@@ -1,0 +1,89 @@
+name: 프론트엔드 배포
+on:
+  push:
+    branches:
+      - deploy
+      - main
+    paths:
+      - shell-ui/**
+      - home-ui/**
+      - post-ui/**
+      - blog-ui/**
+      - login-ui/**
+permissions: write-all
+jobs:
+  extract:
+    runs-on: ubi9
+    outputs:
+      matrix: ${{ steps.extract-modules.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Extract module names from changed files
+        id: extract-modules
+        run: |
+          changed_files="$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})"
+          module_names=()
+          for file in $changed_files; do
+            module_name="${file%%/*}"
+            [[ "$module_name" == "shell-ui" || 
+               "$module_name" == "home-ui" || 
+               "$module_name" == "post-ui" || 
+               "$module_name" == "blog-ui" || 
+               "$module_name" == "login-ui" ]] && module_names+=("$module_name")
+          done
+          module_names=($(printf '%s\n' "${module_names[@]}" | sort -u))
+          echo "matrix=[$(printf '"%s",' "${module_names[@]}" | sed 's/,$//')]" >> $GITHUB_OUTPUT
+  deploy:
+    needs: extract
+    runs-on: ubi9
+    strategy:
+      fail-fast: true
+      matrix:
+        SUBMODULE: ${{ fromJSON(needs.extract.outputs.matrix) }}
+    env:
+      SUBMODULE: ${{ matrix.SUBMODULE }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: 8.7
+      - name: Build
+        env:
+          GITHUB_USERNAME: ${{ secrets._GITHUB_USERNAME }}
+          GITHUB_TOKEN: ${{ secrets._GITHUB_TOKEN }}
+        run: gradle $SUBMODULE:build
+      - name: Unpack
+        run: |
+          unzip -o $SUBMODULE/build/libs/*.war "**/*.js" "**/*.css" "*.html" -d static
+      - name: Gzip Compression
+        run: |
+          gzip_and_move() {
+            find static -type f -name "*.$1" -exec sh -c 'gzip -9 "{}" && mv "{}.gz" "{}"' \;
+          }  
+          gzip_and_move css
+          gzip_and_move js
+          gzip_and_move html
+      - name: Deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: null
+          S3_BUCKET_RELEASE: ${{ secrets.AWS_BUCKET_RELEASE }}
+          S3_BUCKET_CANDIDATE: ${{ secrets.AWS_BUCKET_CANDIDATE }}
+          S3_ENDPOINT: ${{ secrets.AWS_ENDPOINT}}
+          DESTINATION: static
+        run: |
+          if [ "$GITHUB_REF_NAME" = "deploy" ]; then BUCKET=$S3_BUCKET_RELEASE
+          else BUCKET=$S3_BUCKET_CANDIDATE 
+          fi
+          aws s3 sync --endpoint-url $S3_ENDPOINT static s3://$BUCKET/$DESTINATION --acl public-read --content-encoding gzip

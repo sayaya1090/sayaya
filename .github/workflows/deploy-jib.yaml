@@ -1,0 +1,90 @@
+name: 백엔드 배포
+on:
+  push:
+    branches:
+      - deploy
+      - main
+    paths:
+      - shell/**
+      - blog/**
+      - login/**
+      - post/**
+permissions: write-all
+jobs:
+  extract:
+    runs-on: ubi9
+    outputs:
+      matrix: ${{ steps.extract-modules.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+      - name: Extract module names from changed files
+        id: extract-modules
+        run: |
+          changed_files="$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})"
+          module_names=()
+          for file in $changed_files; do
+            module_name="${file%%/*}"
+            [[ "$module_name" == "shell" || 
+               "$module_name" == "blog" || 
+               "$module_name" == "login" || 
+               "$module_name" == "post" ]] && module_names+=("$module_name")
+          done
+          module_names=($(printf '%s\n' "${module_names[@]}" | sort -u))
+          echo "matrix=[$(printf '"%s",' "${module_names[@]}" | sed 's/,$//')]"
+          echo "matrix=[$(printf '"%s",' "${module_names[@]}" | sed 's/,$//')]" >> $GITHUB_OUTPUT
+  deploy:
+    needs: extract
+    runs-on: ubi9
+    strategy:
+      fail-fast: true
+      matrix:
+        SUBMODULE: ${{ fromJSON(needs.extract.outputs.matrix) }}
+    env:
+      _GITHUB_URL: ${{ vars._GITHUB_URL }}
+      _GITHUB_TEST_REPOSITORY: ${{ vars._GITHUB_TEST_REPOSITORY }}
+      _GITHUB_TEST_BRANCH: ${{ vars._GITHUB_TEST_BRANCH }}
+      _GITHUB_APP_ID: ${{ secrets._GITHUB_APP_ID }}
+      _GITHUB_INSTALL_ID: ${{ secrets._GITHUB_INSTALL_ID }}
+      _GITHUB_PRIVATE_KEY: ${{ secrets._GITHUB_PRIVATE_KEY }}
+      IMAGE_REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      BASE_IMAGE: eclipse-temurin:21-jre-ubi9-minimal
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      SUBMODULE: ${{ matrix.SUBMODULE }}
+      IMAGE: sayaya-net/${{ matrix.SUBMODULE }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: 8.7
+      - name: Build&Test
+        run: gradle $SUBMODULE:test
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: ${{ always() }}
+        with:
+          files: ${{ env.SUBMODULE }}/build/test-results/**/*.xml
+      - name: Deploy
+        run: |
+          if [ "$GITHUB_REF_NAME" = "deploy" ]; then TAG="release"
+          else TAG="latest" 
+          fi
+          gradle $SUBMODULE:jib \
+            -Djib.from.image=$BASE_IMAGE \
+            -Djib.from.auth.username=$DOCKER_USERNAME \
+            -Djib.from.auth.password=$DOCKER_PASSWORD \
+            -Djib.to.image=$IMAGE_REGISTRY/$IMAGE:$TAG \
+            -Djib.to.auth.username=$REGISTRY_USERNAME \
+            -Djib.to.auth.password=$REGISTRY_PASSWORD

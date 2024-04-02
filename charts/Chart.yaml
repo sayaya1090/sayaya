@@ -1,0 +1,6 @@
+annotations:
+  charts.openshift.io/name: sayaya
+apiVersion: v2
+kubeVersion: '>= 1.20.0-0'
+name: sayaya
+version: 0.1.0
