@@ -35,6 +35,7 @@ spec:
       timezone: "Asia/Seoul"
   superuserSecret:
     name: postgres
+  enableSuperuserAccess: true
   bootstrap:
     initdb:
       database: sayaya

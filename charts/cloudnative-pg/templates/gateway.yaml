@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway-postgres
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    maistra.io/manageRoute: 'false'
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+        - '*'
+      port:
+        number: 5432
+        name: postgres
+        protocol: TCP
