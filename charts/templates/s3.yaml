@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Release.Namespace }}-s3
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: {{ .Release.Namespace }}
+    server: 'https://kubernetes.default.svc'
+  project: {{ .Release.Namespace }}
+  source:
+    path: charts/s3
+    repoURL: 'https://github.com/sayaya1090/sayaya.git'
+    targetRevision: {{ .Values.revision }}
+    helm:
+      parameters:
+        - name: "bucketMaxSize"
+          value:  {{ .Values.bucket.maxSize }}
+        - name: "host"
+          value: {{ .Values.host }}
+        - name: "bucket"
+          value: {{ .Values.bucket.name }}
+  revisionHistoryLimit: 0
