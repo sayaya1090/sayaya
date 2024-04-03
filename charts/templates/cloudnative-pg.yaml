@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Release.Namespace }}-cloudnative-pg
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: {{ .Release.Namespace }}
+    server: 'https://kubernetes.default.svc'
+  project: {{ .Release.Namespace }}
+  sources:
+    - path: charts/cloudnative-pg
+      repoURL: 'https://github.com/sayaya1090/sayaya.git'
+      targetRevision: {{ .Values.revision }}
+      helm:
+        parameters:
+          - name: "host"
+            value: {{ .Values.host }}
+          {{- with .Values.postgresql.persistence.size }}
+          - name: "persistence.size"
+            value: {{ . | quote }}
+          {{- end }}
+          {{- with .Values.postgresql.persistence.storageClass }}
+          - name: "persistence.storageClass"
+            value: {{ . | quote }}
+          {{- end }}
+          - name: "bucket"
+            value: {{ .Values.bucket.name }}
+  revisionHistoryLimit: 0
