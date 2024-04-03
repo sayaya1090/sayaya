@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Release.Namespace }}-service-mesh
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: {{ .Release.Namespace }}-service-mesh
+    server: 'https://kubernetes.default.svc'
+  project: {{ .Release.Namespace }}
+  source:
+    path: charts/service-mesh
+    repoURL: 'https://github.com/sayaya1090/sayaya.git'
+    targetRevision: {{ .Values.revision }}
+    helm:
+      parameters:
+        - name: "host"
+          value:  {{ .Values.host }}
+        - name: "ip"
+          value:  {{ .Values.ip }}
+        - name: "targetNamespace"
+          value:  {{ .Release.Namespace }}
+  revisionHistoryLimit: 1
+  ignoreDifferences:
+    - group: "*"
+      kind: "*"
+      managedFieldsManagers:
+        - istio-operator
+    - group: "*"
+      kind: "*"
+      managedFieldsManagers:
+        - openshift-router
+        - pilot-discovery
+  syncPolicy:
+    syncOptions:
+      - RespectIgnoreDifferences=true
+      - ServerSideApply=true
