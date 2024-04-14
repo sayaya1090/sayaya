@@ -1,0 +1,15 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: vault
+  namespace: {{ .Release.Namespace }}
+data:
+  vault.yaml: |
+    spring:
+      cloud:
+        vault:
+          uri: http://{{ .Release.Namespace }}-vault.{{ .Release.Namespace }}.svc.cluster.local:8200
+          token: ${vault.token}
+          kv:
+            backend: {{ .Values.host }}
+            profiles:

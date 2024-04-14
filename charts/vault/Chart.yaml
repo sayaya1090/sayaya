@@ -1,0 +1,6 @@
+annotations:
+  charts.openshift.io/name: vault
+apiVersion: v2
+kubeVersion: '>= 1.20.0-0'
+name: vault
+version: 0.1.0

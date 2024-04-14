@@ -1,0 +1,69 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Release.Namespace }}-vault
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: {{ .Release.Namespace }}
+    server: 'https://kubernetes.default.svc'
+  project: {{ .Release.Namespace }}
+  sources:
+    - chart: vault
+      repoURL: https://helm.releases.hashicorp.com
+      targetRevision: '*'
+      helm:
+        values: |
+          global:
+            openshift: true
+          server:
+            route:
+              enabled: false
+            extraLabels:
+              app: vault
+              version: 1.14.0
+            dataStorage:
+            {{- with .Values.vault.dataStorage.storageClass }}
+              storageClass: {{ . | quote }}
+            {{- end }}
+              accessMode: ReadWriteOnce
+            ha:
+              enabled: true
+              raft:
+                enabled: true
+                setNodeId: true
+            statefulSet:
+              annotations:
+                app.kubernetes.io/part-of: login
+            annotations:
+              sidecar.istio.io/inject: 'true'
+            serviceAccount:
+              name: vault
+          injector:
+            enabled: false
+    - chart: vault-secrets-operator
+      repoURL: https://helm.releases.hashicorp.com
+      targetRevision: '*'
+      helm:
+        values: |
+          controller:
+            annotations:
+              app.kubernetes.io/part-of: database
+              sidecar.istio.io/inject: 'true'
+          defaultVaultConnection:
+            enabled: true
+            address: 'http://{{ .Release.Namespace }}-vault.{{ .Release.Namespace }}.svc.cluster.local:8200'
+            skipTLSVerify: true
+          defaultAuthMethod:
+            enabled: true
+            kubernetes:
+              role: sayaya-postgres-secret-role
+              serviceAccount: vault
+    - path: charts/vault
+      repoURL: 'https://github.com/sayaya1090/sayaya.git'
+      targetRevision: {{ .Values.revision }}
+      helm:
+        parameters:
+          - name: "host"
+            value: {{ .Values.host }}
+  revisionHistoryLimit: 1

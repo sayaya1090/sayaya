@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: vault
+  namespace: {{ .Release.Namespace }}
+spec:
+  gateways:
+    - gateway-https
+  hosts:
+    - vault.{{ .Values.host }}
+  http:
+    - route:
+        - destination:
+            host: {{ .Release.Namespace }}-vault-active
+            port:
+              number: 8200
