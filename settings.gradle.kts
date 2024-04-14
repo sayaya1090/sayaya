@@ -54,29 +54,29 @@ dependencyResolutionManagement {
             library("dagger-gwt", "com.google.dagger", "dagger-gwt").version { require("2.51.1") }
             library("dagger-compiler", "com.google.dagger", "dagger-compiler").version { require("2.51.1") }
 
-            library("sayaya-ui", "net.sayaya", "ui").version { require("material3-1.2.0") }
+            library("sayaya-ui", "net.sayaya", "ui").version { require("material3-1.4.0") }
             library("sayaya-rx", "net.sayaya", "rx").version { require("1.6") }
+            library("sayaya-test", "net.sayaya", "gwt-test").version { require("1.0") }
+            library("lombok", "org.projectlombok", "lombok").version { require("1.18.32") }
             bundle("sayaya-web", listOf("elemento-core", "elemental2-svg", "gwt-user", "dagger-gwt", "dagger-compiler", "sayaya-ui", "sayaya-rx", "lombok"))
 
-            library("lombok", "org.projectlombok", "lombok").version { require("1.18.32") }
-
+            library("reactor-test", "io.projectreactor", "reactor-test").withoutVersion()
+            library("kotest-runner", "io.kotest", "kotest-runner-junit5").version { require("5.8.1") }
+            library("mockk", "io.mockk", "mockk").version { require("1.13.10") }
+            library("kotest-extensions-spring", "io.kotest.extensions", "kotest-extensions-spring").version { require("1.1.3") }
+            library("kotest-extensions-testcontainers", "io.kotest.extensions", "kotest-extensions-testcontainers").version { require("2.0.2") }
+            library("selenium", "org.seleniumhq.selenium", "selenium-java").version { require("4.18.1") }
             library("spring-boot-test", "org.springframework.boot", "spring-boot-starter-test").withoutVersion()
             library("spring-security-test", "org.springframework.security", "spring-security-test").withoutVersion()
-            library("mockk", "io.mockk", "mockk").version { require("1.13.10") }
-            library("reactor-test", "io.projectreactor", "reactor-test").withoutVersion()
-            library("kotlin-test", "org.jetbrains.kotlin", "kotlin-test").withoutVersion()
-            library("kotest", "io.kotest", "kotest-runner-junit5").version { require("5.8.1") }
-            bundle("test", listOf("spring-boot-test", "mockk", "reactor-test", "kotlin-test", "spring-security-test", "kotest"))
-            library("kubernetes-mock", "io.fabric8", "kubernetes-server-mock").version { require("6.11.0") }
-
-            library("ktor-core", "io.ktor", "ktor-server-core").version { require("2.3.9") }
-            library("ktor-netty", "io.ktor", "ktor-server-netty").version { require("2.3.9") }
-            bundle("ktor", listOf("ktor-core", "ktor-netty"))
-            library("selenium", "org.seleniumhq.selenium", "selenium-java").version { require("4.19.1") }
-
+            library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").version { require("2.17.0") }
+            library("kubernetes-mock", "io.fabric8", "kubernetes-server-mock").version { require("6.10.0") }
+            library("testcontainers-junit", "org.testcontainers", "junit-jupiter").withoutVersion()
             library("testcontainers-postgresql", "org.testcontainers", "postgresql").withoutVersion()
             library("testcontainers-vault", "org.testcontainers", "vault").withoutVersion()
-
+            bundle("test-api", listOf("reactor-test", "kotest-runner", "mockk", "kotest-extensions-spring", "spring-boot-test"))
+            bundle("test-web", listOf("kotest-runner", "selenium", "sayaya-test", "jackson-databind"))
+            bundle("test-containers", listOf("testcontainers-junit", "kotest-extensions-testcontainers"))
+            bundle("test-kubernetes", listOf("kubernetes-mock"))
         }
     }
 }
