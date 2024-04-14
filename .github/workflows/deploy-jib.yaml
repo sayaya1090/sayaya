@@ -56,7 +56,6 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       SUBMODULE: ${{ matrix.SUBMODULE }}
-      IMAGE: sayaya-net/${{ matrix.SUBMODULE }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -78,9 +77,10 @@ jobs:
           files: ${{ env.SUBMODULE }}/build/test-results/**/*.xml
       - name: Deploy
         run: |
-          if [ "$GITHUB_REF_NAME" = "deploy" ]; then TAG="release"
-          else TAG="latest" 
+          if [ "$GITHUB_REF_NAME" = "deploy" ]; IMAGE="sayaya-net/$SUBMODULE"
+          else IMAGE="sayaya-test/$SUBMODULE"
           fi
+          TAG="latest" 
           gradle $SUBMODULE:jib \
             -Djib.from.image=$BASE_IMAGE \
             -Djib.from.auth.username=$DOCKER_USERNAME \
