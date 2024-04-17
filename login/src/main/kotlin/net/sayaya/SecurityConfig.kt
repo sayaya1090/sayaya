@@ -25,7 +25,7 @@ import java.net.URI
 @Configuration
 class SecurityConfig(
     private val config: AuthorizationConfig,
-    private val toeknPublisher: PublishToken,
+    private val tokenPublisher: PublishToken,
     private val tokenConfig: TokenConfig,
 ) {
     @Bean
@@ -39,7 +39,7 @@ class SecurityConfig(
                 val exchange = filter.exchange
                 val provider = exchange.request.path.value().split("/").last()
                 val principal = authentication.principal as OAuth2User
-                toeknPublisher.publish(provider, principal).flatMap { token -> exchange.sendAuthenticationCookie(token) }
+                tokenPublisher.publish(provider, principal).flatMap { token -> exchange.sendAuthenticationCookie(token) }
             }
         }
         logout {
@@ -54,18 +54,20 @@ class SecurityConfig(
             authenticationEntryPoint = ServerAuthenticationEntryPoint { exchange, e ->
                 e.printStackTrace()
                 Mono.fromRunnable { exchange.response.statusCode = HttpStatus.UNAUTHORIZED } }
-            accessDeniedHandler = ServerAccessDeniedHandler { exchange, _ -> Mono.fromRunnable { exchange.response.statusCode = HttpStatus.FORBIDDEN } }
+            accessDeniedHandler = ServerAccessDeniedHandler { exchange, e ->
+                e.printStackTrace()
+                Mono.fromRunnable { exchange.response.statusCode = HttpStatus.FORBIDDEN } }
         }
     }
     private fun ServerWebExchange.sendAuthenticationCookie(token: String): Mono<Void> {
         response.addCookie(ResponseCookie.from(config.authentication, token).path("/").httpOnly(true).secure(true).maxAge(tokenConfig.duration).build())
-        response.statusCode = HttpStatus.MOVED_PERMANENTLY
+        response.statusCode = HttpStatus.FOUND
         response.headers.location = URI.create(config.loginRedirectUri)
         return response.setComplete()
     }
     private fun ServerWebExchange.clearAuthenticationCookie(): Mono<Void> {
         response.addCookie(ResponseCookie.from(config.authentication).httpOnly(true).secure(true).maxAge(0).build())
-        response.statusCode = HttpStatus.MOVED_PERMANENTLY
+        response.statusCode = HttpStatus.FOUND
         response.headers.location = URI.create(config.logoutRedirectUri)
         return response.setComplete()
     }

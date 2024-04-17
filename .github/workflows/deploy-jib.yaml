@@ -12,7 +12,7 @@ on:
 permissions: write-all
 jobs:
   extract:
-    runs-on: ubi9
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.extract-modules.outputs.matrix }}
     steps:
@@ -37,7 +37,7 @@ jobs:
           echo "matrix=[$(printf '"%s",' "${module_names[@]}" | sed 's/,$//')]" >> $GITHUB_OUTPUT
   deploy:
     needs: extract
-    runs-on: ubi9
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
