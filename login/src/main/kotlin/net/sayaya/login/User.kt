@@ -10,14 +10,14 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Table("public.user")
-data class User(
-    @Id private val id: UUID
-    // val state: State,
-    //val roles: List<Role>
+data class User (
+    @Id private val id: UUID,
+    val roles: MutableList<Role> = mutableListOf(Role.USER)
 ): Persistable<UUID> {
     var alias: String? = null
     var github: String? = null
     var google: String? = null
+    var state: State = State.ACTIVATED
     @CreatedDate @Column("created_at") lateinit var createDateTime: LocalDateTime
     @Column("last_login_at") var lastLoginDateTime: LocalDateTime = LocalDateTime.now()
     @LastModifiedDate @Column("last_modified_at") lateinit var lastModifyDateTime: LocalDateTime

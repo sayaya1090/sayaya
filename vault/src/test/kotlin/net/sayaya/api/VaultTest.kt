@@ -10,7 +10,7 @@ import java.util.*
 class VaultTest: BehaviorSpec({
     val token = UUID.randomUUID().toString()
     val backend = "secret"
-    val vault: VaultContainer<*> = VaultContainer("vault:1.13.0").withVaultToken(token)
+    val vault: VaultContainer<*> = VaultContainer("vault:1.13.2").withVaultToken(token)
     vault.start()
     Given("Vault와 연결된 다음") {
         val api = Vault(URI(vault.httpHostAddress), token, backend)

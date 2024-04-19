@@ -9,14 +9,13 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import net.sayaya.JsonConfig
 import net.sayaya.R2dbcConfig
+import net.sayaya.login.testcontainers.Database
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
 import org.springframework.context.annotation.Import
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.utility.MountableFile
 import java.time.LocalDateTime
 import java.util.*
 
@@ -99,20 +98,9 @@ internal class UserRepositoryTest(private val repo: UserRepository): BehaviorSpe
 }) {
     companion object {
         @JvmStatic
-        private val postgres = PostgreSQLContainer("postgres:latest")
-            .withDatabaseName("postgres")
-            .withUsername("postgres")
-            .withPassword("password")
-            .withCopyFileToContainer(MountableFile.forClasspathResource("schema.sql"), "/docker-entrypoint-initdb.d/init.sql")
-        init {
-            postgres.start()
-        }
-        @JvmStatic
         @DynamicPropertySource
         fun registerDynamicProperties(registry: DynamicPropertyRegistry) {
-            registry.add("spring.r2dbc.url") { "r2dbc:postgresql://${postgres.host}:${postgres.firstMappedPort}/${postgres.databaseName}" }
-            registry.add("spring.r2dbc.username") { postgres.username }
-            registry.add("spring.r2dbc.password") { postgres.password }
+            Database.registerDynamicProperties(registry)
         }
     }
 }

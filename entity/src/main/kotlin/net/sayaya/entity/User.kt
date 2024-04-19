@@ -18,8 +18,8 @@ internal class User {
     @CreatedDate @Column(name = "created_at", nullable = false) private lateinit var createDateTime: LocalDateTime
     @LastModifiedDate @Column(name = "last_modified_at", nullable = false) private lateinit var lastModifyDateTime: LocalDateTime
     @Column(name = "last_login_at") private val lastLoginDateTime: LocalDateTime? = null
-    @Column(length=12) var state: String? = null
-    @Column(length=128) var roles: String? = null
+    @Column(columnDefinition = "VARCHAR(12) NOT NULL DEFAULT 'ACTIVATED'") var state: String? = null
+    @Column(columnDefinition = "VARCHAR(128)[] NOT NULL default {USER}") var roles: String? = null
     @Column(length=16) var github: String? = null
     @Column(length=24) var google: String? = null
 }

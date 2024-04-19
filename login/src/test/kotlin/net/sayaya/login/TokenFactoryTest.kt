@@ -1,11 +1,13 @@
 package net.sayaya.login
 
+import io.jsonwebtoken.JwtParser
 import io.jsonwebtoken.Jwts
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import net.sayaya.JsonConfig
 import net.sayaya.TokenConfig
 import org.bouncycastle.asn1.ASN1Sequence
@@ -38,11 +40,13 @@ internal class TokenFactoryTest: BehaviorSpec({
                 token shouldNotBe null
             }
             Then("JWT 토큰을 decrypt 할 수 있고 그 값으로 원래 사용자의 정보를 확인할 수 있다") {
-                val jwtParser = Jwts.parser().verifyWith(pemToPublicKey(PUBLIC_KEY)).build()
-                val decrypt = jwtParser.parseSignedClaims(token)
+                val decrypt = jwtParser(PUBLIC_KEY).parseSignedClaims(token)
                 val claims = decrypt.payload
 
                 user.id.toString() shouldBeEqual claims["name"]!!
+                claims["authorities"] shouldNotBe null
+                val authorities = claims["authorities"].shouldBeInstanceOf<List<String>>()
+                authorities shouldContain "ROLE_USER"
                 claims.issuer shouldBeEqual config.publisher
                 claims.audience shouldContain config.client
                 claims.notBefore shouldNotBe null
@@ -126,6 +130,7 @@ internal class TokenFactoryTest: BehaviorSpec({
             v+v5pPwsagGfkAAIbebLrMRm5X5NwLXAOQIDAQAB
             -----END RSA PUBLIC KEY-----      
         """.trimIndent()
+        fun jwtParser(publicKey: String): JwtParser = Jwts.parser().verifyWith(pemToPublicKey(publicKey)).build()
         private val pem = Pattern.compile("-----BEGIN (.*)-----(.*)-----END (.*)-----", Pattern.DOTALL)
         private fun pemToPublicKey(pemData: String): PublicKey {
             val m = pem.matcher(pemData.trim())
