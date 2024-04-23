@@ -56,7 +56,7 @@ dependencyResolutionManagement {
 
             library("sayaya-ui", "net.sayaya", "ui").version { require("material3-1.4.0") }
             library("sayaya-rx", "net.sayaya", "rx").version { require("1.6") }
-            library("sayaya-test", "net.sayaya", "gwt-test").version { require("1.0") }
+            library("sayaya-test", "net.sayaya", "gwt-test").version { require("1.1") }
             library("lombok", "org.projectlombok", "lombok").version { require("1.18.32") }
             bundle("sayaya-web", listOf("elemento-core", "elemental2-svg", "gwt-user", "dagger-gwt", "dagger-compiler", "sayaya-ui", "sayaya-rx", "lombok"))
 

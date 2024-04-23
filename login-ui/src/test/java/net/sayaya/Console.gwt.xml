@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+    <inherits name="net.sayaya.UI"/>
+    <inherits name="dagger.Dagger" />
+    <source path="api"/>
+    <source path="client"/>
+    <entry-point class="net.sayaya.client.console.ConsoleTest"/>
+    <collapse-all-properties/>
+</module>
