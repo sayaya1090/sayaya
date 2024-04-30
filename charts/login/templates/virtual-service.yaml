@@ -1,0 +1,62 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: login
+  namespace: {{ .Release.Namespace }}
+spec:
+  gateways:
+    - gateway-https
+  hosts:
+    - {{ .Values.host }}
+  http:
+    - match:
+        - uri:
+            prefix: /login/oauth2/code/
+      route:
+        - destination:
+            host: login
+            port:
+              number: 80
+    - match:
+        - uri:
+            exact: /login
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/login.html
+      route:
+        - destination:
+            host: >-
+              rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /access.html
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/access.html
+      route:
+        - destination:
+            host: >-
+              rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /login/
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: login
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /net.sayaya.Login/
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/net.sayaya.Login/
+      route:
+        - destination:
+            host: >-
+              rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80

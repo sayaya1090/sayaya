@@ -1,0 +1,63 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: shell
+  namespace: {{ .Release.Namespace }}
+spec:
+  gateways:
+    - gateway-https
+  hosts:
+    - {{ .Values.host }}
+  http:
+    - match:
+        - uri:
+            exact: /
+          headers:
+            accept:
+              prefix: text/html
+      redirect:
+        uri: /blog.html
+    - match:
+        - uri:
+            prefix: /css/
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/css/
+      route:
+        - destination:
+            host: >-
+              rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /js/
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/js/
+      route:
+        - destination:
+            host: >-
+              rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /webfonts/
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/webfonts/
+      route:
+        - destination:
+            host: >-
+              rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /wav/
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/wav/
+      route:
+        - destination:
+            host: >-
+              rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80

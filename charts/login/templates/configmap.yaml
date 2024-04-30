@@ -1,0 +1,51 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: login
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/instance: login
+data:
+  application.yaml: |
+    spring:
+      application:
+        name: login
+      main:
+        web-application-type: reactive
+      config:
+        import:
+          - classpath:postgresql.yaml
+          - classpath:vault.yaml
+      security:
+        oauth2:
+          client:
+            registration:
+              google:
+                client-id: ${google.client-id}
+                client-secret: ${google.client-secret}
+                redirect-uri: https://{{ .Values.host }}/access.html
+                scope:
+                  - email
+              github:
+                client-id: ${github.client-id}
+                client-secret: ${github.client-secret}
+                redirect-uri: https://{{ .Values.host }}/access.html
+                scope:
+                  - email
+        authorization:
+          authentication: Authentication
+          login-redirect-uri: https://{{ .Values.host }}
+          logout-redirect-uri: https://{{ .Values.host }}
+          jwt:
+            signature-algorithm: RS256
+            duration: 36000
+            publisher: {{ .Values.host }}
+            client: {{ .Values.host }}
+            secret: ${jwt.secret}
+    management:
+      endpoint:
+        health:
+          probes:
+            enabled: true
+    server:
+      port: 8080
