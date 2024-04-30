@@ -65,7 +65,7 @@ dependencyResolutionManagement {
             library("mockk", "io.mockk", "mockk").version { require("1.13.10") }
             library("kotest-extensions-spring", "io.kotest.extensions", "kotest-extensions-spring").version { require("1.1.3") }
             library("kotest-extensions-testcontainers", "io.kotest.extensions", "kotest-extensions-testcontainers").version { require("2.0.2") }
-            library("selenium", "org.seleniumhq.selenium", "selenium-java").version { require("4.18.1") }
+            library("selenium", "org.seleniumhq.selenium", "selenium-java").version { require("4.20.0") }
             library("spring-boot-test", "org.springframework.boot", "spring-boot-starter-test").withoutVersion()
             library("spring-security-test", "org.springframework.security", "spring-security-test").withoutVersion()
             library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").version { require("2.17.0") }
