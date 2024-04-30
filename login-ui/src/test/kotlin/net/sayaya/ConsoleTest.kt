@@ -10,7 +10,6 @@ import java.lang.Thread.sleep
 
 class ConsoleTest: GwtSpec({
     Given(name="콘솔 컴포넌트 테스트", html="console.html#$MESSAGE", module="net.sayaya.Console",
-        launcherDir = "src/test/resources/static",
         js=listOf(
             "js/bundle.js",
             "js/brands.min.js",
