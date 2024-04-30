@@ -64,6 +64,10 @@ spec:
                     securityContext:
                       runAsUser: 1000
                       privileged: true
+                    resources:
+                      requests:
+                        cpu: "1"
+                        memory: 500Mi
                     env:
                       - name: DOCKER_HOST
                         value: unix:///var/run/docker.sock
