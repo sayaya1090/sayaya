@@ -69,18 +69,15 @@ jobs:
           files: ${{ env.SUBMODULE }}/build/test-results/**/*.xml
       - name: Unpack
         run: |
-          unzip -o -qq $SUBMODULE/build/libs/*.war "**/*.js" "**/*.css" "**.html" -d static | true
-          unzip -o -qq $SUBMODULE/build/libs/*.war "**/*.ttf" -d static | true 
-          unzip -o -qq $SUBMODULE/build/libs/*.war "**/*.woff2" -d static | true
-          unzip -o -qq $SUBMODULE/build/libs/*.war "**/*.mp3" -d static | true
+          unzip -o -qq $SUBMODULE/build/libs/*.war "**/*.js" "**/*.css" "*.html" -d static | true
       - name: Gzip Compression
         run: |
           gzip_and_move() {
             find static -type f -name "*.$1" -exec sh -c 'gzip -9 "{}" && mv "{}.gz" "{}"' \;
           }  
-          gzip_and_move css
-          gzip_and_move js
-          gzip_and_move html
+          gzip_and_move css | true
+          gzip_and_move js | true
+          gzip_and_move html | true
       - name: Deploy
         env:
           AWS_ACCESS_KEY_ID_RELEASE: ${{ secrets.AWS_ACCESS_KEY_ID_RELEASE }}
