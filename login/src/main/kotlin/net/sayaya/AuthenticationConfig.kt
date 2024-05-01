@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component
 
 @Component
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix="spring.security.authorization")
-class AuthorizationConfig {
-    lateinit var authentication: String
+@ConfigurationProperties(prefix="spring.security.authentication")
+class AuthenticationConfig {
+    lateinit var header: String
     lateinit var loginRedirectUri: String
     lateinit var logoutRedirectUri: String
 }

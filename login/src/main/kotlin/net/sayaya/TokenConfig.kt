@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix="spring.security.authorization.jwt")
+@ConfigurationProperties(prefix="spring.security.authentication.jwt")
 class TokenConfig {
     lateinit var signatureAlgorithm: String
     var duration: Long = -1L

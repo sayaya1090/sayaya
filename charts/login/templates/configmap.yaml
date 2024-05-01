@@ -32,8 +32,8 @@ data:
                 redirect-uri: https://{{ .Values.host }}/access.html
                 scope:
                   - email
-        authorization:
-          authentication: Authentication
+        authentication:
+          header: Authentication
           login-redirect-uri: https://{{ .Values.host }}
           logout-redirect-uri: https://{{ .Values.host }}
           jwt:

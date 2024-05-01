@@ -88,14 +88,14 @@ internal class IntegrationTest(private val client: WebTestClient, private val db
             Database.registerDynamicProperties(registry)
             OAuthServer.registerDynamicProperties(registry)
             SecretRepository.registerDynamicProperties(registry)
-            registry.add("spring.security.authorization.authentication") { AUTHENTICATION }
-            registry.add("spring.security.authorization.login-redirect-uri") { "index.html" }
-            registry.add("spring.security.authorization.logout-redirect-uri") { "login.html" }
-            registry.add("spring.security.oauth2.authorization.jwt.signature-algorithm") { "RS256" }
-            registry.add("spring.security.oauth2.authorization.jwt.duration") { "3600" }
-            registry.add("spring.security.oauth2.authorization.jwt.publisher") { PUBLISHER }
-            registry.add("spring.security.oauth2.authorization.jwt.client") { CLIENT }
-            registry.add("spring.security.oauth2.authorization.jwt.secret") { TokenFactoryTest.PRIVATE_KEY }
+            registry.add("spring.security.authentication.header") { AUTHENTICATION }
+            registry.add("spring.security.authentication.login-redirect-uri") { "index.html" }
+            registry.add("spring.security.authentication.logout-redirect-uri") { "login.html" }
+            registry.add("spring.security.authentication.jwt.signature-algorithm") { "RS256" }
+            registry.add("spring.security.authentication.jwt.duration") { "3600" }
+            registry.add("spring.security.authentication.jwt.publisher") { PUBLISHER }
+            registry.add("spring.security.authentication.jwt.client") { CLIENT }
+            registry.add("spring.security.authentication.jwt.secret") { TokenFactoryTest.PRIVATE_KEY }
         }
         fun DatabaseClient.countUser(): Long = sql("SELECT count(*) from \"user\"").fetch().one().mapNotNull { it.values.first() as Long }.block()!!
         fun WebTestClient.login(username: String): WebTestClient.ResponseSpec {

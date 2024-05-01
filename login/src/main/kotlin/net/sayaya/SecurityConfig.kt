@@ -24,7 +24,7 @@ import java.net.URI
 
 @Configuration
 class SecurityConfig(
-    private val config: AuthorizationConfig,
+    private val config: AuthenticationConfig,
     private val tokenPublisher: PublishToken,
     private val tokenConfig: TokenConfig,
 ) {
@@ -60,13 +60,13 @@ class SecurityConfig(
         }
     }
     private fun ServerWebExchange.sendAuthenticationCookie(token: String): Mono<Void> {
-        response.addCookie(ResponseCookie.from(config.authentication, token).path("/").httpOnly(true).secure(true).maxAge(tokenConfig.duration).build())
+        response.addCookie(ResponseCookie.from(config.header, token).path("/").httpOnly(true).secure(true).maxAge(tokenConfig.duration).build())
         response.statusCode = HttpStatus.FOUND
         response.headers.location = URI.create(config.loginRedirectUri)
         return response.setComplete()
     }
     private fun ServerWebExchange.clearAuthenticationCookie(): Mono<Void> {
-        response.addCookie(ResponseCookie.from(config.authentication).httpOnly(true).secure(true).maxAge(0).build())
+        response.addCookie(ResponseCookie.from(config.header).httpOnly(true).secure(true).maxAge(0).build())
         response.statusCode = HttpStatus.FOUND
         response.headers.location = URI.create(config.logoutRedirectUri)
         return response.setComplete()

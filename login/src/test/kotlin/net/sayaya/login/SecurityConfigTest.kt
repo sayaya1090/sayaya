@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockkClass
-import net.sayaya.AuthorizationConfig
+import net.sayaya.AuthenticationConfig
 import net.sayaya.SecurityConfig
 import net.sayaya.TokenConfig
 import net.sayaya.login.testcontainers.OAuthServer
@@ -28,7 +28,7 @@ import java.time.Duration
 @WebFluxTest
 @ContextConfiguration(classes = [SecurityConfig::class, SecurityConfigTest.Companion.TestConfig::class])
 @Testcontainers
-internal class SecurityConfigTest(private val client: WebTestClient, private val authConfig: AuthorizationConfig): BehaviorSpec({
+internal class SecurityConfigTest(private val client: WebTestClient, private val authConfig: AuthenticationConfig): BehaviorSpec({
     Given("서버 기동") {
         When("로그인 URL을 요청하면") {
             val request = client.get().uri("/oauth2/authorization/${OAuthServer.PROVIDER}").exchange()
@@ -37,7 +37,7 @@ internal class SecurityConfigTest(private val client: WebTestClient, private val
             Then("로그인 페이지 정보 제공") {
                 request.expectStatus().isFound
                 request.expectCookie().exists("SESSION")
-                request.expectCookie().doesNotExist(authConfig.authentication)
+                request.expectCookie().doesNotExist(authConfig.header)
                 request.expectHeader().exists("location")
             }
             And("전달된 로그인 페이지에서 로그인 성공하면") {
@@ -51,9 +51,9 @@ internal class SecurityConfigTest(private val client: WebTestClient, private val
                     }.block()
                 val publishToken = client.get().uri(checkNotNull(authentication)).cookie("SESSION", session).exchange()
                 Then("토큰 발급") {
-                    publishToken.expectCookie().valueEquals(authConfig.authentication, OAuthServer.TOKEN)
-                    publishToken.expectCookie().httpOnly(authConfig.authentication, true)
-                    publishToken.expectCookie().secure(authConfig.authentication, true)
+                    publishToken.expectCookie().valueEquals(authConfig.header, OAuthServer.TOKEN)
+                    publishToken.expectCookie().httpOnly(authConfig.header, true)
+                    publishToken.expectCookie().secure(authConfig.header, true)
                 }
                 Then("loginRedirectUri로 리다이렉트") {
                     publishToken.expectStatus().isFound
@@ -64,9 +64,9 @@ internal class SecurityConfigTest(private val client: WebTestClient, private val
         When("로그아웃을 시도하면") {
             val logout = client.mutateWith(SecurityMockServerConfigurers.csrf()).post().uri("/oauth2/logout").exchange()
             Then("쿠키 만료") {
-                logout.expectCookie().maxAge(authConfig.authentication, Duration.ofSeconds(0))
-                logout.expectCookie().httpOnly(authConfig.authentication, true)
-                logout.expectCookie().secure(authConfig.authentication, true)
+                logout.expectCookie().maxAge(authConfig.header, Duration.ofSeconds(0))
+                logout.expectCookie().httpOnly(authConfig.header, true)
+                logout.expectCookie().secure(authConfig.header, true)
             }
             Then("logoutRedirectUri로 리다이렉트") {
                 logout.expectStatus().isFound
@@ -78,8 +78,8 @@ internal class SecurityConfigTest(private val client: WebTestClient, private val
     companion object {
         @TestConfiguration
         class TestConfig {
-            @Bean fun authorizationConfig(): AuthorizationConfig = AuthorizationConfig().apply {
-                authentication = "Authentication"
+            @Bean fun authorizationConfig(): AuthenticationConfig = AuthenticationConfig().apply {
+                header = "Authentication"
                 loginRedirectUri = "main.html"
                 logoutRedirectUri = "login.html"
             }
