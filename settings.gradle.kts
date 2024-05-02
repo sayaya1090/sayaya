@@ -32,7 +32,7 @@ dependencyResolutionManagement {
             library("jjwt-api", "io.jsonwebtoken", "jjwt-api").version { require("0.12.5") }
             library("jjwt-impl", "io.jsonwebtoken", "jjwt-impl").version { require("0.12.5") }
             library("jjwt-jackson", "io.jsonwebtoken", "jjwt-jackson").version { require("0.12.5") }
-            library("bouncycastle-bcprov", "org.bouncycastle", "bcprov-jdk18on").version { require("1.77") }
+            library("bouncycastle-bcprov", "org.bouncycastle", "bcprov-jdk18on").version { require("1.78.1") }
             bundle("jjwt-runtime", listOf("jjwt-impl", "jjwt-jackson"))
             library("r2dbc", "org.springframework.boot", "spring-boot-starter-data-r2dbc").withoutVersion()
             library("r2dbc-postgres", "org.postgresql", "r2dbc-postgresql").withoutVersion()
@@ -44,8 +44,8 @@ dependencyResolutionManagement {
             bundle("spring-client", listOf("spring-log4j2", "spring-security"))
 
             library("jackson-annotations", "com.fasterxml.jackson.core", "jackson-annotations").version { require("2.17.0") }
-
-            library("elemento-core", "org.jboss.elemento", "elemento-core").version { require("1.4.2") }
+            library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").version { require("2.17.0") }
+            library("elemento-core", "org.jboss.elemento", "elemento-core").version { require("1.4.12") }
             library("elemental2-svg", "com.google.elemental2", "elemental2-svg").version { require("1.2.1") }
             library("gwt-user", "org.gwtproject", "gwt-user").version { require("2.11.0") }
             library("gwt-dev", "org.gwtproject", "gwt-dev").version { require("2.11.0") }
@@ -68,8 +68,7 @@ dependencyResolutionManagement {
             library("selenium", "org.seleniumhq.selenium", "selenium-java").version { require("4.20.0") }
             library("spring-boot-test", "org.springframework.boot", "spring-boot-starter-test").withoutVersion()
             library("spring-security-test", "org.springframework.security", "spring-security-test").withoutVersion()
-            library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").version { require("2.17.0") }
-            library("kubernetes-mock", "io.fabric8", "kubernetes-server-mock").version { require("6.10.0") }
+            library("kubernetes-mock", "io.fabric8", "kubernetes-server-mock").version { require("6.12.1") }
             library("testcontainers-junit", "org.testcontainers", "junit-jupiter").withoutVersion()
             library("testcontainers-postgresql", "org.testcontainers", "postgresql").withoutVersion()
             library("testcontainers-vault", "org.testcontainers", "vault").withoutVersion()

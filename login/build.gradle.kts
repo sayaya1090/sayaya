@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    kotlin("kapt")
     kotlin("plugin.spring")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
@@ -24,15 +23,13 @@ dependencies {
 }
 configurations { all { exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging") } }
 dependencyManagement { imports { mavenBom(libs.spring.cloud.bom.get().toString()) } }
-kapt {
-    keepJavacAnnotationProcessors = true
-    includeCompileClasspath = false
-}
-tasks.getByName<Jar>("jar") {
-    enabled = false
-}
-tasks.test {
-    useJUnitPlatform()
+tasks {
+    jar {
+        enabled = false
+    }
+    test {
+        useJUnitPlatform()
+    }
 }
 jib {
     container {
