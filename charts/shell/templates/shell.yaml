@@ -1,0 +1,29 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: shell
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/instance: shell
+data:
+  application.yaml: |
+    spring:
+      application:
+        name: shell
+      main:
+        web-application-type: reactive
+      cloud:
+        kubernetes:
+          discovery:
+            service-labels:
+              type: client
+            namespaces:
+              - {{ .Release.Namespace }}
+            catalogServicesWatchDelay: 5000
+    management:
+      endpoint:
+        health:
+          probes:
+            enabled: true
+    server:
+      port: 8080

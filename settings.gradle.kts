@@ -68,7 +68,7 @@ dependencyResolutionManagement {
             library("selenium", "org.seleniumhq.selenium", "selenium-java").version { require("4.20.0") }
             library("spring-boot-test", "org.springframework.boot", "spring-boot-starter-test").withoutVersion()
             library("spring-security-test", "org.springframework.security", "spring-security-test").withoutVersion()
-            library("kubernetes-mock", "io.fabric8", "kubernetes-server-mock").version { require("6.12.1") }
+            library("kubernetes-mock", "io.fabric8", "kubernetes-server-mock").version { require("6.10.0") }
             library("testcontainers-junit", "org.testcontainers", "junit-jupiter").withoutVersion()
             library("testcontainers-postgresql", "org.testcontainers", "postgresql").withoutVersion()
             library("testcontainers-vault", "org.testcontainers", "vault").withoutVersion()
