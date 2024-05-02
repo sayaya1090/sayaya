@@ -5,17 +5,21 @@
     overflow: hidden;
     margin: auto;
     border: 1px solid;
-    border-color: var(--md-sys-color-outline);
     border-radius: 0.5rem;
     padding: 1rem;
-    background-color: var(--md-sys-color-background);
     transition: height 300ms ease 0ms;
 }
 :root[color-theme='light'] body {
     background: var(--md-sys-color-surface-container-high) !important;
 }
+:root[color-theme='light'] .console {
+    border-color: var(--md-sys-color-outline-variant);
+    background-color: var(--md-sys-color-background);
+    box-shadow: rgba(0,0,0,0.23) 0.25rem 0.25rem 0.5rem;
+}
 :root[color-theme='dark'] .console {
-    background: var(--md-sys-color-surface-container-high);
+    border-color: var(--md-sys-color-outline);
+    background-color: var(--md-sys-color-surface-container-high);
 }
 .console>.line {
     font-family: 'Source Code Pro', 'Nanum Gothic Coding', Consolas, monospace;
