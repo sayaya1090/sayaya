@@ -1,0 +1,76 @@
+:root[color-theme='dark'] body {
+    color-scheme: auto; /* iframe src 변경 시 flickering 방지 */
+}
+.drawer {
+    z-index: 99999;   /* frame 보다 위에 있어야 함 */
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 20%, transparent);
+    border-top-right-radius: 0rem;
+    border-bottom-right-radius: 0rem;
+    backdrop-filter: blur(5px);
+    display: flex;
+    width: fit-content;
+    flex-direction: column;
+    transition-property: background-color, box-shadow, border-top-right-radius, border-bottom-right-radius;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+}
+.drawer[open] {
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+:root[color-theme='light'] .drawer[open] {
+    box-shadow: 0 4px 30px color-mix(in srgb, var(--md-sys-color-outline-variant) 20%, transparent);
+}
+:root[color-theme='dark'] .drawer[open] {
+
+}
+.drawer[open] .menu {
+    width: 16rem;
+}
+.menu {
+    width: 0px;
+    transition: width 500ms cubic-bezier(.2,0,0,1);;
+    overflow: hidden;
+    background: transparent;
+}
+.menu div, .rail div {
+    font-family: var(--md-sys-typescale-headline-large-font)
+}
+.menu .svg-inline--fa, .rail .svg-inline--fa {
+    font-size: 1.5rem;
+}
+.rail {
+    width: 0px;
+    transition: width 400ms cubic-bezier(.2,0,0,1);;
+}
+.rail[open] {
+    width: 2.5rem;
+}
+.drawer[open] .rail[open] {
+    width: 14rem;
+    align-items: flex-start;
+    border-left: 1px solid var(--md-sys-color-outline-variant);
+}
+.drawer[open] .item[selected] {
+    border-left: 3px inset var(--md-sys-color-primary);
+}
+.drawer:not([open]) .rail[open] div {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--md-sys-typescale-body-medium-line-height, 1.5rem);
+    margin-top: var(--md-sys-typescale-body-medium-line-height, 1.5rem);
+}
+.drawer:not([open]).drawer:has(.rail:not([open])) {
+    background-color: rgba(0, 0, 0, 0);
+}
+.content {
+    position: absolute;
+    top: 0;
+    left: 40px;
+    opacity: 1;
+    border: 0px hidden;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    transition: all 80ms ease-in-out;
+}
