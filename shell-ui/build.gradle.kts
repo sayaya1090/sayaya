@@ -40,7 +40,7 @@ tasks {
     }
     gwtTest {
         dependsOn("compileTestJava")
-        modules = listOf("net.sayaya.Menu")
+        modules = listOf("net.sayaya.ContentUrlChange")
         launcherDir = file("src/test/webapp")
         extraJvmArgs = listOf("-javaagent:${lombok}=ECJ")
         webserverPort = 8080
