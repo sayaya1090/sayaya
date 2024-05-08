@@ -28,6 +28,13 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @Testcontainers
 internal class IntegrationTest(private val client: WebTestClient, private val db: DatabaseClient): BehaviorSpec({
     Given("서버 기동") {
+        When("메뉴를 요청하면") {
+            val request = client.get().uri("/menu").exchange()
+            Then("메뉴를 출력한다") {
+                request.expectStatus().isOk
+                request.expectBody().jsonPath("$.title").isEqualTo("Log In")
+            }
+        }
         When("새로운 사용자로 OAuth2 로그인 요청하면") {
             val publishToken = client.login(USER)
             Then("쿠키로 JWT 토큰이 발급된다") {

@@ -15,8 +15,14 @@ spec:
           headers:
             accept:
               prefix: text/html
-      redirect:
-        uri: /blog.html
+      rewrite:
+        uri: /sayaya-test/static/index.html
+      route:
+        - destination:
+            host: >-
+              rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80
     - match:
         - uri:
             prefix: /css/
@@ -59,5 +65,26 @@ spec:
         - destination:
             host: >-
               rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /net.sayaya.Shell/
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/net.sayaya.Shell/
+      route:
+        - destination:
+            host: >-
+              rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /shell/
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: shell
             port:
               number: 80

@@ -30,6 +30,7 @@ spec:
         app: login
         version: 0.0.1
         deployment: login
+        type: client
       annotations:
         sidecar.istio.io/inject: 'true'
     spec:

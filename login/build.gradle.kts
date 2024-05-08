@@ -7,6 +7,7 @@ plugins {
 }
 dependencies {
     implementation(project(":vault"))
+    implementation(project(":activity"))
     implementation(libs.bundles.spring.client)
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation(libs.kotlin.jackson)

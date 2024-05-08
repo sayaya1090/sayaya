@@ -3,6 +3,8 @@ apiVersion: v1
 metadata:
   name: login
   namespace: {{ .Release.Namespace }}
+  labels:
+    type: client
 spec:
   ipFamilies:
     - IPv4
