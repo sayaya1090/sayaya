@@ -9,15 +9,15 @@ import static org.jboss.elemento.Elements.iframe;
 public class ContentUrlChangeTest implements EntryPoint {
     @Override
     public void onModuleLoad() {
-        var iframe = iframe().id("content");
-        body().add(iframe);
+        body().add(iframe().id("content"));
         var components = DaggerContentUrlChangeTestComponent.create();
         var contentUrl = components.urlChangeSubject().contentUrl;
         components.urlChangeListener().listen();
-        var changeSrc = button().text().id("change").add("Change src");
-        var clearSrc = button().text().id("clear").add("Clear src");
-        body().add(changeSrc).add(clearSrc);
-        changeSrc.onClick(evt->contentUrl.next("test"));
-        clearSrc.onClick(evt->contentUrl.next(null));
+        for(var i = 1; i <= 5; ++i) {
+            var n = i;
+            var testSrc = button().text().id("test"+n).add("Test"+n);
+            body().add(testSrc);
+            testSrc.onClick(evt->contentUrl.next("test"+n));
+        }
     }
 }

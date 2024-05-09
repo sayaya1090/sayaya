@@ -88,3 +88,11 @@ spec:
             host: shell
             port:
               number: 80
+    - match:
+        - uri:
+            regex: /.*\.html$
+      route:
+        - destination:
+            host: shell
+            port:
+              number: 80
