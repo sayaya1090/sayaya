@@ -2,11 +2,8 @@ package net.sayaya.client.content;
 
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
-import net.sayaya.client.api.ShellApi;
 import net.sayaya.client.data.Menu;
-import net.sayaya.client.data.Page;
 import net.sayaya.rx.subject.BehaviorSubject;
-import net.sayaya.rx.subject.Subject;
 import net.sayaya.ui.elements.IconButtonElementBuilder;
 import net.sayaya.ui.elements.ListElementBuilder;
 import org.jboss.elemento.EventType;
@@ -17,12 +14,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.nullsLast;
-import static net.sayaya.rx.subject.BehaviorSubject.behavior;
 import static net.sayaya.ui.elements.ButtonElementBuilder.button;
 import static net.sayaya.ui.elements.IconElementBuilder.icon;
 import static net.sayaya.ui.elements.ListElementBuilder.list;
@@ -30,44 +25,39 @@ import static org.jboss.elemento.Elements.*;
 
 @Singleton
 public class DrawerElement extends HTMLContainerBuilder<HTMLElement> implements IsElement<HTMLElement> {
-    @Inject DrawerElement(NavigationRailElement navigation, @Named("contentUrl") BehaviorSubject<String> contentUrl, @Named("isMenuShown") BehaviorSubject<Boolean> isMenuShown, Subject<Page[]> pages) {
-        this(nav(), navigation, contentUrl, isMenuShown, pages);
+    @Inject DrawerElement(NavigationRailElement navigation, @Named("contentUrl") BehaviorSubject<String> contentUrl, MenuManager menuManager) {
+        this(nav(), navigation, contentUrl, menuManager);
     }
     private final HTMLContainerBuilder<HTMLElement> _this;
     private final IconButtonElementBuilder.PlainIconButtonElementBuilder btnToggleMenu = button().icon().add(icon("menu")).ariaLabel("Menu");
     private final ListElementBuilder list;
-    private final BehaviorSubject<List<Menu>> menu = behavior(new LinkedList<>());
-    private DrawerElement(HTMLContainerBuilder<HTMLElement> element, NavigationRailElement navigation, BehaviorSubject<String> contentUrl, BehaviorSubject<Boolean> isMenuShown, Subject<Page[]> pages) {
+    private DrawerElement(HTMLContainerBuilder<HTMLElement> element, NavigationRailElement navigation, BehaviorSubject<String> contentUrl, MenuManager menuManager) {
         super(element.element());
         _this = element;
         list = list();
         list.element().classList.add("menu");
         layout(navigation);
-        btnToggleMenu.onClick(evt->isMenuShown.next(!isMenuShown.getValue()));
-        isMenuShown.subscribe(show -> {
-            if(show) {
-                ShellApi.findMenu().then(menu -> {
-                    this.menu.next(menu);
-                    return null;
-                });
-                _this.element().setAttribute("open", "");
-            } else {
-                update(isMenuShown, menu.getValue(), contentUrl, pages);
-                _this.element().removeAttribute("open");
+        btnToggleMenu.onClick(evt->menuManager.toggle());
+        menuManager.onUpdate(menu->update(menuManager, menu, contentUrl));
+        menuManager.onStateChange(state->{
+            switch(state) {
+                case SHOW:
+                    menuManager.reload();
+                    _this.element().setAttribute("open", "");
+                    break;
+                case HIDE:
+                    update(menuManager, menuManager.menu(), contentUrl);
+                    _this.element().removeAttribute("open");
+                    break;
             }
         });
-        ShellApi.findMenu().then(m -> {
-            menu.subscribe(menu->update(isMenuShown, menu, contentUrl, pages));
-            this.menu.next(m);
-            return null;
-        });
-        contentUrl.subscribe(evt->update(isMenuShown, menu.getValue(), contentUrl, pages));
+        contentUrl.subscribe(evt->update(menuManager, menuManager.menu(), contentUrl));
     }
-    private void update(BehaviorSubject<Boolean> isMenuShown, List<Menu> menu, BehaviorSubject<String> contentUrl, Subject<Page[]> pages) {
+    private void update(MenuManager menuManager, List<Menu> menu, BehaviorSubject<String> contentUrl) {
         list.element().innerHTML = "";
-        menu.stream().sorted(nullsLast(comparing(i->i.order))).forEach(item->appendItem(item, isMenuShown, contentUrl, pages));
+        menu.stream().sorted(nullsLast(comparing(i->i.order))).forEach(item->appendItem(item, menuManager, contentUrl));
     }
-    private void appendItem(Menu item, BehaviorSubject<Boolean> isMenuShown, BehaviorSubject<String> contentUrl, Subject<Page[]> pages) {
+    private void appendItem(Menu item, MenuManager menuManager, BehaviorSubject<String> contentUrl) {
         var child = list.item().css("item").type("button");
         if(item.title!=null) child.headline(item.title);
         if(item.icon!=null) {
@@ -81,12 +71,12 @@ public class DrawerElement extends HTMLContainerBuilder<HTMLElement> implements 
             var url = urlAndHash.split("#")[0];
             if(Arrays.stream(item.children).anyMatch(i->equalUri(i.uri, url))) {
                 child.element().setAttribute("selected", "");
-                pages.next(item.children);
+                menuManager.pages(item.children);
             }
             child.on(EventType.click, evt->contentUrl.next(item.children[0].uri));
         }
-        child.on(EventType.click, evt->isMenuShown.next(false));
-        child.on(EventType.mouseover, evt->pages.next(item.children));
+        child.on(EventType.click, evt->menuManager.state(MenuManager.MenuState.HIDE));
+        child.on(EventType.mouseover, evt->menuManager.pages(item.children));
     }
     private final static String HOST = DomGlobal.window.location.protocol + "//" + DomGlobal.window.location.host;
     static boolean equalUri(String uri1,String uri2) {

@@ -21,7 +21,6 @@ public class FrameUpdater {
     public FrameUpdater(BehaviorSubject<String> contentUrl) {
         this.contentUrl = contentUrl;
         previous = getUrl(contentUrl.getValue());
-        DomGlobal.console.log(previous);
         if(previous!=null && !previous.startsWith(prefix)) previous = prefix + previous;
     }
     void listen() {
@@ -30,7 +29,6 @@ public class FrameUpdater {
     private void update(String evt) {
         if (evt == null) return;
         var url = getUrl(evt);
-        DomGlobal.console.log(url);
         if(!url.startsWith(prefix)) url = prefix + url;
         if(url.equals(previous)) {
             content.contentWindow.history.replaceState("", DomGlobal.document.title, evt);

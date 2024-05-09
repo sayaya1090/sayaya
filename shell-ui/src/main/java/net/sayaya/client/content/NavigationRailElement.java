@@ -23,21 +23,21 @@ import static org.jboss.elemento.Elements.*;
 
 @Singleton
 public class NavigationRailElement extends HTMLContainerBuilder<HTMLElement> implements IsElement<HTMLElement> {
-    @Inject NavigationRailElement(Subject<Page[]> pages, @Named("contentUrl") BehaviorSubject<String> contentUrl, @Named("isMenuShown") BehaviorSubject<Boolean> isMenuShown) {
-        this(nav(), pages, contentUrl, isMenuShown);
+    @Inject NavigationRailElement(@Named("contentUrl") BehaviorSubject<String> contentUrl, MenuManager menuManager) {
+        this(nav(), contentUrl, menuManager);
     }
     private final HTMLContainerBuilder<HTMLElement> _this;
     private final BehaviorSubject<String> contentUrl;
-    private final BehaviorSubject<Boolean> isMenuShown;
-    private NavigationRailElement(HTMLContainerBuilder<HTMLElement> element, Subject<Page[]> pages, BehaviorSubject<String> contentUrl, BehaviorSubject<Boolean> isMenuShown) {
+    private final MenuManager menuManager;
+    private NavigationRailElement(HTMLContainerBuilder<HTMLElement> element, BehaviorSubject<String> contentUrl, MenuManager menuManager) {
         super(element.css("rail").element());
         _this = element;
         this.contentUrl = contentUrl;
-        this.isMenuShown = isMenuShown;
-        pages.subscribe(this::update);
-        isMenuShown.subscribe(show->{
+        this.menuManager = menuManager;
+        menuManager.onPageUpdate(this::update);
+        menuManager.onStateChange(state->{
             if(current==null || current.length<=1) return;
-            if(show) expand();
+            if(state == MenuManager.MenuState.SHOW) expand();
             else collapse();
         });
     }
@@ -54,7 +54,7 @@ public class NavigationRailElement extends HTMLContainerBuilder<HTMLElement> imp
     }
     private void show() {
         _this.element().setAttribute("open", "");
-        if(isMenuShown.getValue()) expand();
+        if(menuManager.state() == MenuManager.MenuState.SHOW) expand();
         else collapse();
     }
     private void expand() {
@@ -74,7 +74,7 @@ public class NavigationRailElement extends HTMLContainerBuilder<HTMLElement> imp
                 }
                 child.on(EventType.click, evt->{
                     contentUrl.next(item.uri);
-                    isMenuShown.next(false);
+                    menuManager.state(MenuManager.MenuState.HIDE);
                 });
             });
         }
