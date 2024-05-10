@@ -1,10 +1,12 @@
 package net.sayaya.login.testcontainers
 
+import org.springframework.context.ApplicationContextInitializer
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.MountableFile
 
-internal class Database {
+internal class Database: ApplicationContextInitializer<ConfigurableApplicationContext> {
     companion object {
         private val postgres = PostgreSQLContainer("postgres:latest")
             .withDatabaseName("postgres")
@@ -19,5 +21,9 @@ internal class Database {
             registry.add("spring.r2dbc.username") { postgres.username }
             registry.add("spring.r2dbc.password") { postgres.password }
         }
+    }
+
+    override fun initialize(context: ConfigurableApplicationContext) {
+        
     }
 }

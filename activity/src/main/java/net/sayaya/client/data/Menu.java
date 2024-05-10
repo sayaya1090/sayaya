@@ -16,4 +16,5 @@ public final class Menu {
     public String trailingText;
     public String order;
     public Page[] children;
+    public Boolean bottom;
 }

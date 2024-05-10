@@ -12,11 +12,6 @@ import static net.sayaya.rx.subject.BehaviorSubject.behavior;
 
 @dagger.Module
 public class UrlModule {
-    @Provides @Singleton @Named("contentUrl") static BehaviorSubject<String> provideContentUrl() {
-        var content = DomGlobal.document.getElementById("content");
-        var s = behavior(content.getAttribute("src"));
-        return s;
-    }
     @Provides @Singleton static FrameUpdater provideFrameUpdater(@Named("contentUrl") BehaviorSubject<String> contentUrl) {
         return new FrameUpdater(contentUrl);
     }

@@ -20,13 +20,15 @@ class Router {
     private val menu = Menu().apply {
         title = "Log In"
         icon = "fa-right-to-bracket"
-        // supportingText = ""
+        iconType = "sharp"
+        bottom = true
         order = "Z000"
         children = arrayOf(
             Page().apply {
                 title = "-"
                 order = "Z000-1"
                 uri = "/login.html"
+                icon = "fa-right-to-bracket"
             }
         )
     }

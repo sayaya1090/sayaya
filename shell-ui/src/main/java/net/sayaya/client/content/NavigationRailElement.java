@@ -86,12 +86,12 @@ public class NavigationRailElement extends HTMLContainerBuilder<HTMLElement> imp
             _this.add(div);
             Arrays.stream(current).forEach(item->{
                 var btn = span().css("item");
-                HTMLElement ico = item.icon.startsWith("fa-")? i().css("fa-sharp", "fa-light", item.icon).element():  null;
+                HTMLElement ico = (item.icon!=null && item.icon.startsWith("fa-")) ? i().css("fa-sharp", "fa-light", item.icon).element():  null;
                 contentUrl.subscribe(url->{
                     btn.element().innerHTML = "";
                     IconButtonElementBuilder<?, ?> icon = ButtonElementBuilder.button().icon().css("item");
                     if(DrawerElement.equalUri(item.uri, contentUrl.getValue())) icon = ((IconButtonElementBuilder.PlainIconButtonElementBuilder)icon).filled();
-                    icon.add(ico);
+                    if(ico!=null) icon.add(ico);
                     btn.add(icon);
                 });
                 div.add(btn);

@@ -1,5 +1,6 @@
 package net.sayaya.client.content;
 
+import elemental2.dom.CSSProperties;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import net.sayaya.client.data.Menu;
@@ -14,8 +15,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.lang.Boolean.TRUE;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.nullsLast;
 import static net.sayaya.ui.elements.ButtonElementBuilder.button;
@@ -55,9 +59,13 @@ public class DrawerElement extends HTMLContainerBuilder<HTMLElement> implements 
     }
     private void update(MenuManager menuManager, List<Menu> menu, BehaviorSubject<String> contentUrl) {
         list.element().innerHTML = "";
-        menu.stream().sorted(nullsLast(comparing(i->i.order))).forEach(item->appendItem(item, menuManager, contentUrl));
+        AtomicBoolean bottom = new AtomicBoolean(false);
+        menu.stream().sorted(nullsLast(comparing((Menu i) -> TRUE.equals(i.bottom)).thenComparing(i->i.order))).forEach(item-> {
+            var child = appendItem(item, menuManager, contentUrl);
+            if(TRUE.equals(item.bottom) && !bottom.getAndSet(true)) child.element().style.marginTop = CSSProperties.MarginTopUnionType.of("auto");
+        });
     }
-    private void appendItem(Menu item, MenuManager menuManager, BehaviorSubject<String> contentUrl) {
+    private ListElementBuilder.ListItemElementBuilder appendItem(Menu item, MenuManager menuManager, BehaviorSubject<String> contentUrl) {
         var child = list.item().css("item").type("button");
         if(item.title!=null) child.headline(item.title);
         if(item.icon!=null) {
@@ -68,15 +76,18 @@ public class DrawerElement extends HTMLContainerBuilder<HTMLElement> implements 
         if(item.trailingText!=null) child.trailingSupportingText(item.trailingText);
         if(item.children!=null && item.children.length > 0) {
             var urlAndHash = contentUrl.getValue();
-            var url = urlAndHash.split("#")[0];
-            if(Arrays.stream(item.children).anyMatch(i->equalUri(i.uri, url))) {
-                child.element().setAttribute("selected", "");
-                menuManager.pages(item.children);
+            if(urlAndHash!=null && urlAndHash.contains("#")) {
+                var url = urlAndHash.split("#")[0];
+                if (Arrays.stream(item.children).anyMatch(i -> equalUri(i.uri, url))) {
+                    child.element().setAttribute("selected", "");
+                    menuManager.pages(item.children);
+                }
             }
             child.on(EventType.click, evt->contentUrl.next(item.children[0].uri));
         }
         child.on(EventType.click, evt->menuManager.state(MenuManager.MenuState.HIDE));
         child.on(EventType.mouseover, evt->menuManager.pages(item.children));
+        return child;
     }
     private final static String HOST = DomGlobal.window.location.protocol + "//" + DomGlobal.window.location.host;
     static boolean equalUri(String uri1,String uri2) {

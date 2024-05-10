@@ -20,11 +20,13 @@ public class MenuManager {
     private final BehaviorSubject<List<Menu>> menu = behavior(new LinkedList<>());
     private final BehaviorSubject<MenuState> state = behavior(MenuState.HIDE);
     private final Subject<Page[]> pages = subject(Page[].class);
-    @Inject MenuManager() {
+    private final ShellApi shellApi;
+    @Inject MenuManager(ShellApi shellApi) {
+        this.shellApi = shellApi;
         reload();
     }
     void reload() {
-        ShellApi.findMenu().then(m -> {
+        shellApi.findMenu().then(m -> {
             menu.next(m);
             return null;
         });

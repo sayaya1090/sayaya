@@ -11,7 +11,7 @@ public class ContentUrlChangeTest implements EntryPoint {
     public void onModuleLoad() {
         body().add(iframe().id("content"));
         var components = DaggerContentUrlChangeTestComponent.create();
-        var contentUrl = components.urlChangeSubject().contentUrl;
+        var contentUrl = components.urlChangeSubject();
         components.urlChangeListener().listen();
         for(var i = 1; i <= 5; ++i) {
             var n = i;

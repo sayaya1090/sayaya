@@ -11,7 +11,7 @@ import net.sayaya.client.url.UrlChangeListener;
 import javax.inject.Singleton;
 
 @Singleton
-@dagger.Component(modules = { ContentModule.class, UrlModule.class, EventModule.class })
+@dagger.Component(modules = { ShellModule.class, ContentModule.class, UrlModule.class, EventModule.class })
 public interface ShellComponent {
     ContentElement contentElement();
     ProgressElement progressElement();

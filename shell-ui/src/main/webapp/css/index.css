@@ -34,7 +34,8 @@
     background: transparent;
 }
 .menu div, .rail div {
-    font-family: var(--md-sys-typescale-headline-large-font)
+    font-family: var(--md-sys-typescale-headline-large-font);
+    white-space: pre;
 }
 .menu .svg-inline--fa, .rail .svg-inline--fa {
     font-size: 1.5rem;
