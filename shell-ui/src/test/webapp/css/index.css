@@ -29,7 +29,7 @@
 }
 .menu {
     width: 0px;
-    transition: width 500ms cubic-bezier(.2,0,0,1);;
+    transition: width 500ms cubic-bezier(.2,0,0,1);
     overflow: hidden;
     background: transparent;
 }
@@ -45,7 +45,7 @@
 }
 .rail {
     width: 0px;
-    transition: width 400ms cubic-bezier(.2,0,0,1);;
+    transition: width 400ms cubic-bezier(.2,0,0,1);
 }
 .rail[open] {
     width: 2.5rem;
@@ -77,4 +77,30 @@
     width: -webkit-fill-available;
     height: -webkit-fill-available;
     transition: all 80ms ease-in-out;
+}
+.menu-button .opened {
+    transform: scaleX(-1);
+}
+.menu-button .line {
+    fill: none;
+    stroke: var(--_icon-color);
+    stroke-width: 6;
+    transition: stroke-dasharray 500ms cubic-bezier(.4,0,.2,1),
+                stroke-dashoffset 500ms cubic-bezier(.4,0,.2,1);
+    stroke-dasharray: 60 207;
+    stroke-width: 6;
+}
+.menu-button .line-middle {
+    stroke-dasharray: 60 60;
+    stroke-width: 6;
+}
+.menu-button .opened .line {
+    stroke-dasharray: 90 207;
+    stroke-dashoffset: -134;
+    stroke-width: 6;
+}
+.menu-button .opened .line-middle {
+    stroke-dasharray: 1 60;
+    stroke-dashoffset: -30;
+    stroke-width: 6;
 }
