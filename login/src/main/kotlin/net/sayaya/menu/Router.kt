@@ -27,7 +27,7 @@ class Router {
             Page().apply {
                 title = "-"
                 order = "Z000-1"
-                uri = "/login.html"
+                uri = "/login"
                 icon = "fa-right-to-bracket"
             }
         )
