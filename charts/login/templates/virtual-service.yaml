@@ -12,6 +12,8 @@ spec:
     - match:
         - uri:
             prefix: /login/oauth2/code/
+        - uri:
+            prefix: /oauth2/logout
       route:
         - destination:
             host: login
@@ -22,6 +24,17 @@ spec:
             exact: /login
       rewrite:
         uri: /{{ .Values.bucket }}/static/login.html
+      route:
+        - destination:
+            host: >-
+              rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            exact: /logout
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/logout.html
       route:
         - destination:
             host: >-

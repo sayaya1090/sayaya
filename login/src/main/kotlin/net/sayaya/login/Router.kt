@@ -51,7 +51,7 @@ class Router {
                 Page().apply {
                     title = "-"
                     order = "Z000-1"
-                    uri = "/oauth2/logout"
+                    uri = "/logout"
                     icon = "fa-left-from-bracket"
                 }
             )
