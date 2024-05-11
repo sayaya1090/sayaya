@@ -34,6 +34,10 @@
     border-right-color: var(--md-sys-color-on-background);
     color: var(--md-sys-color-on-background);
 }
+.console>.line-center {
+    margin-left: auto;
+    margin-right: auto;
+}
 .console>.button {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;

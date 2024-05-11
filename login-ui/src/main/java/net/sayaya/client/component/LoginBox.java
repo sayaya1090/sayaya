@@ -31,15 +31,14 @@ public class LoginBox implements IsElement<HTMLDivElement> {
     private final HTMLAudioElement beep = audio().attr("src", "wav/beep.mp3").element();
     private final HTMLAudioElement start = audio().attr("src", "wav/start.mp3").element();
     private final static String WELCOME =
-            " ___  ___  _ _  ___  _ _  ___     _ _  ___  ___\n" +
+            " ___  ___  _ _  ___  _ _  ___     _ _  ___  ___ \n" +
             "/ __>| . || | || . || | || . |   | \\ || __>|_ _|\n" +
-            "\\__ \\|   |\\   /|   |\\   /|   | _ |   || _>  | |\n" +
-            "<___/|_|_| |_| |_|_| |_| |_|_|<_>|_\\_||___> |_|\n" +
+            "\\__ \\|   |\\   /|   |\\   /|   | _ |   || _>  | | \n" +
+            "<___/|_|_| |_| |_|_| |_| |_|_|<_>|_\\_||___> |_| \n" +
             "================================================\n" +
-            " :: Web ::                              (v0.1.0)\n" +
+            " :: Web ::                             (v0.1.0) \n" +
             " \n" +
-            " \n" +
-            "> SELECT YOUR AUTHENTICATION PROVIDER:";
+            " \n";
     private final Console console;
     @Inject LoginBox(Console console, OAuthApi oauth) {
         _this = div().css("box").style("height: 100%; display: flex;")
@@ -49,7 +48,8 @@ public class LoginBox implements IsElement<HTMLDivElement> {
         Scheduler.get().scheduleDeferred(() -> console.element().style.height = CSSProperties.HeightUnionType.of("22.5rem"));
         console.type(" \nWelcome to\n ");
         DomGlobal.setTimeout(arg2 -> {
-            console.print(WELCOME);
+            console.print(WELCOME, true);
+            console.print("> SELECT YOUR AUTHENTICATION PROVIDER:");
             console.close();
             console.add(btnLoginGithub).add(btnLoginGoogle);
             for (int i = 0; i < selects.length; ++i) {

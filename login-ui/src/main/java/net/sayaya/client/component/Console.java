@@ -21,25 +21,33 @@ public class Console implements IsElement<HTMLDivElement>, Logger {
     @Inject public Console() {}
     private Line last = null;
     public void type(String text) {
+       type(text, false);
+    }
+    public void type(String text, boolean center) {
         close();
         if(text.contains("\n")) {
             int index = text.indexOf("\n");
             String first = text.substring(0, index);
             String remains = text.substring(index+1);
             last = Line.type(first, ()->{
-                type(remains);
+                type(remains, center);
                 return null;
             });
         } else last = Line.type(text, null);
+        if(center) last.css("line-center");
         add(last);
         element().scrollTop = element().scrollHeight;
     }
     @Override
     public void print(String text) {
+        print(text, false);
+    }
+    public void print(String text, boolean center) {
         Arrays.stream(text.split("\n")).map(Line::print).forEach(line->{
             close();
             last = line;
-            add(line);
+            if(center) last.css("line-center");
+            add(last);
         });
         element().scrollTop = element().scrollHeight;
     }
