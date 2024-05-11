@@ -82,12 +82,12 @@ dependencyResolutionManagement {
 
 include("entity")
 include("activity")
+include("authentication")
 include("shell")
 include("shell-ui")
 include("vault")
 include("login")
 include("login-ui")
-// include("authentication")
 // include("home-ui")
 // include("blog")
 // include("blog-ui")
