@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -63,18 +62,19 @@ internal class SecurityConfigTest(
                     publishToken.expectStatus().isFound
                     publishToken.expectHeader().location(urlConfig.loginRedirectUri)
                 }
-            }
-        }
-        When("로그아웃을 시도하면") {
-            val logout = client.post().uri("/oauth2/logout").exchange()
-            Then("쿠키 만료") {
-                logout.expectCookie().maxAge(authConfig.header, Duration.ofSeconds(0))
-                logout.expectCookie().httpOnly(authConfig.header, true)
-                logout.expectCookie().secure(authConfig.header, true)
-            }
-            Then("logoutRedirectUri로 리다이렉트") {
-                logout.expectStatus().isFound
-                logout.expectHeader().location(urlConfig.logoutRedirectUri)
+                And("로그아웃을 시도하면") {
+                    val token = publishToken.returnResult<Void>().responseCookies[authConfig.header]!!.first().value
+                    val logout = client.post().uri("/oauth2/logout").cookie(authConfig.header, token).exchange()
+                    Then("쿠키 만료") {
+                        logout.expectCookie().maxAge(authConfig.header, Duration.ofSeconds(0))
+                        logout.expectCookie().httpOnly(authConfig.header, true)
+                        logout.expectCookie().secure(authConfig.header, true)
+                    }
+                    Then("logoutRedirectUri로 리다이렉트") {
+                        logout.expectStatus().isFound
+                        logout.expectHeader().location(urlConfig.logoutRedirectUri)
+                    }
+                }
             }
         }
     }

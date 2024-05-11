@@ -75,7 +75,7 @@ class SecurityConfig(
         return response.setComplete()
     }
     private fun ServerWebExchange.clearAuthenticationCookie(): Mono<Void> {
-        response.addCookie(ResponseCookie.from(authConfig.header).httpOnly(true).secure(true).maxAge(0).build())
+        response.addCookie(ResponseCookie.from(authConfig.header).path("/").httpOnly(true).secure(true).maxAge(0).build())
         response.statusCode = HttpStatus.FOUND
         response.headers.location = URI.create(urlConfig.logoutRedirectUri)
         return response.setComplete()

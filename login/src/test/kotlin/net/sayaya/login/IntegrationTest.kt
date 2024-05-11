@@ -76,7 +76,8 @@ internal class IntegrationTest(private val client: WebTestClient, private val db
                 }
             }
             When("로그아웃을 시도하면") {
-                val logout = client.post().uri("/oauth2/logout").exchange()
+                val token = publishToken.returnResult<Void>().responseCookies[AUTHENTICATION]!!.first().value
+                val logout = client.post().uri("/oauth2/logout").cookie(AUTHENTICATION, token).exchange()
                 Then("쿠키 만료") {
                     logout.expectCookie().maxAge(AUTHENTICATION, Duration.ofSeconds(0))
                     logout.expectCookie().httpOnly(AUTHENTICATION, true)
