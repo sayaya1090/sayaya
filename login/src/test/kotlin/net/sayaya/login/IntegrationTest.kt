@@ -42,15 +42,17 @@ internal class IntegrationTest(private val client: WebTestClient, private val db
             val request = client.get().uri("/menu").exchange()
             Then("로그인 메뉴를 출력한다") {
                 request.expectStatus().isOk
-                request.expectBody().jsonPath("$.title").isEqualTo("SIGN IN")
+                       .expectBody().jsonPath("$.title").isEqualTo("SIGN IN")
             }
         }
         When("새로운 사용자로 OAuth2 로그인 요청하면") {
             val publishToken = client.login(USER)
             Then("쿠키로 JWT 토큰이 발급된다") {
                 publishToken.expectCookie().exists(AUTHENTICATION)
-                publishToken.expectCookie().httpOnly(AUTHENTICATION, true)
-                publishToken.expectCookie().secure(AUTHENTICATION, true)
+                            .expectCookie().httpOnly(AUTHENTICATION, true)
+                            .expectCookie().secure(AUTHENTICATION, true)
+                            .expectCookie().path(AUTHENTICATION, "/")
+                            .expectCookie().sameSite(AUTHENTICATION, "LAX")
             }
             Then("JWT 토큰을 decrypt 할 수 있고 그 값으로 원래 사용자의 권한 등 토큰 정보를 확인할 수 있다") {
                 val token = publishToken.returnResult<Void>().responseCookies[AUTHENTICATION]!!.first().value
@@ -65,14 +67,14 @@ internal class IntegrationTest(private val client: WebTestClient, private val db
             }
             Then("loginRedirectUri로 리다이렉트 요청으로 응답한다") {
                 publishToken.expectStatus().isFound
-                publishToken.expectHeader().location("index.html")
+                            .expectHeader().location("index.html")
             }
             When("인증 쿠키와 함께 메뉴를 요청하면") {
                 val token = publishToken.returnResult<Void>().responseCookies[AUTHENTICATION]!!.first().value
                 val request = client.get().uri("/menu").cookie(AUTHENTICATION, token).exchange()
                 Then("로그아웃 메뉴를 출력한다") {
                     request.expectStatus().isOk
-                    request.expectBody().jsonPath("$.title").isEqualTo("SIGN OUT")
+                           .expectBody().jsonPath("$.title").isEqualTo("SIGN OUT")
                 }
             }
             When("로그아웃을 시도하면") {
@@ -80,12 +82,13 @@ internal class IntegrationTest(private val client: WebTestClient, private val db
                 val logout = client.post().uri("/oauth2/logout").cookie(AUTHENTICATION, token).exchange()
                 Then("쿠키 만료") {
                     logout.expectCookie().maxAge(AUTHENTICATION, Duration.ofSeconds(0))
-                    logout.expectCookie().httpOnly(AUTHENTICATION, true)
-                    logout.expectCookie().secure(AUTHENTICATION, true)
+                          .expectCookie().httpOnly(AUTHENTICATION, true)
+                          .expectCookie().secure(AUTHENTICATION, true)
+                          .expectCookie().path(AUTHENTICATION, "/")
                 }
                 Then("logoutRedirectUri로 리다이렉트") {
                     logout.expectStatus().isFound
-                    logout.expectHeader().location("login.html")
+                          .expectHeader().location("login.html")
                 }
             }
         }

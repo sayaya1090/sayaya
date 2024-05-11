@@ -39,9 +39,9 @@ internal class SecurityConfigTest(
             val session by lazy { request.returnResult<Any>().responseCookies["SESSION"]!!.first().value }
             Then("로그인 페이지 정보 제공") {
                 request.expectStatus().isFound
-                request.expectCookie().exists("SESSION")
-                request.expectCookie().doesNotExist(authConfig.header)
-                request.expectHeader().exists("location")
+                       .expectCookie().exists("SESSION")
+                       .expectCookie().doesNotExist(authConfig.header)
+                       .expectHeader().exists("location")
             }
             And("전달된 로그인 페이지에서 로그인 성공하면") {
                 val authentication = WebClient.create().post().uri(loginUrl)
@@ -55,24 +55,27 @@ internal class SecurityConfigTest(
                 val publishToken = client.get().uri(checkNotNull(authentication)).cookie("SESSION", session).exchange()
                 Then("토큰 발급") {
                     publishToken.expectCookie().valueEquals(authConfig.header, OAuthServer.TOKEN)
-                    publishToken.expectCookie().httpOnly(authConfig.header, true)
-                    publishToken.expectCookie().secure(authConfig.header, true)
+                                .expectCookie().httpOnly(authConfig.header, true)
+                                .expectCookie().secure(authConfig.header, true)
+                                .expectCookie().path(authConfig.header, "/")
+                                .expectCookie().sameSite(authConfig.header, "LAX")
                 }
                 Then("loginRedirectUri로 리다이렉트") {
                     publishToken.expectStatus().isFound
-                    publishToken.expectHeader().location(urlConfig.loginRedirectUri)
+                                .expectHeader().location(urlConfig.loginRedirectUri)
                 }
                 And("로그아웃을 시도하면") {
                     val token = publishToken.returnResult<Void>().responseCookies[authConfig.header]!!.first().value
                     val logout = client.post().uri("/oauth2/logout").cookie(authConfig.header, token).exchange()
                     Then("쿠키 만료") {
                         logout.expectCookie().maxAge(authConfig.header, Duration.ofSeconds(0))
-                        logout.expectCookie().httpOnly(authConfig.header, true)
-                        logout.expectCookie().secure(authConfig.header, true)
+                              .expectCookie().httpOnly(authConfig.header, true)
+                              .expectCookie().secure(authConfig.header, true)
+                              .expectCookie().path(authConfig.header, "/")
                     }
                     Then("logoutRedirectUri로 리다이렉트") {
                         logout.expectStatus().isFound
-                        logout.expectHeader().location(urlConfig.logoutRedirectUri)
+                              .expectHeader().location(urlConfig.logoutRedirectUri)
                     }
                 }
             }
