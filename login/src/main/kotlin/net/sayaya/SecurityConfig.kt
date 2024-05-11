@@ -1,15 +1,17 @@
 package net.sayaya
 
-import net.sayaya.login.PublishToken
+import net.sayaya.authentication.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseCookie
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.config.web.server.invoke
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter
 import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler
 import org.springframework.security.web.server.authentication.logout.DelegatingServerLogoutHandler
 import org.springframework.security.web.server.authentication.logout.SecurityContextServerLogoutHandler
@@ -24,10 +26,14 @@ import java.net.URI
 
 @Configuration
 class SecurityConfig(
-    private val config: AuthenticationConfig,
+    private val authConfig: AuthenticationConfig,
+    private val urlConfig: AuthenticationUrlConfig,
     private val tokenPublisher: PublishToken,
-    private val tokenConfig: TokenConfig,
+    private val tokenConfig: TokenFactoryConfig,
+    private val jwtAuthenticationConverter: JwtAuthenticationConverter,
+    jwtAuthenticationManager: JwtAuthenticationManager
 ) {
+    private val authenticationWebFilter = AuthenticationWebFilter(jwtAuthenticationManager)
     @Bean
     fun securityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain = http {
         httpBasic { disable() }
@@ -49,7 +55,6 @@ class SecurityConfig(
                 exchange.exchange.clearAuthenticationCookie()
             }
         }
-        authorizeExchange { authorize (anyExchange, permitAll) }
         exceptionHandling {
             authenticationEntryPoint = ServerAuthenticationEntryPoint { exchange, e ->
                 e.printStackTrace()
@@ -58,17 +63,20 @@ class SecurityConfig(
                 e.printStackTrace()
                 Mono.fromRunnable { exchange.response.statusCode = HttpStatus.FORBIDDEN } }
         }
+        authenticationWebFilter.setServerAuthenticationConverter(jwtAuthenticationConverter)
+        addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+        anonymous { }
     }
     private fun ServerWebExchange.sendAuthenticationCookie(token: String): Mono<Void> {
-        response.addCookie(ResponseCookie.from(config.header, token).path("/").httpOnly(true).secure(true).maxAge(tokenConfig.duration).build())
+        response.addCookie(ResponseCookie.from(authConfig.header, token).path("/").httpOnly(true).secure(true).maxAge(tokenConfig.duration).build())
         response.statusCode = HttpStatus.FOUND
-        response.headers.location = URI.create(config.loginRedirectUri)
+        response.headers.location = URI.create(urlConfig.loginRedirectUri)
         return response.setComplete()
     }
     private fun ServerWebExchange.clearAuthenticationCookie(): Mono<Void> {
-        response.addCookie(ResponseCookie.from(config.header).httpOnly(true).secure(true).maxAge(0).build())
+        response.addCookie(ResponseCookie.from(authConfig.header).httpOnly(true).secure(true).maxAge(0).build())
         response.statusCode = HttpStatus.FOUND
-        response.headers.location = URI.create(config.logoutRedirectUri)
+        response.headers.location = URI.create(urlConfig.logoutRedirectUri)
         return response.setComplete()
     }
 }

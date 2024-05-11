@@ -1,4 +1,4 @@
-package net.sayaya.login
+package net.sayaya.authentication
 
 import java.util.*
 

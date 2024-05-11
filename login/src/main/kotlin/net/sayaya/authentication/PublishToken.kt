@@ -1,4 +1,4 @@
-package net.sayaya.login
+package net.sayaya.authentication
 
 import net.sayaya.api.SecretRepository
 import org.springframework.security.oauth2.core.user.OAuth2User

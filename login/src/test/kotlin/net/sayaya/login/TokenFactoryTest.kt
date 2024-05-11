@@ -9,7 +9,7 @@ import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import net.sayaya.JsonConfig
-import net.sayaya.TokenConfig
+import net.sayaya.authentication.*
 import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.asn1.pkcs.RSAPublicKey
 import org.bouncycastle.util.encoders.Base64
@@ -25,15 +25,16 @@ internal class TokenFactoryTest: BehaviorSpec({
     val user = User(UUID.randomUUID())
 
     Given("지원하는 알고리즘으로 토큰 팩토리 생성 후에") {
-        val config = TokenConfig().apply {
+        val tokenConfig = TokenConfig().apply {
+            secret = PRIVATE_KEY
+        }
+        val config = TokenFactoryConfig().apply {
             signatureAlgorithm = "RS256"
             publisher = "test-publisher"
             client = "test-client"
             duration = 1000L
-            secret = PRIVATE_KEY
         }
-        val keyPair = KeyPair(config)
-        val factory = TokenFactory(config, om, keyPair)
+        val factory = TokenFactory(tokenConfig, config, om)
         When("사용자 정보로 토큰 생성을 요청하면") {
             val token = factory.publish(user)
             Then("JWT 토큰이 발급된다") {
@@ -54,15 +55,16 @@ internal class TokenFactoryTest: BehaviorSpec({
         }
     }
     Given("지원되지 않는 알고리즘으로 토큰 팩토리 생성 후에") {
-        val config = TokenConfig().apply {
+        val tokenConfig = TokenConfig().apply {
+            secret = PRIVATE_KEY
+        }
+        val config = TokenFactoryConfig().apply {
             signatureAlgorithm = "Invalid Algorithm"
             publisher = "test-publisher"
             client = "test-client"
             duration = 1000L
-            secret = PRIVATE_KEY
         }
-        val keyPair = KeyPair(config)
-        val factory = TokenFactory(config, om, keyPair)
+        val factory = TokenFactory(tokenConfig, config, om)
         When("사용자 정보로 토큰 생성을 요청하면") {
             Then("IllegalArgumentException 예외를 발생시킨다") {
                 shouldThrow<IllegalArgumentException> {
@@ -72,17 +74,18 @@ internal class TokenFactoryTest: BehaviorSpec({
         }
     }
     Given("잘못된 키페어가 주어지면") {
-        val config = TokenConfig().apply {
+        val tokenConfig = TokenConfig().apply {
+            secret = ILLEGAL_PRIVATE_KEY
+        }
+        val config = TokenFactoryConfig().apply {
             signatureAlgorithm = "RS256"
             publisher = "test-publisher"
             client = "test-client"
             duration = 1000L
-            secret = ILLEGAL_PRIVATE_KEY
         }
         Then("IllegalArgumentException 예외를 발생시킨다") {
             shouldThrow<IllegalArgumentException> {
-                val keyPair = KeyPair(config)
-                val factory = TokenFactory(config, om, keyPair)
+                val factory = TokenFactory(tokenConfig, config, om)
                 factory.publish(user)
             }
         }

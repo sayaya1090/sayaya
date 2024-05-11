@@ -8,6 +8,10 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkClass
 import net.sayaya.api.SecretRepository
+import net.sayaya.authentication.PublishToken
+import net.sayaya.authentication.TokenFactory
+import net.sayaya.authentication.User
+import net.sayaya.authentication.UserRepository
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.security.oauth2.core.user.OAuth2User
 import reactor.core.publisher.Mono

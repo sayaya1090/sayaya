@@ -3,10 +3,10 @@ package net.sayaya.login
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.mockkClass
-import net.sayaya.AuthenticationConfig
 import net.sayaya.SecurityConfig
-import net.sayaya.TokenConfig
+import net.sayaya.authentication.*
 import net.sayaya.login.testcontainers.OAuthServer
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -28,7 +28,11 @@ import java.time.Duration
 @WebFluxTest
 @ContextConfiguration(classes = [SecurityConfig::class, SecurityConfigTest.Companion.TestConfig::class])
 @Testcontainers
-internal class SecurityConfigTest(private val client: WebTestClient, private val authConfig: AuthenticationConfig): BehaviorSpec({
+internal class SecurityConfigTest(
+    private val client: WebTestClient,
+    private val authConfig: AuthenticationConfig,
+    private val urlConfig: AuthenticationUrlConfig
+): BehaviorSpec({
     Given("서버 기동") {
         When("로그인 URL을 요청하면") {
             val request = client.get().uri("/oauth2/authorization/${OAuthServer.PROVIDER}").exchange()
@@ -57,7 +61,7 @@ internal class SecurityConfigTest(private val client: WebTestClient, private val
                 }
                 Then("loginRedirectUri로 리다이렉트") {
                     publishToken.expectStatus().isFound
-                    publishToken.expectHeader().location(authConfig.loginRedirectUri)
+                    publishToken.expectHeader().location(urlConfig.loginRedirectUri)
                 }
             }
         }
@@ -70,7 +74,7 @@ internal class SecurityConfigTest(private val client: WebTestClient, private val
             }
             Then("logoutRedirectUri로 리다이렉트") {
                 logout.expectStatus().isFound
-                logout.expectHeader().location(authConfig.logoutRedirectUri)
+                logout.expectHeader().location(urlConfig.logoutRedirectUri)
             }
         }
     }
@@ -80,13 +84,18 @@ internal class SecurityConfigTest(private val client: WebTestClient, private val
         class TestConfig {
             @Bean fun authorizationConfig(): AuthenticationConfig = AuthenticationConfig().apply {
                 header = "Authentication"
+            }
+            @Bean fun authorizationUrlConfig(): AuthenticationUrlConfig = AuthenticationUrlConfig().apply {
                 loginRedirectUri = "main.html"
                 logoutRedirectUri = "login.html"
             }
-            @Bean fun tokenConfig() = TokenConfig()
+            @Bean fun tokenConfig() = TokenFactoryConfig()
             @Bean fun tokenPublisher() = mockkClass(PublishToken::class).apply {
-                val token = OAuthServer.TOKEN
-                every { publish(any(), any()) } returns Mono.just(token)
+                every { publish(any(), any()) } returns Mono.just(OAuthServer.TOKEN)
+            }
+            @Bean fun jwtAuthenticationManager(): JwtAuthenticationManager = mockk()
+            @Bean fun jwtAuthenticationConverter(): JwtAuthenticationConverter = mockk<JwtAuthenticationConverter>().apply {
+                every { convert(any()) } returns Mono.empty()
             }
         }
         @JvmStatic

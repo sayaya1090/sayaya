@@ -1,4 +1,4 @@
-package net.sayaya.login
+package net.sayaya.authentication
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id

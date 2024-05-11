@@ -9,6 +9,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import net.sayaya.JsonConfig
 import net.sayaya.R2dbcConfig
+import net.sayaya.authentication.User
+import net.sayaya.authentication.UserRepository
 import net.sayaya.login.testcontainers.Database
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
 import org.springframework.context.annotation.Import

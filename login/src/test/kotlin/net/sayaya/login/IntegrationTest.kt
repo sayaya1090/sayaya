@@ -27,12 +27,12 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @AutoConfigureWebTestClient
 @Testcontainers
 internal class IntegrationTest(private val client: WebTestClient, private val db: DatabaseClient): BehaviorSpec({
-    Given("서버 기동") {
+    Given("인증이 안 된 상태에서") {
         When("메뉴를 요청하면") {
             val request = client.get().uri("/menu").exchange()
-            Then("메뉴를 출력한다") {
+            Then("로그인 메뉴를 출력한다") {
                 request.expectStatus().isOk
-                request.expectBody().jsonPath("$.title").isEqualTo("Log In")
+                request.expectBody().jsonPath("$.title").isEqualTo("SIGN IN")
             }
         }
         When("새로운 사용자로 OAuth2 로그인 요청하면") {
@@ -56,6 +56,14 @@ internal class IntegrationTest(private val client: WebTestClient, private val db
             Then("loginRedirectUri로 리다이렉트 요청으로 응답한다") {
                 publishToken.expectStatus().isFound
                 publishToken.expectHeader().location("index.html")
+            }
+            When("인증 쿠키와 함께 메뉴를 요청하면") {
+                val token = publishToken.returnResult<Void>().responseCookies[AUTHENTICATION]!!.first().value
+                val request = client.get().uri("/menu").cookie(AUTHENTICATION, token).exchange()
+                Then("로그아웃 메뉴를 출력한다") {
+                    request.expectStatus().isOk
+                    request.expectBody().jsonPath("$.title").isEqualTo("SIGN OUT")
+                }
             }
         }
     }
