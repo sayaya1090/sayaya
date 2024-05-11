@@ -1,7 +1,6 @@
 package net.sayaya
 
 import net.sayaya.authentication.*
-import org.springframework.boot.web.server.Cookie.SameSite.LAX
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -70,7 +69,7 @@ class SecurityConfig(
         anonymous { }
     }
     private fun ServerWebExchange.sendAuthenticationCookie(token: String): Mono<Void> {
-        response.addCookie(ResponseCookie.from(authConfig.header, token).path("/").httpOnly(true).secure(true).maxAge(tokenConfig.duration).sameSite(LAX.name).build())
+        response.addCookie(ResponseCookie.from(authConfig.header, token).path("/").httpOnly(true).secure(true).maxAge(tokenConfig.duration)/*.sameSite(LAX.name)*/.build())
         response.statusCode = HttpStatus.FOUND
         response.headers.location = URI.create(urlConfig.loginRedirectUri)
         return response.setComplete()

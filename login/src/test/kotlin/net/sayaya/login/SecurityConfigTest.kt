@@ -58,7 +58,7 @@ internal class SecurityConfigTest(
                                 .expectCookie().httpOnly(authConfig.header, true)
                                 .expectCookie().secure(authConfig.header, true)
                                 .expectCookie().path(authConfig.header, "/")
-                                .expectCookie().sameSite(authConfig.header, "LAX")
+                                //.expectCookie().sameSite(authConfig.header, "LAX")
                 }
                 Then("loginRedirectUri로 리다이렉트") {
                     publishToken.expectStatus().isFound
