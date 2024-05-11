@@ -66,7 +66,7 @@ internal class SecurityConfigTest(
             }
         }
         When("로그아웃을 시도하면") {
-            val logout = client.mutateWith(SecurityMockServerConfigurers.csrf()).post().uri("/oauth2/logout").exchange()
+            val logout = client.post().uri("/oauth2/logout").exchange()
             Then("쿠키 만료") {
                 logout.expectCookie().maxAge(authConfig.header, Duration.ofSeconds(0))
                 logout.expectCookie().httpOnly(authConfig.header, true)

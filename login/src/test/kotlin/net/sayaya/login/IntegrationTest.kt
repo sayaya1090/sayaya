@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.r2dbc.core.DatabaseClient
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -22,8 +23,17 @@ import org.springframework.test.web.reactive.server.returnResult
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.reactive.function.client.WebClient
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.time.Duration
 
-@SpringBootTest
+@SpringBootTest(properties=[
+    "spring.security.authentication.header=${ IntegrationTest.AUTHENTICATION }",
+    "spring.security.authentication.login-redirect-uri=index.html",
+    "spring.security.authentication.logout-redirect-uri=login.html",
+    "spring.security.authentication.jwt.signature-algorithm=RS256",
+    "spring.security.authentication.jwt.duration=3600",
+    "spring.security.authentication.jwt.publisher=${ IntegrationTest.PUBLISHER }",
+    "spring.security.authentication.jwt.client=${ IntegrationTest.CLIENT }"
+])
 @AutoConfigureWebTestClient
 @Testcontainers
 internal class IntegrationTest(private val client: WebTestClient, private val db: DatabaseClient): BehaviorSpec({
@@ -65,6 +75,18 @@ internal class IntegrationTest(private val client: WebTestClient, private val db
                     request.expectBody().jsonPath("$.title").isEqualTo("SIGN OUT")
                 }
             }
+            When("로그아웃을 시도하면") {
+                val logout = client.post().uri("/oauth2/logout").exchange()
+                Then("쿠키 만료") {
+                    logout.expectCookie().maxAge(AUTHENTICATION, Duration.ofSeconds(0))
+                    logout.expectCookie().httpOnly(AUTHENTICATION, true)
+                    logout.expectCookie().secure(AUTHENTICATION, true)
+                }
+                Then("logoutRedirectUri로 리다이렉트") {
+                    logout.expectStatus().isFound
+                    logout.expectHeader().location("login.html")
+                }
+            }
         }
     }
     Given("Admin 계정 생성") {
@@ -103,13 +125,6 @@ internal class IntegrationTest(private val client: WebTestClient, private val db
             Database.registerDynamicProperties(registry)
             OAuthServer.registerDynamicProperties(registry)
             SecretRepository.registerDynamicProperties(registry)
-            registry.add("spring.security.authentication.header") { AUTHENTICATION }
-            registry.add("spring.security.authentication.login-redirect-uri") { "index.html" }
-            registry.add("spring.security.authentication.logout-redirect-uri") { "login.html" }
-            registry.add("spring.security.authentication.jwt.signature-algorithm") { "RS256" }
-            registry.add("spring.security.authentication.jwt.duration") { "3600" }
-            registry.add("spring.security.authentication.jwt.publisher") { PUBLISHER }
-            registry.add("spring.security.authentication.jwt.client") { CLIENT }
             registry.add("spring.security.authentication.jwt.secret") { TokenFactoryTest.PRIVATE_KEY }
         }
         fun DatabaseClient.countUser(): Long = sql("SELECT count(*) from \"user\"").fetch().one().mapNotNull { it.values.first() as Long }.block()!!

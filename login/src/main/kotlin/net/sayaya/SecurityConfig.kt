@@ -36,6 +36,7 @@ class SecurityConfig(
     private val authenticationWebFilter = AuthenticationWebFilter(jwtAuthenticationManager)
     @Bean
     fun securityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain = http {
+        csrf { disable() }
         httpBasic { disable() }
         formLogin { disable() }
         headers { frameOptions { mode = XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN } }
