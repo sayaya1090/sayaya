@@ -59,6 +59,8 @@
 }
 .drawer[open] .item[selected] {
     border-left: 3px inset var(--md-sys-color-primary);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 .drawer:not([open]) .rail[open] div {
     display: flex;
