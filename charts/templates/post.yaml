@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Release.Namespace }}-post
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+    argocd-image-updater.argoproj.io/image-list: 'img=image-registry.openshift-image-registry.svc:5000/{{ .Release.Namespace }}/post:latest'
+    argocd-image-updater.argoproj.io/img.update-strategy: digest
+    argocd-image-updater.argoproj.io/img.force-update: 'true'
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+spec:
+  destination:
+    namespace: {{ .Release.Namespace }}
+    server: 'https://kubernetes.default.svc'
+  project: {{ .Release.Namespace }}
+  source:
+    path: charts/post
+    repoURL: 'https://github.com/sayaya1090/sayaya.git'
+    targetRevision: {{ .Values.revision }}
+    helm:
+      parameters:
+        - name: "host"
+          value:  {{ .Values.host }}
+        - name: "targetNamespace"
+          value:  {{ .Release.Namespace }}
+        - name: "bucket"
+          value: {{ .Values.bucket.name }}
+  revisionHistoryLimit: 1
