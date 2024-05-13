@@ -36,12 +36,14 @@ class Router {
             order = "C000"
             children = arrayOf(
                 Page().apply {
-                    title = "New"
+                    title = "NEW"
+                    supportingText = "Create new post"
                     order = "C000-1"
                     uri = "/post#new"
                     icon = "fa-pen-to-square"
                 }, Page().apply {
-                    title = "List"
+                    title = "LIST"
+                    supportingText = "List of your posts"
                     order = "C000-5"
                     uri = "/post"
                     icon = "fa-list"
