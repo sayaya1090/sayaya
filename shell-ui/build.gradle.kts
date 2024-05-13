@@ -47,6 +47,7 @@ tasks {
         port = 8081
         src += files(
             File("src/test/java"),
+            File("src/test/resources"),
             File("build/generated/sources/annotationProcessor/java/test")
         )
     }

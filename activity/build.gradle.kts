@@ -10,6 +10,7 @@ dependencies {
 tasks {
     jar {
         from(sourceSets.main.get().allSource)
+        duplicatesStrategy = DuplicatesStrategy.WARN
     }
     gwtTest {
         launcherDir = file("src/test/webapp")
