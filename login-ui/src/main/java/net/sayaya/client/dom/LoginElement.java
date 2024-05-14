@@ -1,35 +1,31 @@
-package net.sayaya.client.component;
+package net.sayaya.client.dom;
 
 import com.google.gwt.core.client.Scheduler;
 import elemental2.dom.*;
+import jsinterop.annotations.JsType;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import net.sayaya.client.api.OAuthApi;
 import net.sayaya.ui.elements.ButtonElementBuilder;
 import org.jboss.elemento.EventType;
 import org.jboss.elemento.HTMLContainerBuilder;
-import org.jboss.elemento.IsElement;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import java.util.Arrays;
 
 import static net.sayaya.ui.elements.ButtonElementBuilder.button;
 import static net.sayaya.ui.elements.IconElementBuilder.icon;
 import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.htmlElement;
 
-@Singleton
-public class LoginBox implements IsElement<HTMLDivElement> {
-    private final HTMLContainerBuilder<HTMLDivElement> _this;
-    private final HTMLContainerBuilder<HTMLFormElement> contents = form().css("content");
-    private final ButtonElementBuilder.TextButtonElementBuilder btnLoginGithub = button().text().css("button").add("GITHUB").icon(icon("github").css("fa-brands"));
-    private final ButtonElementBuilder.TextButtonElementBuilder btnLoginGoogle = button().text().css("button").add("GOOGLE").icon(icon("google").css("fa-brands"));
-    private final ButtonElementBuilder.TextButtonElementBuilder[] selects = new ButtonElementBuilder.TextButtonElementBuilder[]{
-            btnLoginGithub, btnLoginGoogle
-    };
-    private ButtonElementBuilder.TextButtonElementBuilder cursor = null;
-    private final OAuthApi api;
-    private final HTMLAudioElement beep = audio().attr("src", "wav/beep.mp3").element();
-    private final HTMLAudioElement start = audio().attr("src", "wav/start.mp3").element();
+@JsType
+public class LoginElement extends CustomElement {
+    private HTMLContainerBuilder<HTMLDivElement> div;
+    private ConsoleElement console;
+    @Setter @Accessors(fluent = true)
+    private OAuthApi api;
+    private ButtonElementBuilder.TextButtonElementBuilder btnLoginGithub;
+    private ButtonElementBuilder.TextButtonElementBuilder btnLoginGoogle;
+    private ButtonElementBuilder.TextButtonElementBuilder[] selects;
+    private HTMLAudioElement beep;
+    private HTMLAudioElement start;
     private final static String WELCOME =
             " ___  ___  _ _  ___  _ _  ___     _ _  ___  ___ \n" +
             "/ __>| . || | || . || | || . |   | \\ || __>|_ _|\n" +
@@ -39,19 +35,42 @@ public class LoginBox implements IsElement<HTMLDivElement> {
             " :: Web ::                             (v0.1.0) \n" +
             " \n" +
             " \n";
-    private final Console console;
-    @Inject LoginBox(Console console, OAuthApi oauth) {
-        _this = div().css("box").style("height: 100%; display: flex;")
-                .add(console);
+    private ButtonElementBuilder.TextButtonElementBuilder cursor = null;
+    public static void initialize(LoginElement instance) {
+        var options = ShadowRootInit.create();
+        options.setMode("open");
+        var shadowRoot = instance.attachShadow(options);
+        instance.div= div().id("console").css("console");
+        shadowRoot.append(
+                instance.div.style("height: 100%; display: flex;").add(htmlElement("slot", HTMLSlotElement.class)).element()
+        );
+        instance.btnLoginGithub = button().text().css("button").add("GITHUB").icon(icon().css("fa-brands", "fa-github"));
+        instance.btnLoginGoogle = button().text().css("button").add("GOOGLE").icon(icon().css("fa-brands", "fa-google"));
+        instance.selects = new ButtonElementBuilder.TextButtonElementBuilder[]{
+                instance.btnLoginGithub, instance.btnLoginGoogle
+        };
+        instance.beep = audio().attr("src", "wav/beep.mp3").element();
+        instance.start = audio().attr("src", "wav/start.mp3").element();
+    }
+    public LoginElement console(ConsoleElement console) {
         this.console = console;
-        this.api = oauth;
-        Scheduler.get().scheduleDeferred(() -> console.element().style.height = CSSProperties.HeightUnionType.of("22.5rem"));
-        console.type(" \nWelcome to\n ");
+        this.append(console);
+        return this;
+    }
+    public LoginElement attached() {
+        addEventListener(EventType.click.name, evt->cursor.element().focus());
+        Scheduler.get().scheduleDeferred(() -> {
+            console.style.height = CSSProperties.HeightUnionType.of("22.5rem");
+            btnLoginGithub.onClick(evt -> login("github"));
+            btnLoginGoogle.onClick(evt -> login("google"));
+        });
+        console.type(" \nWelcome to\n ", false);
         DomGlobal.setTimeout(arg2 -> {
             console.print(WELCOME, true);
-            console.print("> SELECT YOUR AUTHENTICATION PROVIDER:");
+            console.print("> SELECT YOUR AUTHENTICATION PROVIDER:", false);
             console.close();
-            console.add(btnLoginGithub).add(btnLoginGoogle);
+            console.add(btnLoginGithub);
+            console.add(btnLoginGoogle);
             for (int i = 0; i < selects.length; ++i) {
                 var idx = i;
                 var UP = "ArrowUp";
@@ -73,9 +92,7 @@ public class LoginBox implements IsElement<HTMLDivElement> {
             }
             Scheduler.get().scheduleDeferred(() -> select(selects[0]));
         }, 1000);
-        _this.on(EventType.click, evt -> cursor.element().focus());
-        btnLoginGithub.onClick(evt -> login("github"));
-        btnLoginGoogle.onClick(evt -> login("google"));
+        return this;
     }
     private void select(ButtonElementBuilder.TextButtonElementBuilder item) {
         cursor = item;
@@ -87,8 +104,8 @@ public class LoginBox implements IsElement<HTMLDivElement> {
         audio.play();
     }
     private void login(String provider) {
-        console.element().style.height = CSSProperties.HeightUnionType.of("36rem");
-        console.element().style.transitionDuration = "100ms";
+        console.style.height = CSSProperties.HeightUnionType.of("36rem");
+        console.style.transitionDuration = "100ms";
         clear();
         for(var i: selects) i.element().disabled = true;
         cursor.attr("selected", true);
@@ -102,9 +119,5 @@ public class LoginBox implements IsElement<HTMLDivElement> {
     private void clear() {
         var lastButton = selects[selects.length-1];
         while(lastButton.element().nextElementSibling!=null) lastButton.element().nextElementSibling.remove();
-    }
-    @Override
-    public HTMLDivElement element() {
-        return _this.element();
     }
 }

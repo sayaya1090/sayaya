@@ -11,18 +11,13 @@ import java.lang.Thread.sleep
 class ConsoleTest: GwtSpec({
     Given(name="콘솔 컴포넌트 테스트", html="console.html#$MESSAGE", module="net.sayaya.Console",
         js=listOf(
-            "js/bundle.js",
-            "js/brands.min.js",
-            "js/fontawesome.min.js"
+            "js/bundle.js"
         ), css=listOf(
             "css/global.css",
-            "css/brands.min.css",
-            "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined",
-            "css/fontawesome.min.css",
             "css/login.css"),
         timeout = 720
     ) { document ->
-        val console = document.findElement(By.id("console"))
+        val console = document.findElement(By.id("console")).shadowRoot.findElement(By.className("console"))
         val type = document.findElement(By.id("type"))
         val print = document.findElement(By.id("print"))
         val cls = document.findElement(By.id("clear"))
