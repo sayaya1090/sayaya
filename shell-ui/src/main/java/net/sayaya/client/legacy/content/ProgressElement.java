@@ -1,7 +1,8 @@
-package net.sayaya.client.content;
+package net.sayaya.client.legacy.content;
 
 import elemental2.dom.CSSProperties;
 import elemental2.dom.HTMLElement;
+import jsinterop.annotations.JsIgnore;
 import net.sayaya.rx.subject.BehaviorSubject;
 import net.sayaya.ui.elements.ProgressElementBuilder;
 import org.jboss.elemento.IsElement;
@@ -18,7 +19,7 @@ public class ProgressElement implements IsElement<HTMLElement> {
         progress.element().style.width = CSSProperties.WidthUnionType.of("100%");
         subject.subscribe(this::update);
     }
-    private void update(Progress value) {
+    @JsIgnore private void update(Progress value) {
         if(!value.isEnabled()) {
             progress.element().style.opacity = CSSProperties.OpacityUnionType.of("0");
         } else {

@@ -5,6 +5,6 @@
     <inherits name="net.sayaya.Activity"/>
     <inherits name="dagger.Dagger" />
     <source path="client"/>
-    <entry-point class="net.sayaya.client.content.ContentTest"/>
+    <entry-point class="net.sayaya.client.content.ComponentTest"/>
     <collapse-all-properties/>
 </module>

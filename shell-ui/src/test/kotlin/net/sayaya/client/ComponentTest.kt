@@ -2,8 +2,8 @@ package net.sayaya.client
 
 import net.sayaya.gwt.test.GwtSpec
 
-class ContentTest: GwtSpec({
-    Given(name="iframe src 관리 컴포넌트 테스트", html="content.html", module="net.sayaya.Content",
+class ComponentTest: GwtSpec({
+    Given(name="컴포넌트 테스트", html="component.html", module="net.sayaya.Component",
         js=listOf("js/bundle.js", "js/rxjs.umd.min.js", "js/fontawesome.min.js", "js/sharp-light.min.js", "js/sharp-solid.min.js"),
         css=listOf("css/fontawesome.min.css", "css/sharp-light.min.css", "css/sharp-solid.min.css", "css/global.css", "css/index.css"),
         timeout = 720

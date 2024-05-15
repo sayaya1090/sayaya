@@ -5,7 +5,6 @@ import net.sayaya.client.data.Page
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
-import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.server.ServerRequest
@@ -41,12 +40,14 @@ class Router {
                     order = "C000-1"
                     uri = "/post#new"
                     icon = "fa-pen-to-square"
+                    tag = "sac-post-new"
                 }, Page().apply {
                     title = "LIST"
                     supportingText = "List of your posts"
                     order = "C000-5"
                     uri = "/post"
                     icon = "fa-list"
+                    tag = "sac-post-list"
                 }
             )
         }

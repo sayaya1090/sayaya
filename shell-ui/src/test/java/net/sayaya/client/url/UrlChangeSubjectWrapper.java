@@ -9,7 +9,7 @@ import javax.inject.Singleton;
 @Singleton
 public class UrlChangeSubjectWrapper {
     public final BehaviorSubject<String> contentUrl;
-    @Inject UrlChangeSubjectWrapper(@Named("contentUrl") BehaviorSubject<String> contentUrl) {
+    @Inject UrlChangeSubjectWrapper(@Named("url") BehaviorSubject<String> contentUrl) {
         this.contentUrl = contentUrl;
     }
 }

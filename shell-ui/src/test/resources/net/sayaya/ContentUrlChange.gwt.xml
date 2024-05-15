@@ -5,6 +5,6 @@
     <inherits name="net.sayaya.Activity"/>
     <inherits name="dagger.Dagger" />
     <source path="client"/>
-    <entry-point class="net.sayaya.client.url.ContentUrlChangeTest"/>
+    <entry-point class="net.sayaya.client.url.UrlChangeTest"/>
     <collapse-all-properties/>
 </module>

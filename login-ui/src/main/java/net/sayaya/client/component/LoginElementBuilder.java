@@ -15,6 +15,6 @@ import static net.sayaya.client.dom.CustomElements.customContainer;
 public class LoginElementBuilder implements IsElement<LoginElement> {
     @Delegate private final ContainerBuilder<LoginElement> _this = customContainer("sac-login-box", LoginElement.class);
     @Inject public LoginElementBuilder(ConsoleElementBuilder console, OAuthApi oauth) {
-        _this.element().console(console.element()).api(oauth).attached();
+        _this.element().console(console.element()).api(oauth);
     }
 }

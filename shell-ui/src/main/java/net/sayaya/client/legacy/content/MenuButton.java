@@ -1,4 +1,4 @@
-package net.sayaya.client.content;
+package net.sayaya.client.legacy.content;
 
 import elemental2.dom.Element;
 import lombok.experimental.Delegate;

@@ -1,4 +1,4 @@
-package net.sayaya.client.content;
+package net.sayaya.client.legacy.content;
 
 import net.sayaya.client.api.ShellApi;
 import net.sayaya.client.data.Menu;
@@ -43,11 +43,11 @@ public class MenuManager {
         state.subscribe(observer);
     }
     void state(MenuState next) { state.next(next); }
-    MenuState state() { return state.getValue(); }
+    public MenuState state() { return state.getValue(); }
     void toggle() {
         state(state()== MenuManager.MenuState.SHOW ? MenuManager.MenuState.HIDE : MenuManager.MenuState.SHOW );
     }
-    enum MenuState {
+    public enum MenuState {
         SHOW, HIDE
     }
     interface OnUpdateObserver extends Observer.ObserverDefault<List<Menu>> {

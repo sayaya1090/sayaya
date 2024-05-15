@@ -18,31 +18,31 @@ val lombok = project.configurations.annotationProcessor.get().filter { it.name.s
 sourceSets.getByName("main").java.srcDirs(
     "build/generated/sources/annotationProcessor/java/main"
 )
+gwt {
+    gwtVersion = "2.11.0"
+    modules = listOf("net.sayaya.Shell")
+    minHeapSize = "1024M"
+    maxHeapSize = "2048M"
+    sourceLevel = "auto"
+    extraJvmArgs = listOf("-javaagent:${lombok}=ECJ")
+    gwt.jsInteropExports.setGenerate(true)
+    compiler.strict = true
+    compiler.disableClassMetadata = true
+    compiler.disableCastChecking = true
+}
 tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
     }
-    gwt {
-        gwt.modules = listOf("net.sayaya.Shell")
-        minHeapSize = "1024M"
-        maxHeapSize = "2048M"
-        sourceLevel = "auto"
-    }
-    compileGwt {
-        extraJvmArgs = listOf("-javaagent:${lombok}=ECJ")
-    }
     gwtDev {
-        modules = listOf("net.sayaya.Shell")
-        extraJvmArgs = listOf("-javaagent:${lombok}=ECJ")
         port = 10010
         codeServerPort = 10011
         war = file("src/main/webapp")
     }
     gwtTest {
         dependsOn("compileTestJava")
-        modules = listOf("net.sayaya.Content", "net.sayaya.ContentUrlChange")
+        modules = listOf("net.sayaya.Component", "net.sayaya.ContentUrlChange")
         launcherDir = file("src/test/webapp")
-        extraJvmArgs = listOf("-javaagent:${lombok}=ECJ")
         webserverPort = 8080
         port = 8081
         src += files(

@@ -9,7 +9,7 @@ import net.sayaya.client.DaggerLoginComponent;
 import static org.jboss.elemento.Elements.*;
 
 @JsType
-public class LoginSceneElement extends CustomSceneElement<LoginSceneElement> {
+public class LoginSceneElement extends CustomElement implements Drawable {
     public static void initialize(LoginSceneElement instance) {
         var options = ShadowRootInit.create();
         options.setMode("open");
@@ -19,9 +19,14 @@ public class LoginSceneElement extends CustomSceneElement<LoginSceneElement> {
                 htmlElement("slot", HTMLSlotElement.class).element()
         );
     }
+
     @Override
-    public LoginSceneElement draw() {
-        this.append(DaggerLoginComponent.create().login().element());
-        return this;
+    public void prepare(String param) {
+       // Redirect URL 설정
+    }
+
+    @Override
+    public void draw() {
+        this.append(DaggerLoginComponent.create().login().element().attached());
     }
 }

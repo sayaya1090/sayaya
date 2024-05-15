@@ -1,9 +1,8 @@
-package net.sayaya.client.content;
+package net.sayaya.client.legacy.content;
 
 import elemental2.dom.HTMLElement;
 import net.sayaya.client.data.Page;
 import net.sayaya.rx.subject.BehaviorSubject;
-import net.sayaya.rx.subject.Subject;
 import net.sayaya.ui.elements.ButtonElementBuilder;
 import net.sayaya.ui.elements.IconButtonElementBuilder;
 import org.jboss.elemento.EventType;
@@ -23,7 +22,7 @@ import static org.jboss.elemento.Elements.*;
 
 @Singleton
 public class NavigationRailElement extends HTMLContainerBuilder<HTMLElement> implements IsElement<HTMLElement> {
-    @Inject NavigationRailElement(@Named("contentUrl") BehaviorSubject<String> contentUrl, MenuManager menuManager) {
+    @Inject NavigationRailElement(@Named("url") BehaviorSubject<String> contentUrl, MenuManager menuManager) {
         this(nav(), contentUrl, menuManager);
     }
     private final HTMLContainerBuilder<HTMLElement> _this;

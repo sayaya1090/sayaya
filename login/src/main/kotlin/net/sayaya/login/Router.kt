@@ -37,6 +37,8 @@ class Router {
                     title = "-"
                     order = "Z000-1"
                     uri = "/login"
+                    script = "net.sayaya.Login/net.sayaya.Login.nocache.js"
+                    tag = "sac-login-scene"
                     icon = "fa-right-to-bracket"
                 }
             )

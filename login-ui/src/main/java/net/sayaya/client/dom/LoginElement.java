@@ -2,6 +2,7 @@ package net.sayaya.client.dom;
 
 import com.google.gwt.core.client.Scheduler;
 import elemental2.dom.*;
+import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,7 +20,7 @@ import static org.jboss.elemento.Elements.htmlElement;
 public class LoginElement extends CustomElement {
     private HTMLContainerBuilder<HTMLDivElement> div;
     private ConsoleElement console;
-    @Setter @Accessors(fluent = true)
+    @Setter(onMethod_ = { @JsIgnore }) @Accessors(fluent = true)
     private OAuthApi api;
     private ButtonElementBuilder.TextButtonElementBuilder btnLoginGithub;
     private ButtonElementBuilder.TextButtonElementBuilder btnLoginGoogle;
@@ -42,13 +43,14 @@ public class LoginElement extends CustomElement {
         var shadowRoot = instance.attachShadow(options);
         instance.div= div().id("console").css("console");
         shadowRoot.append(
+                script().attr("type", "text/javascript").attr("src", "js/fontawesome.min.js").element(),
+                htmlElement("link", HTMLLinkElement.class).attr("rel", "stylesheet").attr("href", "css/fontawesome.min.css").element(),
+                script().attr("type", "text/javascript").attr("src", "js/brands.min.js").element(),
+                htmlElement("link", HTMLLinkElement.class).attr("rel", "stylesheet").attr("href", "css/brands.min.css").element(),
                 instance.div.style("height: 100%; display: flex;").add(htmlElement("slot", HTMLSlotElement.class)).element()
         );
         instance.btnLoginGithub = button().text().css("button").add("GITHUB").icon(icon().css("fa-brands", "fa-github"));
         instance.btnLoginGoogle = button().text().css("button").add("GOOGLE").icon(icon().css("fa-brands", "fa-google"));
-        instance.selects = new ButtonElementBuilder.TextButtonElementBuilder[]{
-                instance.btnLoginGithub, instance.btnLoginGoogle
-        };
         instance.beep = audio().attr("src", "wav/beep.mp3").element();
         instance.start = audio().attr("src", "wav/start.mp3").element();
     }
@@ -58,6 +60,7 @@ public class LoginElement extends CustomElement {
         return this;
     }
     public LoginElement attached() {
+        selects = new ButtonElementBuilder.TextButtonElementBuilder[]{ btnLoginGithub, btnLoginGoogle };
         addEventListener(EventType.click.name, evt->cursor.element().focus());
         Scheduler.get().scheduleDeferred(() -> {
             console.style.height = CSSProperties.HeightUnionType.of("22.5rem");
@@ -67,7 +70,7 @@ public class LoginElement extends CustomElement {
         console.type(" \nWelcome to\n ", false);
         DomGlobal.setTimeout(arg2 -> {
             console.print(WELCOME, true);
-            console.print("> SELECT YOUR AUTHENTICATION PROVIDER:", false);
+            console.print("> SELECT YOUR AUTHENTICATION PROVIDER:\n ", false);
             console.close();
             console.add(btnLoginGithub);
             console.add(btnLoginGoogle);

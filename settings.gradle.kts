@@ -54,7 +54,7 @@ dependencyResolutionManagement {
             library("dagger-gwt", "com.google.dagger", "dagger-gwt").version { require("2.51.1") }
             library("dagger-compiler", "com.google.dagger", "dagger-compiler").version { require("2.51.1") }
 
-            library("sayaya-ui", "net.sayaya", "ui").version { require("material3-1.4.0") }
+            library("sayaya-ui", "net.sayaya", "ui").version { require("material3-1.4.1") }
             library("sayaya-rx", "net.sayaya", "rx").version { require("1.6") }
             library("sayaya-test", "net.sayaya", "gwt-test").version { require("1.1") }
             library("lombok", "org.projectlombok", "lombok").version { require("1.18.32") }

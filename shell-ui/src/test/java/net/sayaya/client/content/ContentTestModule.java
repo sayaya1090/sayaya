@@ -20,9 +20,8 @@ import static net.sayaya.rx.subject.BehaviorSubject.behavior;
 
 @dagger.Module
 public class ContentTestModule {
-    @Provides @Singleton @Named("contentUrl") static BehaviorSubject<String> provideContentUrl() {
-        var content = DomGlobal.document.getElementById("content");
-        return behavior(content.getAttribute("src"));
+    @Provides @Singleton @Named("url") static BehaviorSubject<String> provideContentUrl() {
+        return behavior("");
     }
     @Provides @Singleton static FetchApi fetchApi() {
         return new FetchApi() {
@@ -42,7 +41,7 @@ public class ContentTestModule {
             menu1.title = "Menu 1";
             menu1.supportingText = "Supporting text 1";
             menu1.trailingText = "Trailing text 1";
-            menu1.order = "A";
+            menu1.order = "C";
             menu1.icon = "fa-user";
             menu1.iconType = "sharp";
             var page1 = new Page(); {
@@ -90,7 +89,14 @@ public class ContentTestModule {
                 page1.icon = "fa-user";
                 page1.iconType = "sharp";
             }
-            menu3.children = new Page[] { page1 };
+            var page2 = new Page(); {
+                page2.title = "menu1-page2";
+                page2.uri = "menu1-page2";
+                page2.order = "AB";
+                page2.icon = "fa-user";
+                page2.iconType = "sharp";
+            }
+            menu3.children = new Page[] { page1, page2 };
         }
         var menu4 = new Menu(); {
             menu4.title = "Menu 4";
@@ -107,6 +113,6 @@ public class ContentTestModule {
             }
             menu4.children = new Page[] { page1 };
         }
-        return new Response(JSON.stringify(new Menu[] { menu1, menu2, menu3, menu4 }), headers);
+        return new Response(JSON.stringify(new Menu[] { menu2, menu1, menu3, menu4 }), headers);
     }
 }

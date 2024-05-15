@@ -2,6 +2,7 @@ package net.sayaya.client.dom;
 
 import elemental2.core.Function;
 import elemental2.dom.*;
+import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import lombok.experimental.Delegate;
 import org.jboss.elemento.HTMLContainerBuilder;
@@ -11,7 +12,6 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 
 import static org.jboss.elemento.Elements.*;
-import static org.jboss.elemento.Elements.script;
 
 @JsType
 public class ConsoleElement extends CustomElement {
@@ -23,10 +23,6 @@ public class ConsoleElement extends CustomElement {
         var shadowRoot = instance.attachShadow(options);
         instance.div= div().id("console").css("console");
         shadowRoot.append(
-                script().attr("type", "text/javascript").attr("src", "js/fontawesome.min.js").element(),
-                htmlElement("link", HTMLLinkElement.class).attr("rel", "stylesheet").attr("href", "css/fontawesome.min.css").element(),
-                script().attr("type", "text/javascript").attr("src", "js/brands.min.js").element(),
-                htmlElement("link", HTMLLinkElement.class).attr("rel", "stylesheet").attr("href", "css/brands.min.css").element(),
                 htmlElement("link", HTMLLinkElement.class).attr("rel", "stylesheet").attr("href", "css/console.css").element(),
                 instance.div.element()
         );
@@ -55,8 +51,19 @@ public class ConsoleElement extends CustomElement {
         });
         scrollTop = scrollHeight;
     }
-    public void add(IsElement<?> elem) {
-        div.add(elem);
+    @JsIgnore public void add(IsElement<? extends HTMLElement> elem) {
+        add(elem.element());
+    }
+    public void add(HTMLElement elem) {
+        String id = "Row_" + div.element().childElementCount;
+        elem.setAttribute("slot", id);
+        elem.style.width = CSSProperties.WidthUnionType.of("100%");
+        var line = new Line();
+        line.style("width: 100%; overflow: visible;");
+        line.add(htmlElement("slot", HTMLSlotElement.class).attr("name", id));
+        line.close();
+        div.add(line);
+        append(elem);
     }
     public void close() {
         if(last!=null) last.close();
@@ -76,8 +83,7 @@ public class ConsoleElement extends CustomElement {
             line.element().innerHTML = text;
             return line;
         }
-        @Delegate
-        final HTMLContainerBuilder<HTMLDivElement> _this = div().css("line");
+        @Delegate final HTMLContainerBuilder<HTMLDivElement> _this = div().css("line");
         public Line() {
             this.element().innerHTML = "";
         }

@@ -2,7 +2,6 @@ package net.sayaya.client.dom;
 
 import elemental2.core.JsArray;
 import elemental2.dom.DomGlobal;
-import elemental2.dom.ShadowRootInit;
 import jsinterop.annotations.*;
 import jsinterop.base.Js;
 import jsinterop.base.JsConstructorFn;

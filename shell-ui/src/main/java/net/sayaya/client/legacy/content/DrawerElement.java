@@ -1,4 +1,4 @@
-package net.sayaya.client.content;
+package net.sayaya.client.legacy.content;
 
 import elemental2.dom.CSSProperties;
 import elemental2.dom.DomGlobal;
@@ -20,14 +20,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.lang.Boolean.TRUE;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.nullsLast;
-import static net.sayaya.client.content.MenuButton.menu;
 import static net.sayaya.ui.elements.IconElementBuilder.icon;
 import static net.sayaya.ui.elements.ListElementBuilder.list;
 import static org.jboss.elemento.Elements.*;
 
 @Singleton
 public class DrawerElement extends HTMLContainerBuilder<HTMLElement> implements IsElement<HTMLElement> {
-    @Inject DrawerElement(NavigationRailElement navigation, @Named("contentUrl") BehaviorSubject<String> contentUrl, MenuManager menuManager) {
+    @Inject DrawerElement(NavigationRailElement navigation, @Named("url") BehaviorSubject<String> contentUrl, MenuManager menuManager) {
         this(nav(), navigation, contentUrl, menuManager);
     }
     private final HTMLContainerBuilder<HTMLElement> _this;
@@ -36,7 +35,7 @@ public class DrawerElement extends HTMLContainerBuilder<HTMLElement> implements 
     private DrawerElement(HTMLContainerBuilder<HTMLElement> element, NavigationRailElement navigation, BehaviorSubject<String> contentUrl, MenuManager menuManager) {
         super(element.element());
         _this = element;
-        btnToggleMenu = menu(menuManager);
+        btnToggleMenu = MenuButton.menu(menuManager);
         list = list();
         list.element().classList.add("menu");
         layout(navigation);
