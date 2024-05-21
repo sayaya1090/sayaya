@@ -7,6 +7,7 @@ plugins {
 }
 dependencies {
     implementation(project(":activity"))
+    implementation(project(":authentication"))
     implementation(libs.bundles.spring.client)
     implementation(libs.kotlin.jackson)
     implementation(libs.spring.thymeleaf)
@@ -16,7 +17,7 @@ dependencies {
     implementation(libs.jjwt.api)
     runtimeOnly(libs.bundles.jjwt.runtime)
     testImplementation(libs.bundles.test.api)
-    testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.spring.security.test)
 }
 configurations { all { exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging") } }
 dependencyManagement { imports { mavenBom(libs.spring.cloud.bom.get().toString()) } }

@@ -25,7 +25,7 @@ class Router {
 
     companion object {
         private val blog = Menu().apply {
-            title = "Article"
+            title = "ARTICLE"
             icon = "fa-newspaper"
             iconType = "sharp"
             order = "B000"
