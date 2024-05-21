@@ -1,0 +1,45 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: blog
+  namespace: {{ .Release.Namespace }}
+spec:
+  gateways:
+    - gateway-https
+  hosts:
+    - {{ .Values.host }}
+  http:
+    - match:
+        - uri:
+            prefix: /blog
+          headers:
+            accept:
+              prefix: application
+      route:
+        - destination:
+            host: blog
+            port:
+              number: 80
+    - match:
+        - uri:
+            exact: /blog
+          headers:
+            accept:
+              prefix: text/html
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/blog.html
+      route:
+        - destination:
+            host: rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /net.sayaya.Blog/
+      rewrite:
+        uri: /{{ .Values.bucket }}/static/net.sayaya.Blog/
+      route:
+        - destination:
+            host: rook-ceph-rgw-ocs-storagecluster-cephobjectstore.openshift-storage.svc.cluster.local
+            port:
+              number: 80

@@ -1,0 +1,143 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+    alpha.image.policy.openshift.io/resolve-names: '*'
+    app.openshift.io/route-disabled: 'false'
+    app.openshift.io/vcs-uri: 'https://github.com/sayaya1090/sayaya.git'
+    reloader.stakater.com/auto: 'true'
+  name: blog
+  namespace: {{ .Release.Namespace }}
+  finalizers:
+    - foregroundDeletion
+  labels:
+    app: blog
+    app.kubernetes.io/component: blog
+    app.kubernetes.io/instance: blog
+    app.kubernetes.io/name: blog
+    app.kubernetes.io/part-of: blog
+    app.openshift.io/runtime: spring-boot
+    app.openshift.io/runtime-namespace: {{ .Release.Namespace }}
+    app.openshift.io/runtime-version: latest
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: blog
+  template:
+    metadata:
+      labels:
+        app: blog
+        version: 0.0.1
+        deployment: blog
+        type: client
+      annotations:
+        sidecar.istio.io/inject: 'true'
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: blog
+            defaultMode: 420
+        - name: postgres-config
+          configMap:
+            name: postgresql
+            defaultMode: 420
+        - name: s3-config
+          configMap:
+            name: s3
+            defaultMode: 420
+        - name: log-volume
+          persistentVolumeClaim:
+            claimName: log
+      containers:
+        - name: blog
+        {{- if .Values.image }}
+          image: {{ .Values.image.name }}:{{ .Values.image.tag }}
+        {{- else }}
+          image: image-registry.openshift-image-registry.svc:5000/{{ .Release.Namespace }}/blog:latest
+        {{- end }}
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: postgres.username
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-app
+                  key: username
+            - name: postgres.password
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-app
+                  key: password
+            - name: s3.accessKey
+              valueFrom:
+                secretKeyRef:
+                  name: bucket
+                  key: AWS_ACCESS_KEY_ID
+            - name: s3.secretKey
+              valueFrom:
+                secretKeyRef:
+                  name: bucket
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: jwt.secret
+              valueFrom:
+                secretKeyRef:
+                  name: sayaya-token-keypair
+                  key:
+                    public-key
+            - name: TZ
+              value: Asia/Seoul
+            - name: JAVA_TOOL_OPTIONS
+              value: '-Xmx250m'
+          volumeMounts:
+            - name: config
+              mountPath: /app/resources/application.yaml
+              subPath: application.yaml
+            - name: postgres-config
+              mountPath: /app/resources/postgresql.yaml
+              subPath: postgresql.yaml
+            - name: s3-config
+              mountPath: /app/resources/s3.yaml
+              subPath: s3.yaml
+            - name: log-volume
+              mountPath: /var/log
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+              scheme: HTTP
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+              scheme: HTTP
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            limits:
+              memory: 600Mi
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+      imagePullSecrets: []
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  revisionHistoryLimit: 2
+  progressDeadlineSeconds: 600
+  paused: false

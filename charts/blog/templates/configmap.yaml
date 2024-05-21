@@ -1,0 +1,29 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: blog
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/instance: blog
+data:
+  application.yaml: |
+    spring:
+      application:
+        name: blog
+      config:
+        import:
+          - classpath:postgresql.yaml
+      main:
+        web-application-type: reactive
+      security:
+        authentication:
+          header: Authentication
+          jwt:
+            secret: ${jwt.secret}
+    management:
+      endpoint:
+        health:
+          probes:
+            enabled: true
+    server:
+      port: 8080
