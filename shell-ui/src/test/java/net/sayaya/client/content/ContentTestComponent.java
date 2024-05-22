@@ -7,7 +7,5 @@ import javax.inject.Singleton;
 @Singleton
 @dagger.Component(modules = { ContentTestModule.class, ContentModule.class })
 public interface ContentTestComponent {
-    DrawerElementBuilder drawer();
-    //ContentElement contentElement();
-    //ProgressElement progressElement();
+    ContentElement contentElement();
 }

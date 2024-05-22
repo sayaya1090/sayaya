@@ -15,5 +15,4 @@ public interface ShellComponent {
     ContentElement contentElement();
     ProgressElementBuilder progressElement();
     UrlChangeListener urlChangeListener();
-
 }

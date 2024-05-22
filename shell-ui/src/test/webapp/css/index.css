@@ -26,15 +26,20 @@
     width: 0px;
     overflow: hidden;
     white-space: pre;
-    transition: width 400ms cubic-bezier(.2,0,0,1), padding-top 400ms cubic-bezier(.2,0,0,1);
+    transition: width 400ms cubic-bezier(.2,0,0,1);
 }
 .rail[collapse] {
     width: 3.5rem;
+    padding-top: 0px !important;
 }
 .rail[expand] {
     width: 16rem;
     align-items: flex-start;
     padding: 0 0.6rem;
+}
+.rail[hide] {
+    width: 0px;
+    padding-top: 0px !important;
 }
 .rail[expand]:not(:first-of-type) {
     border-left: 1px solid var(--md-sys-color-outline-variant);
