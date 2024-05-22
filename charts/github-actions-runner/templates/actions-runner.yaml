@@ -82,10 +82,10 @@ spec:
 
       # Install chrome
       dnf install -y vulkan xdg-utils \
-      https://download.rockylinux.org/vault/rocky/9.3/AppStream/x86_64/kickstart/Packages/l/liberation-sans-fonts-2.1.3-4.el9.noarch.rpm \
-      https://download.rockylinux.org/vault/rocky/9.3/AppStream/x86_64/kickstart/Packages/l/liberation-serif-fonts-2.1.3-4.el9.noarch.rpm \
-      https://download.rockylinux.org/vault/rocky/9.3/AppStream/x86_64/kickstart/Packages/l/liberation-fonts-2.1.3-4.el9.noarch.rpm \
-      https://download.rockylinux.org/vault/rocky/9.2/AppStream/x86_64/kickstart/Packages/x/xdg-utils-1.1.3-11.el9.noarch.rpm \
+      https://download.rockylinux.org/vault/rocky/9.4/AppStream/x86_64/kickstart/Packages/l/liberation-sans-fonts-2.1.3-5.el9.noarch.rpm \
+      https://download.rockylinux.org/vault/rocky/9.4/AppStream/x86_64/kickstart/Packages/l/liberation-serif-fonts-2.1.3-5.el9.noarch.rpm \
+      https://download.rockylinux.org/vault/rocky/9.4/AppStream/x86_64/kickstart/Packages/l/liberation-fonts-2.1.3-5.el9.noarch.rpm \
+      https://download.rockylinux.org/vault/rocky/9.4/AppStream/x86_64/kickstart/Packages/x/xdg-utils-1.1.3-11.el9.noarch.rpm \
       https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm && \
 
       # Install helm using the in-line curl to bash method
