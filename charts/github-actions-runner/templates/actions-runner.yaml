@@ -7,14 +7,14 @@ spec:
   source:
     type: Dockerfile
     dockerfile: |
-      FROM registry.access.redhat.com/ubi9/ubi-init:9.3
+      FROM registry.access.redhat.com/ubi9/ubi-init:9.4
 
       LABEL org.opencontainers.image.title "ubi9"
       LABEL org.opencontainers.image.description "A RedHat UBI 9 based runner image for GitHub Actions"
 
       # Arguments
       ARG TARGETPLATFORM=linux/x64
-      ARG RUNNER_VERSION=2.316.0
+      ARG RUNNER_VERSION=2.316.1
       ARG RUNNER_CONTAINER_HOOKS_VERSION=0.6.0
 
       # Shell setup
