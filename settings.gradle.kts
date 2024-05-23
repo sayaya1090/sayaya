@@ -43,9 +43,9 @@ dependencyResolutionManagement {
             library("spring-kubernetes-config", "org.springframework.cloud", "spring-cloud-starter-kubernetes-fabric8-config").withoutVersion()
             bundle("spring-client", listOf("spring-log4j2", "spring-security"))
 
-            library("jackson-annotations", "com.fasterxml.jackson.core", "jackson-annotations").version { require("2.17.0") }
-            library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").version { require("2.17.0") }
-            library("elemento-core", "org.jboss.elemento", "elemento-core").version { require("1.4.12") }
+            library("jackson-annotations", "com.fasterxml.jackson.core", "jackson-annotations").version { require("2.17.1") }
+            library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").version { require("2.17.1") }
+            library("elemento-core", "org.jboss.elemento", "elemento-core").version { require("1.6.1") }
             library("elemental2-svg", "com.google.elemental2", "elemental2-svg").version { require("1.2.1") }
             library("gwt-user", "org.gwtproject", "gwt-user").version { require("2.11.0") }
             library("gwt-dev", "org.gwtproject", "gwt-dev").version { require("2.11.0") }
@@ -61,11 +61,11 @@ dependencyResolutionManagement {
             bundle("sayaya-web", listOf("elemento-core", "elemental2-svg", "gwt-user", "dagger-gwt", "dagger-compiler", "sayaya-ui", "sayaya-rx", "lombok"))
 
             library("reactor-test", "io.projectreactor", "reactor-test").withoutVersion()
-            library("kotest-runner", "io.kotest", "kotest-runner-junit5").version { require("5.8.1") }
-            library("mockk", "io.mockk", "mockk").version { require("1.13.10") }
+            library("kotest-runner", "io.kotest", "kotest-runner-junit5").version { require("5.9.0") }
+            library("mockk", "io.mockk", "mockk").version { require("1.13.11") }
             library("kotest-extensions-spring", "io.kotest.extensions", "kotest-extensions-spring").version { require("1.1.3") }
             library("kotest-extensions-testcontainers", "io.kotest.extensions", "kotest-extensions-testcontainers").version { require("2.0.2") }
-            library("selenium", "org.seleniumhq.selenium", "selenium-java").version { require("4.20.0") }
+            library("selenium", "org.seleniumhq.selenium", "selenium-java").version { require("4.21.0") }
             library("spring-boot-test", "org.springframework.boot", "spring-boot-starter-test").withoutVersion()
             library("spring-security-test", "org.springframework.security", "spring-security-test").withoutVersion()
             library("kubernetes-mock", "io.fabric8", "kubernetes-server-mock").version { require("6.10.0") }
@@ -88,6 +88,7 @@ include("shell-ui")
 include("vault")
 include("login")
 include("login-ui")
+include("card")
 // include("home-ui")
 include("blog")
 // include("blog-ui")
