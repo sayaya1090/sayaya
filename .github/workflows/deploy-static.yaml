@@ -10,6 +10,7 @@ on:
       - post-ui/**
       - blog-ui/**
       - login-ui/**
+      - card-ui/**
 permissions: write-all
 jobs:
   extract:
@@ -32,7 +33,8 @@ jobs:
                "$module_name" == "home-ui" || 
                "$module_name" == "post-ui" || 
                "$module_name" == "blog-ui" || 
-               "$module_name" == "login-ui" ]] && module_names+=("$module_name")
+               "$module_name" == "login-ui" || 
+               "$module_name" == "card-ui" ]] && module_names+=("$module_name")
           done
           module_names=($(printf '%s\n' "${module_names[@]}" | sort -u))
           echo "matrix=[$(printf '"%s",' "${module_names[@]}" | sed 's/,$//')]" >> $GITHUB_OUTPUT
