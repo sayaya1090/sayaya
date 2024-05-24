@@ -1,9 +1,6 @@
-:root[color-theme='dark'] body {
-    color-scheme: auto; /* iframe src 변경 시 flickering 방지 */
-}
 .drawer {
     z-index: 99999;   /* frame 보다 위에 있어야 함 */
-    background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 20%, transparent);
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 80%, transparent);
     border-top-right-radius: 0rem;
     border-bottom-right-radius: 0rem;
     backdrop-filter: blur(5px);
@@ -15,7 +12,7 @@
     transition-timing-function: ease-in-out;
 }
 :root[color-theme='light'] .drawer[open] {
-    box-shadow: 0 4px 30px color-mix(in srgb, var(--md-sys-color-outline-variant) 20%, transparent);
+    box-shadow: 0 4px 30px color-mix(in srgb, var(--md-sys-color-outline-variant) 80%, transparent);
 }
 :root[color-theme='dark'] .drawer[open] {
 
