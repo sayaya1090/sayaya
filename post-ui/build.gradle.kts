@@ -1,3 +1,4 @@
+import org.docstr.gradle.plugins.gwt.LogLevel
 plugins {
     kotlin("jvm")
     id("war")
@@ -6,6 +7,7 @@ plugins {
 dependencies {
     implementation(project(":activity"))
     implementation(project(":post-data"))
+    implementation(project(":card-ui"))
     implementation(libs.bundles.sayaya.web)
     compileOnly(libs.gwt.dev)
     annotationProcessor(libs.lombok)
@@ -21,7 +23,7 @@ sourceSets.getByName("main").java.srcDirs(
 )
 gwt {
     gwtVersion = "2.11.0"
-    modules = listOf("net.sayaya.Card")
+    modules = listOf("net.sayaya.Post")
     minHeapSize = "1024M"
     maxHeapSize = "2048M"
     sourceLevel = "auto"
@@ -42,7 +44,7 @@ tasks {
     }
     gwtTest {
         dependsOn("compileTestJava")
-        modules = listOf("net.sayaya.CardTest")
+        modules = listOf("net.sayaya.PostListTest")
         launcherDir = file("src/test/webapp")
         webserverPort = 8080
         port = 8081
@@ -53,11 +55,7 @@ tasks {
         )
     }
     withType<War> {
-        archiveFileName.set("card-ui.war")
-        duplicatesStrategy = DuplicatesStrategy.WARN
-    }
-    jar {
-        from(sourceSets.main.get().allSource)
+        archiveFileName.set("post-ui.war")
         duplicatesStrategy = DuplicatesStrategy.WARN
     }
 }

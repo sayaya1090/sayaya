@@ -1,9 +1,5 @@
 package net.sayaya.client.dom;
 
-import com.google.gwt.event.dom.client.HasMouseDownHandlers;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import elemental2.core.JsDate;
 import elemental2.dom.*;
 import jsinterop.annotations.JsType;
@@ -30,7 +26,7 @@ public class CardElement extends CustomElement {
         instance.lblDate = label();
         shadowRoot.append(
                 htmlElement("style", HTMLStyleElement.class).add(CSS).element(),
-                instance.container.css("post-card")
+                instance.container.css("post-card", "hide")
                         .add(instance.lblImage)
                         .add(instance.lblTitle.css("title"))
                         .add(instance.lblDescription.css("desc"))
@@ -54,6 +50,7 @@ public class CardElement extends CustomElement {
         if(item.tags!=null) for(var tag: item.tags) lblTags.assist().label(tag);
         lblAuthor.element().innerHTML = "written by " + item.author;
         lblDate.element().innerHTML = "Posted in: " + toLocalDate();
+        container.element().classList.remove("hide");
         return this;
     }
     private String toLocalDate() {
@@ -72,20 +69,27 @@ public class CardElement extends CustomElement {
             "    margin-left: auto;\n" +
             "    margin-right: auto;\n" +
             "    border-radius: 0.5rem;\n" +
+            "    opacity: 1;\n" +
+            "    transform: scale(1) translateY(0rem);\n" +
+            "    transition: opacity 500ms ease, transform 200ms ease;" +
             "    font-family: \"Source Serif 4\", \"Noto Sans KR\", sans-serif;\n" +
             "}\n" +
             ":host-context(:root[color-theme='light']) .post-card {\n" +
-            "    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);\n" +
+            "    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 500ms ease, transform 200ms ease;\n" +
             "}\n" +
             ":host-context(:root[color-theme='light']) .post-card:hover {\n" +
             "    box-shadow: rgba(60, 0, 0, 0.23) 3px 3px 6px;\n" +
             "}\n" +
             ":host-context(:root[color-theme='dark']) .post-card {\n" +
             "    background: var(--md-sys-color-surface-container);\n" +
-            "    transition: background 300ms cubic-bezier(0.4, 0, 0.2, 1);\n" +
+            "    transition: background 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 500ms ease, transform 200ms ease;\n" +
             "}\n" +
             ":host-context(:root[color-theme='dark']) .post-card:hover {\n" +
             "    background: var(--md-sys-color-surface-container-high);\n" +
+            "}\n" +
+            ".post-card.hide {\n" +
+            "    opacity: 0;\n" +
+            "    transform: scale(0.95) translateY(2rem);\n" +
             "}\n" +
             ".post-card img {\n" +
             "    mask: linear-gradient(to top, transparent 0, black 4rem);\n" +

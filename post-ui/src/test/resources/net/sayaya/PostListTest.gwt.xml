@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+    <inherits name="net.sayaya.UI"/>
+    <inherits name="net.sayaya.Rx"/>
+    <inherits name="net.sayaya.Activity"/>
+    <inherits name="net.sayaya.Card"/>
+    <inherits name="dagger.Dagger" />
+    <source path="client"/>
+    <entry-point class="net.sayaya.client.list.PostListTest"/>
+    <collapse-all-properties/>
+</module>

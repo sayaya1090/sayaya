@@ -94,7 +94,6 @@ include("card-ui")
 include("blog")
 // include("blog-ui")
 include("post")
-// include("post-ui")
+include("post-ui")
 // include("marked")
 // include("search")
-
