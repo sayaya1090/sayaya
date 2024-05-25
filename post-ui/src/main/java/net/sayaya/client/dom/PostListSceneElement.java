@@ -6,7 +6,7 @@ import net.sayaya.client.PostComponent;
 import net.sayaya.client.list.PostListScene;
 
 @JsType
-public class PostListSceneElement extends CustomElement implements Drawable {
+public class PostListSceneElement extends CustomElement implements IsFrame {
     public static void initialize(PostListSceneElement instance, PostComponent components) {
         var options = ShadowRootInit.create();
         options.setMode("open");
@@ -18,12 +18,11 @@ public class PostListSceneElement extends CustomElement implements Drawable {
     }
     private PostListScene scene;
     @Override
-    public void prepare(String param) {
+    public void draw() {
 
     }
-
     @Override
-    public void draw() {
+    public void onHashChange(String hash) {
 
     }
 }

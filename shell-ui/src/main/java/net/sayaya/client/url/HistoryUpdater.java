@@ -3,12 +3,16 @@ package net.sayaya.client.url;
 import elemental2.dom.DomGlobal;
 import net.sayaya.rx.subject.BehaviorSubject;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.logging.Logger;
 
+@Singleton
 public class HistoryUpdater {
     private static final Logger logger = Logger.getLogger(HistoryUpdater.class.getName());
     private final BehaviorSubject<String> url;
-    public HistoryUpdater(BehaviorSubject<String> url) {
+    @Inject HistoryUpdater(@Named("url") BehaviorSubject<String> url) {
        this.url = url;
     }
     void listen() {

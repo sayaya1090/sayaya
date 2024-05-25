@@ -1,7 +1,5 @@
 package net.sayaya.client.content;
 
-import net.sayaya.client.content.component.DrawerElementBuilder;
-
 import javax.inject.Singleton;
 
 @Singleton

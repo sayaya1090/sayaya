@@ -56,8 +56,4 @@ tasks {
         archiveFileName.set("card-ui.war")
         duplicatesStrategy = DuplicatesStrategy.WARN
     }
-    jar {
-        from(sourceSets.main.get().allSource)
-        duplicatesStrategy = DuplicatesStrategy.WARN
-    }
 }

@@ -42,21 +42,19 @@ public class DrawerElementBuilder implements IsElement<HTMLElement> {
     private Menu menuSelected = null;
     private Page pageSelected = null;
     private final BehaviorSubject<ContentModule.MenuState> state;
-    private final FrameElementBuilder frame;
-    private final BehaviorSubject<String> url;
-    @Inject DrawerElementBuilder(ShellApi shellApi, BehaviorSubject<ContentModule.MenuState> state, MenuToggleButtonElementBuilder btnToggle, FrameElementBuilder frame, @Named("url") BehaviorSubject<String> url) {
+    private final BehaviorSubject<Page> page;
+    @Inject DrawerElementBuilder(ShellApi shellApi, BehaviorSubject<ContentModule.MenuState> state, MenuToggleButtonElementBuilder btnToggle, BehaviorSubject<Page> page) {
         this.shellApi = shellApi;
         this.state = state;
         this.btnToggle = btnToggle;
-        this.frame = frame;
-        this.url = url;
+        this.page = page;
         layout();
         state.subscribe(s->{
             if(s == SHOW) open();
             else collapse();
         });
         menu.subscribe(this::update);
-        url.subscribe(this::update);
+        page.subscribe(this::update);
         reload();
     }
     private void layout() {
@@ -134,24 +132,10 @@ public class DrawerElementBuilder implements IsElement<HTMLElement> {
         pageSelected = p;
         collapse();
         state.next(HIDE);
-        frame.element().innerHTML = "";
-        if(p!=null && p.tag!=null) {
-            try {
-                var elem = createHtmlElement(p.tag, HTMLElement.class);
-                frame.element().appendChild(elem);
-                show(elem, null);
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-            url.next(p.uri);
-        }
+        page.next(p);
         update(menu.getValue());
         update(m);
     }
-    public native void show(Element elem, String param) /*-{
-        elem.prepare(param);
-        elem.draw();
-    }-*/;
     private void open() {
         if(menuSelected == null || menuSelected.children==null || menuSelected.children.length <= 1) {
             navMenu.expand();
@@ -175,9 +159,9 @@ public class DrawerElementBuilder implements IsElement<HTMLElement> {
         }
         element().removeAttribute("open");
     }
-    private void update(String url) {
+    private void update(Page page) {
         menu.getValue().forEach(m->{
-            var opt = Arrays.stream(m.children).filter(p->url.startsWith(p.uri)).max(Comparator.comparingInt(p->p.uri.length()));
+            var opt = Arrays.stream(m.children).filter(p->page.uri.startsWith(p.uri)).max(Comparator.comparingInt(p->p.uri.length()));
             if(opt.isEmpty()) return;
             var p = opt.get();
             if(pageSelected == p) return;

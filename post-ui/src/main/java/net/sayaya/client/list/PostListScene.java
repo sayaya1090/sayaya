@@ -3,10 +3,12 @@ package net.sayaya.client.list;
 import elemental2.core.Global;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import elemental2.dom.ViewCSS;
 import jsinterop.base.Js;
-import net.sayaya.client.component.CardContainerElementBuilder;
 import net.sayaya.client.data.CatalogItem;
+import net.sayaya.client.dom.ContainerBuilder;
+import net.sayaya.client.dom.CustomElement;
 import net.sayaya.client.util.Debounce;
 import net.sayaya.rx.subject.BehaviorSubject;
 import net.sayaya.ui.elements.MenuElementBuilder;
@@ -40,10 +42,10 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
             .option().value("true").headline("Asc").end()
             .option().value("false").headline("Desc").end()
             .required(true);
-    private final CardContainerElementBuilder container;
+    private final ContainerBuilder<CustomElement> container;
     private final MenuElementBuilder.TopMenuElementBuilder menu = MenuElementBuilder.menu().positioning(MenuElementBuilder.Position.Fixed);
     @Inject public PostListScene(
-            CardContainerElementBuilder container,
+            ContainerBuilder<CustomElement> container,
             @Named("sort-by") BehaviorSubject<String> sortBy,
             @Named("sort") BehaviorSubject<String> sort) {
         super(div().element());
@@ -72,13 +74,14 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
        // allocate();
         //DomGlobal.window.addEventListener(EventType.resize.name, evt->allocate());
 
-        container.element().add(
+        k(container.element(),
                 IntStream.range(0, 30).mapToObj(i->new CatalogItem().title("천하무적 이런 건 못 참지")
                                 .tags(new String[] {"webflux", "kotlin", "spring"}).author("아인슈타인")
                                 .description("고1 봄, 친구들과 매점을 가는 중이었는데 목련나무 앞에서 처음 본 여자 선생님이 \"지금 떨어지는 목련이 참 예쁘고, 너희도 참 예쁘다. 내가 너희를 사진 찍어줘도 될까?"))
                         .toArray(CatalogItem[]::new)
         );
     }
+    private static native void k(HTMLElement e, CatalogItem[] items) /*-{ e.add(items); }-*/;
     private static final double REM = Global.parseFloat(Js.<ViewCSS>cast(DomGlobal.window).getComputedStyle(DomGlobal.document.documentElement).fontSize);
     private static final double TRACK_WIDTH_MIN = 15*REM;
     private final Debounce allocate = debounce(() -> {

@@ -1,5 +1,5 @@
 .drawer {
-    z-index: 99999;   /* frame 보다 위에 있어야 함 */
+    z-index: 5;   /* frame 보다 위에 있어야 함 */
     background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 80%, transparent);
     border-top-right-radius: 0rem;
     border-bottom-right-radius: 0rem;
@@ -46,11 +46,19 @@
 }
 .frame {
     position: absolute;
-    top: 3rem;
     left: 56px;
-    opacity: 1;
     border: 0px hidden;
     width: -webkit-fill-available;
     height: -webkit-fill-available;
-    transition: all 80ms ease-in-out;
+    transition: all 100ms ease-in-out;
+    top: 0rem;
+    opacity: 1;
+}
+.frame-in {
+    top: 1rem;
+    opacity: 0;
+}
+.frame-out {
+    top: -1rem;
+    opacity: 0;
 }

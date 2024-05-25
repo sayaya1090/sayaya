@@ -22,7 +22,7 @@ public class CardContainerElement extends CustomElement {
         );
     }
     private HTMLContainerBuilder<HTMLDivElement> container;
-    public CardContainerElement add(CatalogItem... items) {
+    public CardContainerElement add(CatalogItem[] items) {
         for(int i = 0; i < items.length; ++i) {
             var item = items[i];
             var card = new CardElementBuilder();

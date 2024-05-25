@@ -15,7 +15,4 @@ public class ShellModule {
     @Provides @Singleton @Named("url") static BehaviorSubject<String> provideContentUrl() {
         return behavior("");
     }
-    @Provides @Singleton @Named("contentTag") static BehaviorSubject<String> provideContentTag() {
-        return behavior(null);
-    }
 }

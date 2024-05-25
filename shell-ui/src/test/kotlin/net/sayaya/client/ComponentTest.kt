@@ -10,6 +10,7 @@ import net.sayaya.client.content.ContentTestModule
 import net.sayaya.gwt.test.GwtSpec
 import org.openqa.selenium.By
 import org.openqa.selenium.interactions.Actions
+import java.lang.Thread.sleep
 
 class ComponentTest: GwtSpec({
     Given(name="컴포넌트 테스트", html="component.html", module="net.sayaya.Component",
@@ -22,7 +23,7 @@ class ComponentTest: GwtSpec({
         val rails = document.findElements(By.className("rail"))
         var menu = rails[0].findElements(By.tagName("sac-navigation-rail-item"))
         val nav = document.findElement(By.tagName("nav"))
-        val frame = document.findElement(By.className("frame"))
+
         nav.getAttribute("open") shouldBe null
         When("메뉴 버튼을 누르면") {
             btnMenu.click()
@@ -65,8 +66,9 @@ class ComponentTest: GwtSpec({
                 Then("nav 상태가 close 로 변경된다") {
                     nav.getAttribute("open") shouldBe null
                 }
-                Then("지정된 태그가 프레임에 출력된다") {
-                    frame.findElement(By.tagName(ContentTestModule.menu[0].children[0].tag)) shouldNotBe null
+                Then("지정된 태그가 1초 안에 프레임에 출력된다") {
+                    sleep(1000)
+                    document.findElement(By.tagName(ContentTestModule.menu[0].children[0].tag)) shouldNotBe null
                 }
                 And("Menu Rail에서 두번째 메뉴를 클릭하면") {
                     menu[1].click()
@@ -75,15 +77,16 @@ class ComponentTest: GwtSpec({
                         rails[0].getAttribute("hide") shouldBe "true"
                         rails[1].getAttribute("collapse") shouldBe "true"
                     }
-                    Then("지정된 태그가 프레임에 출력된다") {
-                        frame.findElement(By.tagName(ContentTestModule.menu[1].children[0].tag)) shouldNotBe null
+                    Then("지정된 태그가 1초 안에 프레임에 출력된다") {
+                        sleep(1000)
+                        document.findElement(By.tagName(ContentTestModule.menu[1].children[0].tag)) shouldNotBe null
                     }
                 }
             }
         }
         When("메뉴를 열어서 Page가 2개 이상인 두번째 메뉴에 마우스 호버하면") {
             ContentTestModule.menu[1].children.size shouldBeGreaterThan 1
-            val scene = frame.text
+            val scene = document.findElement(By.className("frame")).text
             btnMenu.click()
             actions.moveToElement(menu[1]).perform()
             Then("Page Menu가 열린다") {
@@ -94,7 +97,7 @@ class ComponentTest: GwtSpec({
                 menu[1].location.y.shouldBeBetween(pages[0].location.y-1, pages[0].location.y+1)    // Border 때문에 1px정도는 차이가 날 수 있다
             }
             Then("아직 프레임은 변경되지 않는다") {
-                frame.text shouldBeEqual scene
+                document.findElement(By.className("frame")).text shouldBeEqual scene
             }
             And("첫번째 페이지를 클릭하면") {
                 rails[1].findElements(By.tagName("sac-navigation-rail-item"))[0].click()
@@ -105,8 +108,9 @@ class ComponentTest: GwtSpec({
                 Then("nav 상태가 close 로 변경된다") {
                     nav.getAttribute("open") shouldBe null
                 }
-                Then("지정된 태그가 프레임에 출력된다") {
-                    frame.findElement(By.tagName(ContentTestModule.menu[1].children[0].tag)) shouldNotBe null
+                Then("지정된 태그가 1초 안에 프레임에 출력된다") {
+                    sleep(1000)
+                    document.findElement(By.tagName(ContentTestModule.menu[1].children[0].tag)) shouldNotBe null
                 }
                 And("Page Rail에서 두번째 메뉴를 클릭하면") {
                     rails[1].findElements(By.tagName("sac-navigation-rail-item"))[1].click()
@@ -114,12 +118,13 @@ class ComponentTest: GwtSpec({
                         rails[0].getAttribute("hide") shouldBe "true"
                         rails[1].getAttribute("collapse") shouldBe "true"
                     }
-                    Then("지정된 태그가 프레임에 출력된다") {
-                        frame.findElement(By.tagName(ContentTestModule.menu[1].children[1].tag)) shouldNotBe null
+                    Then("지정된 태그가 1초 안에 프레임에 출력된다") {
+                        sleep(1000)
+                        document.findElement(By.tagName(ContentTestModule.menu[1].children[1].tag)) shouldNotBe null
                     }
                 }
                 And("Page Rail 가장 마지막에 있는 돌아가기 버튼을 클릭하면") {
-                    val scene2 = frame.text
+                    val scene2 = document.findElement(By.className("frame")).text
                     val children = rails[1].findElements(By.tagName("sac-navigation-rail-item"))
                     children[children.size-1].click()
                     Then("Page Rail이 접히고 Menu Rail로 전환된다") {
@@ -127,7 +132,7 @@ class ComponentTest: GwtSpec({
                         rails[1].getAttribute("hide") shouldBe "true"
                     }
                     Then("프레임은 변경되지 않는다") {
-                        frame.text shouldBeEqual scene2
+                        document.findElement(By.className("frame")).text shouldBeEqual scene2
                     }
                 }
             }
