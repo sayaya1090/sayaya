@@ -5,7 +5,6 @@ import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.ViewCSS;
 import jsinterop.base.Js;
-import net.sayaya.client.api.RouteApi;
 import net.sayaya.client.component.CardContainerElementBuilder;
 import net.sayaya.client.data.CatalogItem;
 import net.sayaya.client.util.Debounce;
@@ -20,8 +19,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static elemental2.dom.DomGlobal.requestAnimationFrame;

@@ -40,7 +40,7 @@ class Router {
                     order = "C000-1"
                     uri = "/post#new"
                     icon = "fa-pen-to-square"
-                    tag = "sac-post-new"
+                    tag = "sac-post-edit"
                 }, Page().apply {
                     title = "LIST"
                     supportingText = "List of your posts"
