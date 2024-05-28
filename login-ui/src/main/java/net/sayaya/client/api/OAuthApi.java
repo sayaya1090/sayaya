@@ -25,7 +25,7 @@ public class OAuthApi {
             return waitAuthenticationCookie(url);
         }).then(redirect->{
             info("Logged in successfully.");
-            DomGlobal.location.replace(redirect);
+            DomGlobal.window.history.back();
             return null;
         });
     }
