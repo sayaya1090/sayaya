@@ -1,10 +1,7 @@
 package net.sayaya.client.content.component;
 
-import elemental2.dom.CSSProperties;
-import elemental2.dom.Element;
-import elemental2.dom.HTMLElement;
+import elemental2.dom.*;
 import lombok.experimental.Delegate;
-import net.sayaya.client.api.ShellApi;
 import net.sayaya.client.content.ContentModule;
 import net.sayaya.client.data.Menu;
 import net.sayaya.client.data.Page;
@@ -14,20 +11,15 @@ import org.jboss.elemento.HTMLContainerBuilder;
 import org.jboss.elemento.IsElement;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Boolean.TRUE;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.nullsLast;
 import static net.sayaya.client.content.ContentModule.MenuState.*;
-import static net.sayaya.rx.subject.BehaviorSubject.behavior;
 import static net.sayaya.ui.elements.IconElementBuilder.icon;
 import static org.jboss.elemento.Elements.*;
 
@@ -37,25 +29,23 @@ public class DrawerElementBuilder implements IsElement<HTMLElement> {
     private final MenuToggleButtonElementBuilder btnToggle;
     private final NavigationRailElementBuilder navMenu = NavigationRailElementBuilder.nav();
     private final NavigationRailElementBuilder navPage = NavigationRailElementBuilder.nav();
-    private final BehaviorSubject<List<Menu>> menu = behavior(new LinkedList<>());
-    private final ShellApi shellApi;
     private Menu menuSelected = null;
     private Page pageSelected = null;
     private final BehaviorSubject<ContentModule.MenuState> state;
+    private final MenuManager menu;
     private final BehaviorSubject<Page> page;
-    @Inject DrawerElementBuilder(ShellApi shellApi, BehaviorSubject<ContentModule.MenuState> state, MenuToggleButtonElementBuilder btnToggle, BehaviorSubject<Page> page) {
-        this.shellApi = shellApi;
+    @Inject DrawerElementBuilder(BehaviorSubject<ContentModule.MenuState> state, MenuManager menu, BehaviorSubject<Page> page, MenuToggleButtonElementBuilder btnToggle) {
         this.state = state;
         this.btnToggle = btnToggle;
+        this.menu = menu;
         this.page = page;
         layout();
         state.subscribe(s->{
             if(s == SHOW) open();
             else collapse();
         });
-        menu.subscribe(this::update);
-        page.subscribe(this::update);
-        reload();
+        menu.subscribe(this::updateMenuPage);
+        page.subscribe(this::selectMenuByPage);
     }
     private void layout() {
         _this.css("drawer")
@@ -63,13 +53,8 @@ public class DrawerElementBuilder implements IsElement<HTMLElement> {
                 .add(div().style("display: flex; height: -webkit-fill-available;")
                           .add(navMenu).add(navPage));
     }
-    private void reload() {
-        shellApi.findMenu().then(m -> {
-            menu.next(m);
-            return null;
-        });
-    }
-    private void update(List<Menu> menu) {
+
+    private void updateMenuPage(List<Menu> menu) {
         navMenu.clear();
         AtomicBoolean bottom = new AtomicBoolean(false);
         menu.stream().sorted(nullsLast(comparing((Menu i) -> TRUE.equals(i.bottom)).thenComparing(i->i.order))).forEach(item-> {
@@ -87,7 +72,7 @@ public class DrawerElementBuilder implements IsElement<HTMLElement> {
             child.trailingSupportingText("▶");
             child.on(EventType.mouseover, evt-> {
                 if(state.getValue() == SHOW) {
-                    update(item);
+                    selectMenuByPage(item);
                     navPage.element().style.paddingTop = CSSProperties.PaddingTopUnionType.of((child.element().offsetTop - navMenu.element().offsetTop) + "px");
                     navPage.expand();
                 }
@@ -99,12 +84,17 @@ public class DrawerElementBuilder implements IsElement<HTMLElement> {
         child.on(EventType.click, evt->select(item));
         return child;
     }
-    private void update(Menu menu) {
+    private void selectMenuByPage(Menu menu) {
         navPage.clear();
         if(menu.children!=null) Arrays.stream(menu.children)
                 .sorted(nullsLast(comparing((Page i) -> i.order)))
                 .forEach(item-> toPageItem(menu, item));
         addBackToMenuRail();
+    }
+    private void selectMenuByPage(Page page) {
+        if(pageSelected == page) return;
+        var parent = menu.parentOf(page);
+        select(parent, page);
     }
     private void toPageItem(Menu menu, Page item) {
         var child = navPage.item();
@@ -133,17 +123,13 @@ public class DrawerElementBuilder implements IsElement<HTMLElement> {
         collapse();
         state.next(HIDE);
         page.next(p);
-        update(menu.getValue());
-        update(m);
+        updateMenuPage(menu.getValue());
+        selectMenuByPage(m);
     }
     private void open() {
-        if(menuSelected == null || menuSelected.children==null || menuSelected.children.length <= 1) {
-            navMenu.expand();
-            navPage.hide();
-        } else {
-            navMenu.expand();
-            navPage.expand();
-        }
+        navMenu.expand();
+        if(menuSelected == null || menuSelected.children==null || menuSelected.children.length <= 1) navPage.hide();
+        else navPage.expand();
         element().setAttribute("open", true);
     }
     private void collapse() {
@@ -158,14 +144,5 @@ public class DrawerElementBuilder implements IsElement<HTMLElement> {
             navPage.collapse();
         }
         element().removeAttribute("open");
-    }
-    private void update(Page page) {
-        menu.getValue().forEach(m->{
-            var opt = Arrays.stream(m.children).filter(p->page.uri.startsWith(p.uri)).max(Comparator.comparingInt(p->p.uri.length()));
-            if(opt.isEmpty()) return;
-            var p = opt.get();
-            if(pageSelected == p) return;
-            select(m, p);
-        });
     }
 }

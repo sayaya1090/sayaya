@@ -23,7 +23,7 @@ spec:
         - uri:
             exact: /login
       rewrite:
-        uri: /{{ .Values.bucket }}/static/login.html
+        uri: /{{ .Values.bucket }}/static/index.html
       route:
         - destination:
             host: >-

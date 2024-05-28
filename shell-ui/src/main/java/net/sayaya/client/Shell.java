@@ -3,6 +3,7 @@ package net.sayaya.client;
 import com.google.gwt.core.client.EntryPoint;
 import net.sayaya.client.content.ContentModule;
 
+import static elemental2.dom.DomGlobal.console;
 import static org.jboss.elemento.Elements.body;
 
 public class Shell implements EntryPoint {

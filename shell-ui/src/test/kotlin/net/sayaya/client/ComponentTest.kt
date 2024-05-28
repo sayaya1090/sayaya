@@ -21,7 +21,6 @@ class ComponentTest: GwtSpec({
         val actions = Actions(document)
         val btnMenu = document.findElement(By.tagName("sac-menu-button"))
         val rails = document.findElements(By.className("rail"))
-        var menu = rails[0].findElements(By.tagName("sac-navigation-rail-item"))
         val nav = document.findElement(By.tagName("nav"))
 
         nav.getAttribute("open") shouldBe null
@@ -35,12 +34,12 @@ class ComponentTest: GwtSpec({
                 rails[1].getAttribute("hide") shouldBe "true"
             }
             Then("메뉴 항목이 보인다") {
-                menu.size shouldBeEqual ContentTestModule.menu.size
+                rails[0].findElements(By.tagName("sac-navigation-rail-item")).size shouldBeEqual ContentTestModule.menu.size
             }
             Then("Bottom 메뉴는 Bottom끼리 모여서 하단 정렬되어 있다") {
-                menu.count { i -> i.getCssValue("margin-top") != "0px" } shouldBe 1
+                rails[0].findElements(By.tagName("sac-navigation-rail-item")).count { i -> i.getCssValue("margin-top") != "0px" } shouldBe 1
                 val bottoms = ContentTestModule.menu.filter { m->m.bottom==true }.map { m->m.title }.toSet()
-                menu.dropWhile { it.getCssValue("margin-top") == "0px"  }.count() shouldBeEqual bottoms.size
+                rails[0].findElements(By.tagName("sac-navigation-rail-item")).dropWhile { it.getCssValue("margin-top") == "0px"  }.count() shouldBeEqual bottoms.size
             }
             And("메뉴 버튼을 다시 누르면") {
                 btnMenu.click()
@@ -52,13 +51,13 @@ class ComponentTest: GwtSpec({
         When("메뉴를 열어서 Page가 0개 또는 1개인 첫번째 메뉴에 마우스 호버하면") {
             ContentTestModule.menu[0].children.size shouldBeLessThanOrEqual 1
             btnMenu.click()
-            actions.moveToElement(menu[0]).perform()
+            val menu1st = rails[0].findElements(By.tagName("sac-navigation-rail-item"))[0]
+            actions.moveToElement(menu1st).perform()
             Then("Page Menu는 열리지 않는다") {
                 rails[1].getAttribute("hide") shouldBe "true"
             }
             And("첫번째 메뉴를 클릭하면") {
-                menu[0].click()
-                menu = rails[0].findElements(By.tagName("sac-navigation-rail-item"))        // elements가 재생성된다
+                menu1st.click()
                 Then("Menu Rail이 접힌다") {
                     rails[0].getAttribute("collapse") shouldBe "true"
                     rails[1].getAttribute("hide") shouldBe "true"
@@ -71,8 +70,7 @@ class ComponentTest: GwtSpec({
                     document.findElement(By.tagName(ContentTestModule.menu[0].children[0].tag)) shouldNotBe null
                 }
                 And("Menu Rail에서 두번째 메뉴를 클릭하면") {
-                    menu[1].click()
-                    menu = rails[0].findElements(By.tagName("sac-navigation-rail-item"))
+                    rails[0].findElements(By.tagName("sac-navigation-rail-item"))[1].click()
                     Then("Page Menu Rail로 전환된다") {
                         rails[0].getAttribute("hide") shouldBe "true"
                         rails[1].getAttribute("collapse") shouldBe "true"
@@ -88,13 +86,14 @@ class ComponentTest: GwtSpec({
             ContentTestModule.menu[1].children.size shouldBeGreaterThan 1
             val scene = document.findElement(By.className("frame")).text
             btnMenu.click()
-            actions.moveToElement(menu[1]).perform()
+            val menu2nd = rails[0].findElements(By.tagName("sac-navigation-rail-item"))[1]
+            actions.moveToElement(menu2nd).perform()
             Then("Page Menu가 열린다") {
                 rails[1].getAttribute("expand") shouldBe "true"
             }
             val pages = rails[1].findElements(By.tagName("sac-navigation-rail-item"))
             Then("Page Menu의 아이템은 부모 아이템과 높이가 정렬되어 있다") {
-                menu[1].location.y.shouldBeBetween(pages[0].location.y-1, pages[0].location.y+1)    // Border 때문에 1px정도는 차이가 날 수 있다
+                menu2nd.location.y.shouldBeBetween(pages[0].location.y-1, pages[0].location.y+1)    // Border 때문에 1px정도는 차이가 날 수 있다
             }
             Then("아직 프레임은 변경되지 않는다") {
                 document.findElement(By.className("frame")).text shouldBeEqual scene
