@@ -15,8 +15,10 @@ import static org.jboss.elemento.Elements.iframe;
 @Singleton
 public class OAuthApi {
     private final Logger logger;
+    private final FetchApi fetchApi;
     @Inject OAuthApi(Logger logger, FetchApi fetchApi) {
         this.logger = logger;
+        this.fetchApi = fetchApi;
     }
     public Promise<Void> login(String provider) {
         String requestUrl = "login/oauth2/authorization/" + provider;
@@ -66,5 +68,18 @@ public class OAuthApi {
     }
     private void error(String message) {
         logger.print("[ <font color='#980001'>FAILED</font> ] " + message);
+    }
+    public Promise<Void> logout() {
+        RequestInit param = RequestInit.create();
+        param.setMethod("POST");
+        return fetchApi.request("oauth2/logout", param).then(response->{
+            if(response.status==200) {
+                info("Logged out successfully.");
+                DomGlobal.window.location.assign("/");
+            } else {
+                error("Failed to log out.");
+            }
+            return null;
+        });
     }
 }

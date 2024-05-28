@@ -54,6 +54,8 @@ class Router {
                     title = "-"
                     order = "Z000-1"
                     uri = "/logout"
+                    script = "net.sayaya.Login/net.sayaya.Login.nocache.js"
+                    tag = "sac-logout-scene"
                     icon = "fa-left-from-bracket"
                 }
             )

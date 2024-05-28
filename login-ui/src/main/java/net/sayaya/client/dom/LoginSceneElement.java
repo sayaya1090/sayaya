@@ -6,12 +6,17 @@ import elemental2.dom.MutationRecord;
 import elemental2.dom.ShadowRootInit;
 import jsinterop.annotations.JsType;
 import net.sayaya.client.DaggerLoginComponent;
+import net.sayaya.client.api.OAuthApi;
+import net.sayaya.client.component.ConsoleElementBuilder;
 
+import static net.sayaya.client.dom.CustomElements.customContainer;
 import static org.jboss.elemento.Elements.*;
 
 @JsType
 public class LoginSceneElement extends CustomElement implements IsFrame {
-    public static void initialize(LoginSceneElement instance) {
+    public static void initialize(LoginSceneElement instance, ConsoleElementBuilder console, OAuthApi api) {
+        instance.console = console;
+        instance.api = api;
         var options = ShadowRootInit.create();
         options.setMode("open");
         var shadowRoot = instance.attachShadow(options);
@@ -20,11 +25,13 @@ public class LoginSceneElement extends CustomElement implements IsFrame {
                 htmlElement("slot", HTMLSlotElement.class).element()
         );
     }
+    private ConsoleElementBuilder console;
+    private OAuthApi api;
     @Override
     public void attach(MutationRecord mutationRecord) {
-        var elem = DaggerLoginComponent.create().login().element();
-        this.append(elem);
-        elem.attach(mutationRecord);
+        var elem = customContainer("sac-login-box", LoginElement.class);
+        this.append(elem.element().console(console.element()).api(api));
+        elem.element().attach(mutationRecord);
     }
     @Override
     public void onHashChange(String hash) {
