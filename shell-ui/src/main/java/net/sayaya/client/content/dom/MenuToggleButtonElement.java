@@ -2,14 +2,13 @@ package net.sayaya.client.content.dom;
 
 import elemental2.dom.HTMLStyleElement;
 import elemental2.dom.ShadowRootInit;
-import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
 import net.sayaya.client.dom.CustomElement;
-import net.sayaya.ui.svg.SVGElement;
+import net.sayaya.ui.svg.dom.SVGElement;
 
 import static net.sayaya.ui.elements.ButtonElementBuilder.button;
-import static net.sayaya.ui.svg.SvgBuilder.svg;
-import static net.sayaya.ui.svg.SvgPathBuilder.path;
+import static net.sayaya.ui.svg.elements.SvgBuilder.svg;
+import static net.sayaya.ui.svg.elements.SvgPathBuilder.path;
 import static org.jboss.elemento.Elements.htmlElement;
 
 @JsType

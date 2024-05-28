@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.sayaya.client.api.OAuthApi;
 import net.sayaya.ui.elements.ButtonElementBuilder;
+import org.jboss.elemento.Attachable;
 import org.jboss.elemento.EventType;
 import org.jboss.elemento.HTMLContainerBuilder;
 
@@ -17,7 +18,7 @@ import static org.jboss.elemento.Elements.*;
 import static org.jboss.elemento.Elements.htmlElement;
 
 @JsType
-public class LoginElement extends CustomElement {
+public class LoginElement extends CustomElement implements Attachable {
     private HTMLContainerBuilder<HTMLDivElement> div;
     private ConsoleElement console;
     @Setter(onMethod_ = { @JsIgnore }) @Accessors(fluent = true)
@@ -28,10 +29,10 @@ public class LoginElement extends CustomElement {
     private HTMLAudioElement beep;
     private HTMLAudioElement start;
     private final static String WELCOME =
-            " ___  ___  _ _  ___  _ _  ___     _ _  ___  ___ \n" +
-            "/ __>| . || | || . || | || . |   | \\ || __>|_ _|\n" +
-            "\\__ \\|   |\\   /|   |\\   /|   | _ |   || _>  | | \n" +
-            "<___/|_|_| |_| |_|_| |_| |_|_|<_>|_\\_||___> |_| \n" +
+            " ___  ___  _ _  ___  _ _  ___     ___  ___  _ _  \n" +
+            "/ __>| . || | || . || | || . |   | . \\| __>| | |\n" +
+            "\\__ \\|   |\\   /|   |\\   /|   | _ | | || _> | ' |\n" +
+            "<___/|_|_| |_| |_|_| |_| |_|_|<_>|___/|___>|__/ \n" +
             "================================================\n" +
             " :: Web ::                             (v0.1.0) \n" +
             " \n" +
@@ -59,7 +60,8 @@ public class LoginElement extends CustomElement {
         this.append(console);
         return this;
     }
-    public LoginElement attached() {
+    @Override
+    public void attach(MutationRecord mutationRecord) {
         selects = new ButtonElementBuilder.TextButtonElementBuilder[]{ btnLoginGithub, btnLoginGoogle };
         addEventListener(EventType.click.name, evt->cursor.element().focus());
         Scheduler.get().scheduleDeferred(() -> {
@@ -95,7 +97,6 @@ public class LoginElement extends CustomElement {
             }
             Scheduler.get().scheduleDeferred(() -> select(selects[0]));
         }, 1000);
-        return this;
     }
     private void select(ButtonElementBuilder.TextButtonElementBuilder item) {
         cursor = item;

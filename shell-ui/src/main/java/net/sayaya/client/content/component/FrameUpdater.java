@@ -40,10 +40,13 @@ public class FrameUpdater {
         tag = createHtmlElement(page.tag, HTMLElement.class);
         next.appendChild(tag);
         parent.appendChild(next);
-        draw(tag);
+        attach(tag);
         update(page.uri);
         Scheduler.get().scheduleDeferred(()->fadeIn(next));
-        DomGlobal.setTimeout(a -> old.remove(), 100);
+        DomGlobal.setTimeout(a -> {
+            old.remove();
+            detach(old);
+        }, 100);
     }
     private void update(String url) {
         if(url!=null && url.contains("#")) {
@@ -51,8 +54,11 @@ public class FrameUpdater {
             onHashChange(tag, hash);
         }
     }
-    public static native void draw(Element elem) /*-{
-        try { elem.draw(); } catch(e) {}
+    public static native void attach(Element elem) /*-{
+        try { elem.attach(null); } catch(e) {}
+    }-*/;
+    public static native void detach(Element elem) /*-{
+        try { elem.detach(null); } catch(e) {}
     }-*/;
     public static native void onHashChange(Element elem, String hash) /*-{
         try { elem.onHashChange(hash); } catch(e) {}

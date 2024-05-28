@@ -1,5 +1,6 @@
 package net.sayaya.client.dom;
 
+import elemental2.dom.MutationRecord;
 import elemental2.dom.ShadowRootInit;
 import jsinterop.annotations.JsType;
 import net.sayaya.client.PostComponent;
@@ -18,7 +19,7 @@ public class PostListSceneElement extends CustomElement implements IsFrame {
     }
     private PostListScene scene;
     @Override
-    public void draw() {
+    public void attach(MutationRecord mutationRecord) {
 
     }
     @Override

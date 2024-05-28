@@ -2,6 +2,7 @@ package net.sayaya.client.dom;
 
 import elemental2.dom.HTMLLinkElement;
 import elemental2.dom.HTMLSlotElement;
+import elemental2.dom.MutationRecord;
 import elemental2.dom.ShadowRootInit;
 import jsinterop.annotations.JsType;
 import net.sayaya.client.DaggerLoginComponent;
@@ -20,8 +21,10 @@ public class LoginSceneElement extends CustomElement implements IsFrame {
         );
     }
     @Override
-    public void draw() {
-        this.append(DaggerLoginComponent.create().login().element().attached());
+    public void attach(MutationRecord mutationRecord) {
+        var elem = DaggerLoginComponent.create().login().element();
+        this.append(elem);
+        elem.attach(mutationRecord);
     }
     @Override
     public void onHashChange(String hash) {

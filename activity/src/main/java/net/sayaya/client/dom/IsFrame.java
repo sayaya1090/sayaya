@@ -1,6 +1,7 @@
 package net.sayaya.client.dom;
 
-public interface IsFrame {
-   void draw();
+import org.jboss.elemento.Attachable;
+
+public interface IsFrame extends Attachable {
    void onHashChange(String hash);
 }
