@@ -41,6 +41,7 @@ public class LoginElement extends CustomElement implements Attachable {
     public static void initialize(LoginElement instance) {
         var options = ShadowRootInit.create();
         options.setMode("open");
+        options.setDelegatesFocus(true);
         var shadowRoot = instance.attachShadow(options);
         instance.div= div().id("console").css("console");
         shadowRoot.append(
@@ -50,10 +51,16 @@ public class LoginElement extends CustomElement implements Attachable {
                 htmlElement("link", HTMLLinkElement.class).attr("rel", "stylesheet").attr("href", "css/brands.min.css").element(),
                 instance.div.style("height: 100%; display: flex;").add(htmlElement("slot", HTMLSlotElement.class)).element()
         );
-        instance.btnLoginGithub = button().text().css("button").add("GITHUB").icon(icon().css("fa-brands", "fa-github"));
-        instance.btnLoginGoogle = button().text().css("button").add("GOOGLE").icon(icon().css("fa-brands", "fa-google"));
         instance.beep = audio().attr("src", "wav/beep.mp3").element();
         instance.start = audio().attr("src", "wav/start.mp3").element();
+        instance.btnLoginGithub = button().text().id("github").css("button").add("GITHUB").icon(icon().css("fa-brands", "fa-github"));
+        instance.btnLoginGoogle = button().text().id("google").css("button").add("GOOGLE").icon(icon().css("fa-brands", "fa-google")).style("margin-bottom: 1rem;");
+        instance.btnLoginGithub.onClick(evt -> instance.login("github"));
+        instance.btnLoginGoogle.onClick(evt -> instance.login("google"));
+        instance.onclick = evt->{
+            instance.select(instance.cursor);
+            return null;
+        };
     }
     public LoginElement console(ConsoleElement console) {
         this.console = console;
@@ -64,11 +71,8 @@ public class LoginElement extends CustomElement implements Attachable {
     public void attach(MutationRecord mutationRecord) {
         selects = new ButtonElementBuilder.TextButtonElementBuilder[]{ btnLoginGithub, btnLoginGoogle };
         addEventListener(EventType.click.name, evt->cursor.element().focus());
-        Scheduler.get().scheduleDeferred(() -> {
-            console.style.height = CSSProperties.HeightUnionType.of("22.5rem");
-            btnLoginGithub.onClick(evt -> login("github"));
-            btnLoginGoogle.onClick(evt -> login("google"));
-        });
+        Scheduler.get().scheduleDeferred(() -> console.style.height = CSSProperties.HeightUnionType.of("20rem"));
+        console.clear();
         console.type(" \nWelcome to\n ", false);
         DomGlobal.setTimeout(arg2 -> {
             console.print(WELCOME, true);
@@ -90,17 +94,18 @@ public class LoginElement extends CustomElement implements Attachable {
                         }
                     }
                 });
-                selects[i].onClick(evt->{       // 마우스로 클릭 시 커서 이동
-                    select(selects[idx]);
+                selects[i].onClick(evt->{
+                    select(selects[idx]);      // 마우스로 클릭 시 커서 이동
                     replay(start);
                 });
             }
-            Scheduler.get().scheduleDeferred(() -> select(selects[0]));
+            Scheduler.get().scheduleDeferred(()->select(selects[0]));
         }, 1000);
     }
     private void select(ButtonElementBuilder.TextButtonElementBuilder item) {
         cursor = item;
         cursor.element().focus();
+        try { cursor.element().shadowRoot.querySelector("md-focus-ring").setAttribute("visible", "true"); } catch(Exception ignore) {}
     }
     private void replay(HTMLAudioElement audio) {
         audio.pause();
@@ -108,7 +113,7 @@ public class LoginElement extends CustomElement implements Attachable {
         audio.play();
     }
     private void login(String provider) {
-        console.style.height = CSSProperties.HeightUnionType.of("36rem");
+        console.style.height = CSSProperties.HeightUnionType.of("30rem");
         console.style.transitionDuration = "100ms";
         clear();
         for(var i: selects) i.element().disabled = true;

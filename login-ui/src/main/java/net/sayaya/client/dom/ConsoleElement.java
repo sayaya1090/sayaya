@@ -68,6 +68,10 @@ public class ConsoleElement extends CustomElement {
     public void close() {
         if(last!=null) last.close();
     }
+    public void clear() {
+        div.element().innerHTML = "";
+        innerHTML = "";
+    }
     public static final class Line implements IsElement<HTMLDivElement> {
         public static Line type(String text, Supplier<Void> onComplete) {
             var line = new Line();

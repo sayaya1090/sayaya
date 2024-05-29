@@ -23,7 +23,7 @@
     width: fit-content;
     min-width: 1rem;
     animation: blink-caret 1s step-end infinite;
-    line-height: 1.2rem;
+    line-height: 1rem;
     margin: 0.1rem;
     border-right-color: var(--md-sys-color-on-background);
     color: var(--md-sys-color-on-background);
