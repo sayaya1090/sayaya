@@ -1,0 +1,26 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: builder-{{ .Release.Namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: builder
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: builder-volumesnapshots-role-{{ .Release.Namespace }}
+
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: builder-volumesnapshots-role-{{ .Release.Namespace }}
+rules:
+  - verbs:
+      - '*'
+    apiGroups:
+      - snapshot.storage.k8s.io
+    resources:
+      - volumesnapshots

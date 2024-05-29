@@ -33,30 +33,6 @@ spec:
                     volumeMounts:
                       - name: dind-externals
                         mountPath: /home/runner/tmpDir
-                  - name: init-cache
-                    image: image-registry.openshift-image-registry.svc:5000/{{ .Release.Namespace }}/actions-runner:latest
-                    securityContext:
-                      runAsUser: 1000
-                      privileged: true
-                    command:
-                      - /bin/sh
-                      - -c
-                      - |
-                        rsync -a /home/runner/cache/_work /home/runner/ || true
-                        rsync -a /home/runner/cache/gradle-installations/installs /home/runner/gradle-installations/ || true
-                        rsync -a /home/runner/cache/.gradle /home/runner/ || true
-                        rsync -a /home/runner/cache/docker/fuse-overlayfs /var/lib/docker/ || true
-                    volumeMounts:
-                      - name: cache
-                        mountPath: /home/runner/cache
-                      - name: work
-                        mountPath: /home/runner/_work
-                      - name: gradle-installation
-                        mountPath: /home/runner/gradle-installations/installs
-                      - name: gradle
-                        mountPath: /home/runner/.gradle
-                      - name: docker
-                        mountPath: /var/lib/docker/fuse-overlayfs
                 containers:
                   - name: runner
                     image: image-registry.openshift-image-registry.svc:5000/{{ .Release.Namespace }}/actions-runner:latest
@@ -72,23 +48,19 @@ spec:
                       - name: DOCKER_HOST
                         value: unix:///var/run/docker.sock
                     volumeMounts:
-                      - name: work
+                      - name: cache
+                        subPath: _work
                         mountPath: /home/runner/_work
-                      - name: gradle-installation
-                        mountPath: /home/runner/gradle-installations/installs
-                      - name: gradle
+                      - name: cache
+                        subPath: .gradle
                         mountPath: /home/runner/.gradle
+                      - name: cache
+                        subPath: gradle-installations/installs
+                        mountPath: /home/runner/gradle-installations/installs
                       - name: dind-sock
                         mountPath: /var/run
                       - name: cache
                         mountPath: /home/runner/cache
-                    lifecycle:
-                      preStop:
-                        exec:
-                          command:
-                            - rsync -a --exclude=_temp/* ~/_work ~/cache/ || true &&
-                            - rsync -a ~/gradle-installations/installs ~/cache/gradle-installations/ || true &&
-                            - rsync -a ~/.gradle ~/cache/ || true
                   - name: dind
                     image: image-registry.openshift-image-registry.svc:5000/{{ .Release.Namespace }}/docker:dind
                     args: [ "dockerd", "--host=unix:///var/run/docker.sock", "--group=$(DOCKER_GROUP_GID)" ]
@@ -98,9 +70,11 @@ spec:
                     securityContext:
                       privileged: true
                     volumeMounts:
-                      - name: work
+                      - name: cache
+                        subPath: _work
                         mountPath: /home/runner/_work
-                      - name: docker
+                      - name: cache
+                        subPath: fuse-overlayfs
                         mountPath: /var/lib/docker/fuse-overlayfs
                       - name: dind-sock
                         mountPath: /var/run
@@ -110,16 +84,7 @@ spec:
                         mountPath: /etc/docker/daemon.json
                         subPath: daemon.json
                         readOnly: true
-                      - name: cache
-                        mountPath: /home/runner/cache
-                    lifecycle:
-                      preStop:
-                        exec:
-                          command:
-                            - rsync -a /var/lib/docker/fuse-overlayfs /home/runner/cache/docker || true
                 volumes:
-                  - name: work
-                    emptyDir: { }
                   - name: dind-sock
                     emptyDir: { }
                   - name: dind-externals
@@ -127,15 +92,20 @@ spec:
                   - name: daemon-json
                     configMap:
                       name: docker-daemon-config
-                  - name: gradle-installation
-                    emptyDir: { }
-                  - name: gradle
-                    emptyDir: { }
-                  - name: docker
-                    emptyDir: { }
                   - name: cache
-                    persistentVolumeClaim:
-                      claimName: runner-cache
+                    ephemeral:
+                      volumeClaimTemplate:
+                        spec:
+                          accessModes:
+                            - ReadWriteOnce
+                          storageClassName: ocs-storagecluster-ceph-rbd
+                          dataSource:
+                            name: runner-cache-snapshot
+                            kind: VolumeSnapshot
+                            apiGroup: snapshot.storage.k8s.io
+                          resources:
+                            requests:
+                              storage: 5Gi
             controllerServiceAccount:
               namespace: {{ .Release.Namespace }}
               name: arc
