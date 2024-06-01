@@ -12,4 +12,5 @@ public final class Post {
     public String title;
     public String markdown;
     public String html;
+    public Image[] images;
 }

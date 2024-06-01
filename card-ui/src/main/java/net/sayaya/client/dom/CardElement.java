@@ -53,6 +53,9 @@ public class CardElement extends CustomElement {
         container.element().classList.remove("hide");
         return this;
     }
+    public boolean hasAttribute(String attr) {
+        return container.element().hasAttribute(attr);
+    }
     private String toLocalDate() {
         JsDate jsDate = new JsDate();
         return jsDate.toLocaleDateString();
