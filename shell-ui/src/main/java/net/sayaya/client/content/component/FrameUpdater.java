@@ -1,10 +1,8 @@
 package net.sayaya.client.content.component;
 
 import com.google.gwt.core.client.Scheduler;
-import elemental2.dom.CSSProperties;
-import elemental2.dom.DomGlobal;
-import elemental2.dom.Element;
-import elemental2.dom.HTMLElement;
+import elemental2.dom.*;
+import net.sayaya.client.content.dom.IsFrame;
 import net.sayaya.client.data.Page;
 import net.sayaya.rx.subject.BehaviorSubject;
 
@@ -40,29 +38,20 @@ public class FrameUpdater {
         tag = createHtmlElement(page.tag, HTMLElement.class);
         next.appendChild(tag);
         parent.appendChild(next);
-        attach(tag);
+        IsFrame.attach(tag);
         update(page.uri);
         Scheduler.get().scheduleDeferred(()->fadeIn(next));
         DomGlobal.setTimeout(a -> {
             old.remove();
-            detach(old);
+            IsFrame.detach(tag);
         }, 100);
     }
     private void update(String url) {
         if(url!=null && url.contains("#")) {
             var hash = url.substring(url.indexOf("#")+1);
-            onHashChange(tag, hash);
+            IsFrame.onHashChange(tag, hash);
         }
     }
-    public static native void attach(Element elem) /*-{
-        try { elem.attach(null); } catch(e) {}
-    }-*/;
-    public static native void detach(Element elem) /*-{
-        try { elem.detach(null); } catch(e) {}
-    }-*/;
-    public static native void onHashChange(Element elem, String hash) /*-{
-        try { elem.onHashChange(hash); } catch(e) {}
-    }-*/;
     private static void fadeOut(HTMLElement elem) {
         elem.classList.add("frame-out");
     }

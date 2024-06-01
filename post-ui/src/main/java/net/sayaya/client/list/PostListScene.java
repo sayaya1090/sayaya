@@ -7,6 +7,7 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.ViewCSS;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
 import net.sayaya.client.data.CatalogItem;
 import net.sayaya.client.util.Debounce;
@@ -23,8 +24,6 @@ import javax.inject.Singleton;
 
 import java.util.stream.IntStream;
 
-import static elemental2.dom.DomGlobal.requestAnimationFrame;
-import static net.sayaya.client.util.Debounce.debounce;
 import static net.sayaya.ui.elements.IconElementBuilder.icon;
 import static net.sayaya.ui.elements.SelectElementBuilder.select;
 import static net.sayaya.ui.elements.TextFieldElementBuilder.textField;
@@ -80,7 +79,7 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
                                 "You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."))
                 .toArray(CatalogItem[]::new));
     }
-
+    @JsType(isNative=true)
     private interface CardContainer {
         @JsMethod void add(CatalogItem[] items);
     }
