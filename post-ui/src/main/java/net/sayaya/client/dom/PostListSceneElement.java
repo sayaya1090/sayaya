@@ -8,11 +8,11 @@ import net.sayaya.client.list.PostListScene;
 
 @JsType
 public class PostListSceneElement extends CustomElement implements IsFrame {
-    public static void initialize(PostListSceneElement instance, PostComponent components) {
+    public static void initialize(PostListSceneElement instance, PostListScene scene) {
         var options = ShadowRootInit.create();
         options.setMode("open");
         var shadowRoot = instance.attachShadow(options);
-        instance.scene = components.postListScene();
+        instance.scene = scene;
         shadowRoot.append(
                 instance.scene.element()
         );

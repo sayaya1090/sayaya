@@ -8,6 +8,7 @@ dependencies {
     implementation(project(":activity"))
     implementation(project(":post-data"))
     implementation(project(":card-ui"))
+    implementation(project(":marked"))
     implementation(libs.bundles.sayaya.web)
     compileOnly(libs.gwt.dev)
     annotationProcessor(libs.lombok)
@@ -44,7 +45,7 @@ tasks {
     }
     gwtTest {
         dependsOn("compileTestJava")
-        modules = listOf("net.sayaya.PostListTest")
+        modules = listOf("net.sayaya.PostListTest", "net.sayaya.PostEditTest")
         launcherDir = file("src/test/webapp")
         webserverPort = 8080
         port = 8081

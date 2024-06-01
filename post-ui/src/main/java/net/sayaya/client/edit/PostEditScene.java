@@ -10,7 +10,7 @@ import static org.jboss.elemento.Elements.div;
 
 @Singleton
 public class PostEditScene extends HTMLContainerBuilder<HTMLDivElement> {
-    @Inject public PostEditScene() {
-        super(div().add("Hello").element());
+    @Inject public PostEditScene(TitleElement title) {
+        super(div().add(title).element());
     }
 }

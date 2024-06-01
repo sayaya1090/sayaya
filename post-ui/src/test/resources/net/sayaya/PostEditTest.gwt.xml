@@ -3,9 +3,8 @@
     <inherits name="net.sayaya.UI"/>
     <inherits name="net.sayaya.Rx"/>
     <inherits name="net.sayaya.Activity"/>
-    <inherits name="net.sayaya.Marked"/>
     <inherits name="dagger.Dagger" />
     <source path="client"/>
-    <entry-point class="net.sayaya.client.Post"/>
+    <entry-point class="net.sayaya.client.edit.PostEditTest"/>
     <collapse-all-properties/>
 </module>

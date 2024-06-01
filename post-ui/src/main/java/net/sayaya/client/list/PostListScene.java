@@ -5,10 +5,10 @@ import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.ViewCSS;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsMethod;
 import jsinterop.base.Js;
 import net.sayaya.client.data.CatalogItem;
-import net.sayaya.client.dom.ContainerBuilder;
-import net.sayaya.client.dom.CustomElement;
 import net.sayaya.client.util.Debounce;
 import net.sayaya.rx.subject.BehaviorSubject;
 import net.sayaya.ui.elements.MenuElementBuilder;
@@ -42,10 +42,10 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
             .option().value("true").headline("Asc").end()
             .option().value("false").headline("Desc").end()
             .required(true);
-    private final ContainerBuilder<CustomElement> container;
+    private final HTMLContainerBuilder<HTMLElement> container;
     private final MenuElementBuilder.TopMenuElementBuilder menu = MenuElementBuilder.menu().positioning(MenuElementBuilder.Position.Fixed);
     @Inject public PostListScene(
-            ContainerBuilder<CustomElement> container,
+            HTMLContainerBuilder<HTMLElement> container,
             @Named("sort-by") BehaviorSubject<String> sortBy,
             @Named("sort") BehaviorSubject<String> sort) {
         super(div().element());
@@ -71,32 +71,17 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
                 .item().start(icon().css("fa-sharp", "fa-light", "fa-chart-line").style("font-size: 1rem;")).headline("Statistics").on(EventType.click, evt->{
                     evt.preventDefault();
                 }).end();
-       // allocate();
-        //DomGlobal.window.addEventListener(EventType.resize.name, evt->allocate());
 
-        k(container.element(),
-                IntStream.range(0, 30).mapToObj(i->new CatalogItem().title("천하무적 이런 건 못 참지")
-                                .tags(new String[] {"webflux", "kotlin", "spring"}).author("아인슈타인")
-                                .description("고1 봄, 친구들과 매점을 가는 중이었는데 목련나무 앞에서 처음 본 여자 선생님이 \"지금 떨어지는 목련이 참 예쁘고, 너희도 참 예쁘다. 내가 너희를 사진 찍어줘도 될까?"))
-                        .toArray(CatalogItem[]::new)
-        );
+        CardContainer cast = Js.uncheckedCast(container.element());
+        cast.add(IntStream.range(0, 30).mapToObj(i->new CatalogItem().title("실행 중 'compileTestJava'...")
+                        .tags(new String[] {"webflux", "kotlin", "spring"}).author("아인슈타인")
+                        .description("Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n" +
+                                "\n" +
+                                "You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."))
+                .toArray(CatalogItem[]::new));
     }
-    private static native void k(HTMLElement e, CatalogItem[] items) /*-{ e.add(items); }-*/;
-    private static final double REM = Global.parseFloat(Js.<ViewCSS>cast(DomGlobal.window).getComputedStyle(DomGlobal.document.documentElement).fontSize);
-    private static final double TRACK_WIDTH_MIN = 15*REM;
-    private final Debounce allocate = debounce(() -> {
-        /*var clientWidth = container.element().clientWidth;
-        var trackCnt = (int)(clientWidth/TRACK_WIDTH_MIN);
-        var trackWidth = TRACK_WIDTH_MIN+(clientWidth-trackCnt*TRACK_WIDTH_MIN)/trackCnt;
 
-
-        container.element().innerHTML = "";
-        for(int i = 0; i < trackCnt; ++i) {
-            var track = div();
-
-        }*/
-    }, 300);
-    private void allocate() {
-        requestAnimationFrame(evt-> allocate.run());
+    private interface CardContainer {
+        @JsMethod void add(CatalogItem[] items);
     }
 }
