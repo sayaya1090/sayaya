@@ -105,7 +105,7 @@ spec:
                             apiGroup: snapshot.storage.k8s.io
                           resources:
                             requests:
-                              storage: 5Gi
+                              storage: 6Gi
             controllerServiceAccount:
               namespace: {{ .Release.Namespace }}
               name: arc
