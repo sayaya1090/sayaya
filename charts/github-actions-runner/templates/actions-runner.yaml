@@ -42,26 +42,23 @@ spec:
       curl -L -o runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${ARCH}-${RUNNER_VERSION}.tar.gz && \
       tar xzf ./runner.tar.gz && rm runner.tar.gz && \
       ./bin/installdependencies.sh && \
-      dnf clean all
 
       # Install container hooks
-      RUN dnf install -y unzip && \
+      dnf install -y unzip && \
       curl -f -L -o runner-container-hooks.zip https://github.com/actions/runner-container-hooks/releases/download/v${RUNNER_CONTAINER_HOOKS_VERSION}/actions-runner-hooks-k8s-${RUNNER_CONTAINER_HOOKS_VERSION}.zip && \
       unzip ./runner-container-hooks.zip -d ./k8s && \
       rm runner-container-hooks.zip && \
-      dnf clean all
 
       # Install docker
-      RUN dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
+      dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
       groupadd -r -g $DOCKER_UID docker && \
       useradd -r -u $DOCKER_UID -g $DOCKER_UID docker && \
       dnf install -y docker-ce fuse-overlayfs && \
       systemctl enable docker && \
       usermod -aG docker $USERNAME && \
-      dnf clean all
 
       # Install software
-      RUN dnf update -y && \
+      dnf update -y && \
       dnf install dnf-plugins-core -y && \
       dnf install -y git jq krb5-libs libicu libyaml-devel lttng-ust zsh net-tools openssl-libs wget rsync && \
 
@@ -71,7 +68,6 @@ spec:
       # Install the `gh` cli
       dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo && \
       dnf install -y gh && \
-      dnf clean all && \
 
       # Install the `oc` cli
       curl "https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz" -o "oc.tar.gz" && \
@@ -95,11 +91,17 @@ spec:
       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
       unzip awscliv2.zip && \
       rm awscliv2.zip && \
-      ./aws/install
+      ./aws/install && \
+
+      # Setup default locale to KoKr
+      dnf install -y https://dl.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/g/glibc-langpack-ko-2.34-100.el9_4.2.x86_64.rpm && \
+      dnf clean all && \
 
       # Set the working directory
-      RUN chown -R $USERNAME:$UID $WORKDIR
+      chown -R $USERNAME:$UID $WORKDIR
       USER $USERNAME
+
+      ENV LANG='ko_KR.UTF-8' LANGUAGE='ko_KR;ko' LC_ALL='ko_KR.UTF-8'
 
       CMD ["./run.sh"]
   strategy:
