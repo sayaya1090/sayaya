@@ -7,6 +7,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.5" apply false
     id("com.google.cloud.tools.jib") version "3.4.2" apply false
     id("net.sayaya.gwt") version "1.1.30" apply false
+    id("com.adarshr.test-logger") version "4.0.0" apply false
 }
 java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = JavaVersion.VERSION_21
