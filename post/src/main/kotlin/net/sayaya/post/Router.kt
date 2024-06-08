@@ -12,9 +12,9 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
 import reactor.core.publisher.Mono
 
-@Configuration
+@Configuration("net.sayaya.post.Router")
 class Router {
-    @Bean("net.sayaya.menu.Router.route")
+    @Bean("net.sayaya.post.Router.route")
     fun route() = router {
         GET ("/menu", ::findMenu)
     }

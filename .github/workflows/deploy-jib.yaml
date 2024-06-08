@@ -50,6 +50,13 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       SUBMODULE: ${{ matrix.SUBMODULE }}
+
+      _GITHUB_URL: ${{ vars._GITHUB_URL }}
+      _GITHUB_TEST_REPOSITORY: ${{ vars._GITHUB_TEST_REPOSITORY }}
+      _GITHUB_TEST_BRANCH: ${{ vars._GITHUB_TEST_BRANCH }}
+      _GITHUB_APP_ID: ${{ secrets._GITHUB_APP_ID }}
+      _GITHUB_INSTALL_ID: ${{ secrets._GITHUB_INSTALL_ID }}
+      _GITHUB_PRIVATE_KEY: ${{ secrets._GITHUB_PRIVATE_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
