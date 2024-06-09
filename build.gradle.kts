@@ -3,9 +3,9 @@ plugins {
     kotlin("jvm") version "2.0.0" apply false
     kotlin("kapt") version "2.0.0" apply false
     kotlin("plugin.spring") version "2.0.0" apply false
-    id("org.springframework.boot") version "3.2.5" apply false
+    id("org.springframework.boot") version "3.3.0" apply false
     id("io.spring.dependency-management") version "1.1.5" apply false
-    id("com.google.cloud.tools.jib") version "3.4.2" apply false
+    id("com.google.cloud.tools.jib") version "3.4.3" apply false
     id("net.sayaya.gwt") version "1.1.30" apply false
     id("com.adarshr.test-logger") version "4.0.0" apply false
 }

@@ -38,7 +38,7 @@ dependencyResolutionManagement {
             library("r2dbc-postgres", "org.postgresql", "r2dbc-postgresql").withoutVersion()
             bundle("r2dbc-postgres", listOf("r2dbc", "r2dbc-postgres"))
 
-            library("spring-cloud-bom", "org.springframework.cloud", "spring-cloud-dependencies").version { require("2023.0.1") }
+            library("spring-cloud-bom", "org.springframework.cloud", "spring-cloud-dependencies").version { require("2023.0.2") }
             library("spring-kubernetes-client", "org.springframework.cloud", "spring-cloud-starter-kubernetes-fabric8").withoutVersion()
             library("spring-kubernetes-config", "org.springframework.cloud", "spring-cloud-starter-kubernetes-fabric8-config").withoutVersion()
             bundle("spring-client", listOf("spring-log4j2", "spring-security"))
@@ -55,15 +55,15 @@ dependencyResolutionManagement {
             library("dagger-compiler", "com.google.dagger", "dagger-compiler").version { require("2.51.1") }
 
             library("sayaya-ui", "net.sayaya", "ui").version { require("material3-1.5.0") }
-            library("sayaya-rx", "net.sayaya", "rx").version { require("1.6") }
+            library("sayaya-rx", "net.sayaya", "rx").version { require("1.7") }
             library("sayaya-test", "net.sayaya", "gwt-test").version { require("1.1") }
             library("lombok", "org.projectlombok", "lombok").version { require("1.18.32") }
             bundle("sayaya-web", listOf("elemento-core", "elemental2-svg", "gwt-user", "dagger-gwt", "dagger-compiler", "sayaya-ui", "sayaya-rx", "lombok"))
 
             library("reactor-test", "io.projectreactor", "reactor-test").withoutVersion()
-            library("kotest-runner", "io.kotest", "kotest-runner-junit5").version { require("5.9.0") }
+            library("kotest-runner", "io.kotest", "kotest-runner-junit5").version { require("5.9.1") }
             library("mockk", "io.mockk", "mockk").version { require("1.13.11") }
-            library("kotest-extensions-spring", "io.kotest.extensions", "kotest-extensions-spring").version { require("1.1.3") }
+            library("kotest-extensions-spring", "io.kotest.extensions", "kotest-extensions-spring").version { require("1.3.0") }
             library("kotest-extensions-testcontainers", "io.kotest.extensions", "kotest-extensions-testcontainers").version { require("2.0.2") }
             library("selenium", "org.seleniumhq.selenium", "selenium-java").version { require("4.21.0") }
             library("spring-boot-test", "org.springframework.boot", "spring-boot-starter-test").withoutVersion()
