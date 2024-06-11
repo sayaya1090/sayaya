@@ -22,14 +22,15 @@ import static org.jboss.elemento.Elements.*;
 public class GithubSettingsElement implements IsElement<HTMLElement> {
     @Delegate private final HTMLContainerBuilder<HTMLDivElement> div = div().id("github-settings").style("display: flex;align-items: center;");
     private final HTMLContainerBuilder<HTMLLabelElement> lblDestination = label();
-    private final IconElementBuilder icnConfig = icon();
-    private final PlainIconButtonElementBuilder btnConfig = button().icon().add(icnConfig);
+    private final PlainIconButtonElementBuilder btnConfig = button().icon();
     @Inject GithubSettingsElement(BehaviorSubject<GithubRepositoryConfig> repository, GithubSettingsDialog dialog) {
         div.add(lblDestination).add(btnConfig).add(dialog);
         btnConfig.onClick(evt-> dialog.open());
         repository.subscribe(this::update);
     }
     private void update(GithubRepositoryConfig config) {
+        btnConfig.element().innerHTML = "";
+        IconElementBuilder icnConfig = icon();
         if(config==null || !config.isValid()) {
             lblDestination.textContent("No repository assigned");
             div.element().style.color = "var(--md-sys-color-error)";
@@ -42,5 +43,6 @@ public class GithubSettingsElement implements IsElement<HTMLElement> {
             icnConfig.css("fa-sharp", "fa-light", "fa-check");
             icnConfig.element().style.color = "var(--md-sys-color-safe)";
         }
+        btnConfig.add(icnConfig);
     }
 }

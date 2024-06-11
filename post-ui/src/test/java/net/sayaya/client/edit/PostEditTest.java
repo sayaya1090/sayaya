@@ -1,6 +1,7 @@
 package net.sayaya.client.edit;
 
 import com.google.gwt.core.client.EntryPoint;
+import elemental2.dom.DomGlobal;
 import net.sayaya.client.data.GithubRepositoryConfig;
 import net.sayaya.client.data.Post;
 import net.sayaya.client.dom.CustomElements;
@@ -27,10 +28,14 @@ public class PostEditTest implements EntryPoint {
         post.next(new Post().title("Title"));
 
         var btnSetupGithubRepoConfig = button().text().add("Set Github Repo Config").id("setup-github-repo-config");
-        btnSetupGithubRepoConfig.onClick(evt->components.githubAppConfig().next(new GithubRepositoryConfig().repo("repo").branch("branch").owner("user").auth(true)));
+        var q = components.githubRepoConfig();
+        btnSetupGithubRepoConfig.onClick(evt->{
+            DomGlobal.console.log(q);
+            q.next(new GithubRepositoryConfig().repo("Repo1").branch("branch1").owner("user").auth(true));
+        });
         body().add(btnSetupGithubRepoConfig);
         var btnClearGithubRepoConfig = button().text().add("Clear Github Repo Config").id("clear-github-repo-config");
-        btnClearGithubRepoConfig.onClick(evt->components.githubAppConfig().next(new GithubRepositoryConfig()));
+        btnClearGithubRepoConfig.onClick(evt->q.next(new GithubRepositoryConfig()));
         body().add(btnClearGithubRepoConfig);
 
         var json = input(InputType.textarea).id("post-json").style("position:absolute; z-index:999999;");

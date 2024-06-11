@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":vault"))
     implementation(project(":authentication"))
     implementation(project(":activity"))
+    implementation(project(":post-data"))
     implementation(libs.bundles.spring.client)
     implementation(libs.kotlin.jackson)
     implementation(libs.bundles.kotlin.webflux)

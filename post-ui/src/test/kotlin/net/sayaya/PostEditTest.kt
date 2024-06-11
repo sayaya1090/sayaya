@@ -477,7 +477,7 @@ class PostEditTest: GwtSpec({
         When("Github Repo 설정이 주어지면") {
             body.findElement(By.id("setup-github-repo-config")).click()
             Then("주어진 Repo 값이 출력된다") {
-                controller.findElement(By.id("github-settings")).text shouldContain "user/repo:branch"
+                controller.findElement(By.id("github-settings")).text shouldContain "user/Repo1:branch"
                 controller.findElement(By.id("github-settings")).getCssValue("color").color() shouldBeEqual document.getCssVariable("--md-sys-color-safe").color()
             }
         }

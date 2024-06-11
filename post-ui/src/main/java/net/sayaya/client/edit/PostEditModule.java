@@ -2,6 +2,7 @@ package net.sayaya.client.edit;
 
 import dagger.Provides;
 import dagger.multibindings.ElementsIntoSet;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import net.sayaya.client.api.GithubApi;
 import net.sayaya.client.data.*;
@@ -115,7 +116,15 @@ public class PostEditModule {
         return behavior(new LinkedList<>());
     }
     @Provides @Singleton static BehaviorSubject<GithubRepositoryConfig> repoConfig(GithubApi api) {
-        return behavior(null);
+        BehaviorSubject<GithubRepositoryConfig> repoConfig = behavior(null);
+        api.findGithubRepositoryConfig().then(repo->{
+            repoConfig.next(repo);
+            return null;
+        }).catch_(err->{
+            repoConfig.next(null);
+            return null;
+        });
+        return repoConfig;
     }
     @Provides @Singleton static BehaviorSubject<Commit> commit(BehaviorSubject<GithubRepositoryConfig> repo) {
         var behavior = behavior((Commit)null);

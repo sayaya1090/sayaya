@@ -14,5 +14,5 @@ public interface PostEditComponent {
     BehaviorSubject<Post> post();
     @Named("title") BehaviorSubject<String> title();
     @Named("markdown") BehaviorSubject<String> markdown();
-    BehaviorSubject<GithubRepositoryConfig> githubAppConfig();
+    BehaviorSubject<GithubRepositoryConfig> githubRepoConfig();
 }
