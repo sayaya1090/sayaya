@@ -7,6 +7,7 @@ import net.sayaya.client.data.GithubAppConfig;
 import net.sayaya.client.data.GithubConfigRequest;
 import net.sayaya.client.data.GithubRepositoryConfig;
 import net.sayaya.client.util.Debounce;
+import net.sayaya.client.util.Throttle;
 import net.sayaya.rx.subject.BehaviorSubject;
 import net.sayaya.ui.dom.MdDialogElement;
 import net.sayaya.ui.elements.ButtonElementBuilder.TextButtonElementBuilder;
@@ -24,6 +25,7 @@ import javax.inject.Singleton;
 import java.util.List;
 
 import static net.sayaya.client.util.Debounce.debounce;
+import static net.sayaya.client.util.Throttle.throttle;
 import static net.sayaya.rx.subject.BehaviorSubject.behavior;
 import static net.sayaya.ui.elements.ButtonElementBuilder.button;
 import static net.sayaya.ui.elements.DialogElementBuilder.dialog;
@@ -68,7 +70,7 @@ public class GithubSettingsDialog implements IsElement<MdDialogElement> {
                 .actions(form().add(btnCancel).add(btnApply));
         initialize();
     }
-    private final Debounce requestRepoBranch = debounce(this::updateRepoBranch, 300);
+    private final Throttle requestRepoBranch = throttle(this::updateRepoBranch, 300);
     private void initialize() {
         repoConfig.subscribe(evt->requestRepoBranch.run());
         iptAppId.onChange(evt->appConfig.next(appConfig.getValue().appId(iptAppId.value())));
