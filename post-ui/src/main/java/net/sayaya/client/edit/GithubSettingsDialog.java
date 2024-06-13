@@ -6,7 +6,6 @@ import net.sayaya.client.api.GithubApi;
 import net.sayaya.client.data.GithubAppConfig;
 import net.sayaya.client.data.GithubConfigRequest;
 import net.sayaya.client.data.GithubRepositoryConfig;
-import net.sayaya.client.util.Debounce;
 import net.sayaya.client.util.Throttle;
 import net.sayaya.rx.subject.BehaviorSubject;
 import net.sayaya.ui.dom.MdDialogElement;
@@ -15,7 +14,6 @@ import net.sayaya.ui.elements.DialogElementBuilder;
 import net.sayaya.ui.elements.ProgressElementBuilder.LinearProgressElementBuilder;
 import net.sayaya.ui.elements.SelectElementBuilder.OutlinedSelectElementBuilder;
 import net.sayaya.ui.elements.TextFieldElementBuilder.OutlinedTextFieldElementBuilder;
-import elemental2.dom.DomGlobal;
 import org.jboss.elemento.InputType;
 import org.jboss.elemento.IsElement;
 
@@ -24,7 +22,6 @@ import javax.inject.Singleton;
 
 import java.util.List;
 
-import static net.sayaya.client.util.Debounce.debounce;
 import static net.sayaya.client.util.Throttle.throttle;
 import static net.sayaya.rx.subject.BehaviorSubject.behavior;
 import static net.sayaya.ui.elements.ButtonElementBuilder.button;
@@ -38,7 +35,7 @@ import static org.jboss.elemento.Elements.form;
 
 @Singleton
 public class GithubSettingsDialog implements IsElement<MdDialogElement> {
-    @Delegate private final DialogElementBuilder dialogSettings = dialog().ariaLabel("GitHub App setting");
+    @Delegate private final DialogElementBuilder dialog = dialog().ariaLabel("GitHub App setting");
     private final LinearProgressElementBuilder progress = progress().linear();
     private final OutlinedTextFieldElementBuilder iptAppId = textField().outlined().label("App ID");
     private final OutlinedTextFieldElementBuilder iptInstallationId = textField().outlined().label("Installation ID");
@@ -58,14 +55,14 @@ public class GithubSettingsDialog implements IsElement<MdDialogElement> {
     @Inject GithubSettingsDialog(BehaviorSubject<GithubRepositoryConfig> repository, GithubApi api) {
         repoConfig = repository;
         this.api = api;
-        dialogSettings.style("max-width: calc(50em + 48px);")
-                .headline("GitHub App Settings")
-                .content(progress.style("width: 100%;--_track-color: transparent; padding: 0px;"))
-                .content(form()
-                        .add(div().style("padding: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;")
+        dialog.style("max-width: calc(50em + 48px);")
+              .headline("GitHub App Settings")
+              .content(progress.style("width: 100%;--_track-color: transparent; padding: 0px;"))
+              .content(form()
+                      .add(div().style("padding: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;")
                                 .add(iptAppId.style("flex-grow: 1;")).add(iptInstallationId.style("flex-grow: 1;")))
-                        .add(iptPrivateKey.style("padding-left: 1rem; padding-right: 1rem; width: -webkit-fill-available; height: 6rem;"))
-                        .add(div().style("padding: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;")
+                      .add(iptPrivateKey.style("padding-left: 1rem; padding-right: 1rem; width: -webkit-fill-available; height: 6rem;"))
+                      .add(div().style("padding: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;")
                                 .add(lblOwner.style("flex-grow: 1;")).add(iptRepository.style("flex-grow: 1;")).add(iptBranch.style("flex-grow: 1;"))))
                 .actions(form().add(btnCancel).add(btnApply));
         initialize();
@@ -83,12 +80,19 @@ public class GithubSettingsDialog implements IsElement<MdDialogElement> {
         iptRepository.onChange(evt->updateBranch(iptRepository.value()));
         btnCancel.onClick(evt->{
             evt.preventDefault();
-            dialogSettings.close();
+            dialog.close();
         });
         btnApply.onClick(evt->{
             evt.preventDefault();
             save();
-            dialogSettings.close();
+            dialog.close();
+        });
+    }
+    public void open() {
+        dialog.open();
+        Scheduler.get().scheduleDeferred(()-> {
+            if(!branches.getValue().isEmpty()) iptBranch.element().focus();
+            else if(!repositories.getValue().isEmpty()) iptRepository.element().focus();
         });
     }
     private void updateRepoList(List<String> repositories) {
@@ -110,6 +114,7 @@ public class GithubSettingsDialog implements IsElement<MdDialogElement> {
         }
     }
     private void updateRepoBranch() {
+        if(isInsufficientConfig()) return;
         progress.indeterminate();
         owner.next(null);
         repositories.next(null);
@@ -135,6 +140,7 @@ public class GithubSettingsDialog implements IsElement<MdDialogElement> {
         });
     }
     private void updateBranch(String repo) {
+        if(isInsufficientConfig()) return;
         progress.indeterminate();
         branches.next(null);
         iptBranch.reset();
@@ -153,6 +159,11 @@ public class GithubSettingsDialog implements IsElement<MdDialogElement> {
         var auth = appConfig.getValue();
         if(auth.appId==null || auth.installationId==null || auth.privateKey==null) return null;
         else return auth;
+    }
+    private boolean isInsufficientConfig() {
+        var auth = appConfig.getValue();
+        if(auth.appId==null && auth.installationId==null && auth.privateKey==null) return false;
+        else return auth.appId == null || auth.installationId == null || auth.privateKey == null;
     }
     private void save() {
         var request = new GithubConfigRequest()

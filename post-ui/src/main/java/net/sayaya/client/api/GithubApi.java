@@ -33,9 +33,6 @@ public class GithubApi {
             return Promise.reject(response.statusText);
         });
     }
-    public Promise<GithubRepositories> findGithubRepository() {
-        return findGithubRepository(null);
-    }
     public Promise<GithubRepositories> findGithubRepository(GithubAppConfig appConfig) {
         RequestInit request = RequestInit.create();
         if(appConfig!=null) {
@@ -51,9 +48,6 @@ public class GithubApi {
             else if(response.status==204)   return Promise.resolve((GithubRepositories)null);
             return Promise.reject(response.statusText);
         });
-    }
-    public Promise<List<String>> findGithubBranch(String owner, String repository) {
-        return findGithubBranch(owner, repository);
     }
     public Promise<List<String>> findGithubBranch(GithubAppConfig appConfig, String owner, String repository) {
         RequestInit request = RequestInit.create();
