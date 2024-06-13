@@ -31,3 +31,4 @@ data:
             enabled: true
     server:
       port: 8080
+      external-url: https://{{ .Values.host }}

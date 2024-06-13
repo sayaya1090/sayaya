@@ -1,4 +1,4 @@
-package net.sayaya.post
+package net.sayaya.menu
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.extensions.spring.SpringExtension

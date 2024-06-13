@@ -94,4 +94,15 @@ class Handler (
             mapNotNull { it.name }
         }
     }
+    fun commit(appConfig: GithubAppConfig, owner: String, repo: String, branch: String, commitMessage: String, files: List<Triple<String, String, String>>): Mono<Void> {
+        val appId = appConfig.appId
+        val privateKey = appConfig.privateKey
+        val installationId = appConfig.installationId
+        return with(githubApi) {
+            app(appId, privateKey).
+            map(GithubApi.AppResponse::token).
+            flatMap { jwt -> authorize(jwt, installationId) }.
+            flatMap { token -> commit(owner, repo, token, GithubApi.Push(branch, files, commitMessage)) }.then()
+        }
+    }
 }

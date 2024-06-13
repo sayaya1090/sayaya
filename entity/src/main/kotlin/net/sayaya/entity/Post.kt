@@ -16,7 +16,7 @@ import java.util.*
 internal class Post {
     @Id lateinit var id: UUID
     @CreatedDate @Column(name = "created_at", nullable = false) private lateinit var createDateTime: LocalDateTime
-    @LastModifiedDate @Column(name = "last_modified_at", nullable = false) private lateinit var lastModifyDateTime: LocalDateTime
+    @LastModifiedDate @Column(name = "updated_at", nullable = false) private lateinit var lastModifyDateTime: LocalDateTime
     @Column(columnDefinition = "text", nullable = false) lateinit var title: String
     @JoinColumn(name="author", nullable = false) @ManyToOne lateinit var author: User
     @Column(columnDefinition = "text", nullable = false) lateinit var markdown: String
