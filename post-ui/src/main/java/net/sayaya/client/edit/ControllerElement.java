@@ -1,10 +1,12 @@
 package net.sayaya.client.edit;
 
+import elemental2.core.Global;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 import lombok.experimental.Delegate;
+import net.sayaya.client.api.PostApi;
 import net.sayaya.client.data.CatalogItem;
 import net.sayaya.client.data.PostRequest;
 import net.sayaya.rx.subject.BehaviorSubject;
@@ -27,6 +29,7 @@ import static org.jboss.elemento.Elements.div;
 public class ControllerElement implements IsElement<HTMLElement> {
     @Delegate private final HTMLContainerBuilder<HTMLDivElement> elem = div();
     @Inject ControllerElement(TitleElement title, GithubSettingsElement btnGithubConfig, CommitDialog commitDialog,
+                              PostApi api,
                               BehaviorSubject<PostRequest> post, BehaviorSubject<CatalogItem> catalog,
                               @Named("is-preview-mode") BehaviorSubject<Boolean> isPreviewMode,
                               @Named("is-publish-mode") BehaviorSubject<Boolean> isPublishMode) {
@@ -60,22 +63,23 @@ public class ControllerElement implements IsElement<HTMLElement> {
         btnPublish.onClick(evt-> isPublishMode.next(!btnPublish.element().selected));
         btnSave.onClick(evt->{
             if(isPublishMode.getValue()) save(catalog.getValue());
-            else save(post.getValue());
+            else save(api, post.getValue());
         });
     }
-    private void save(PostRequest value) {
-        DomGlobal.console.log(value);
+    private void save(PostApi api, PostRequest value) {
+        DomGlobal.console.log("Save");
+        DomGlobal.console.log(Global.JSON.stringify(value));
         Promise.resolve(value)
-               /* .then(PostApi::save)
+                .then(api::save)
                 .then(id->{
-                    DomGlobal.console.log("FA");
-                    RouteApi.route("/post", true, false);
+                    DomGlobal.console.log("Done");
+                    //RouteApi.route("/post", true, false);
                     return null;
                 }).catch_(err->{
                     if("cancel".equalsIgnoreCase(err.toString())) return null;
                     else DomGlobal.console.error(Global.JSON.stringify(err));
                     return null;
-                })*/;
+                });
     }
     private void save(CatalogItem catalog) {
 
