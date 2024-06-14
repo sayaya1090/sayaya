@@ -11,7 +11,8 @@ import java.lang.Thread.sleep
 class ConsoleTest: GwtSpec({
     Given(name="콘솔 컴포넌트 테스트", html="console.html#$MESSAGE", module="net.sayaya.Console",
         js=listOf(
-            "js/bundle.js"
+            "js/bundle.js",
+            "js/rxjs.umd.min.js"
         ), css=listOf(
             "css/global.css",
             "css/login.css"),

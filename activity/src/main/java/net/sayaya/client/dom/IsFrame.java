@@ -6,6 +6,6 @@ import org.jboss.elemento.Attachable;
 
 public interface IsFrame extends Attachable {
    void onHashChange(String hash);
-   default void urlSubject(BehaviorSubjectJs<String> subject) {}
-   default void progressSubject(BehaviorSubjectJs<Progress> subject) {}
+   void url(BehaviorSubjectJs<String> subject);
+   void progress(Progress progress);
 }

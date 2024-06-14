@@ -32,7 +32,8 @@ public class ControllerElement implements IsElement<HTMLElement> {
                               PostApi api,
                               BehaviorSubject<PostRequest> post, BehaviorSubject<CatalogItem> catalog,
                               @Named("is-preview-mode") BehaviorSubject<Boolean> isPreviewMode,
-                              @Named("is-publish-mode") BehaviorSubject<Boolean> isPublishMode) {
+                              @Named("is-publish-mode") BehaviorSubject<Boolean> isPublishMode,
+                              @Named("url") BehaviorSubject<String> contentUrl) {
         var btnPreview = button().icon().add(icon().css("fa-sharp", "fa-light", "fa-eye")).toggle(icon().css("fa-sharp", "fa-light", "fa-eye-slash"), false);
         var btnPublish = button().icon()
                 .add(svg().viewBox(0, 0, 640, 512)
@@ -63,17 +64,21 @@ public class ControllerElement implements IsElement<HTMLElement> {
         btnPublish.onClick(evt-> isPublishMode.next(!btnPublish.element().selected));
         btnSave.onClick(evt->{
             if(isPublishMode.getValue()) save(catalog.getValue());
-            else save(api, post.getValue());
+            else save(api, post.getValue(), isPublishMode, contentUrl);
         });
     }
-    private void save(PostApi api, PostRequest value) {
-        DomGlobal.console.log("Save");
-        DomGlobal.console.log(Global.JSON.stringify(value));
-        Promise.resolve(value)
-                .then(api::save)
+    private void save(PostApi api, PostRequest value, BehaviorSubject<Boolean> isPublishMode, BehaviorSubject<String> contentUrl) {
+        Promise<PostRequest> requestCommitMessage = Promise.resolve(value);
+        //if(value.commit==null) promise = Promise.resolve(value);
+        //else promise = commitDialog.open(value);
+        boolean initialPublish = value.post.id==null;
+        requestCommitMessage.then(api::save)
                 .then(id->{
-                    DomGlobal.console.log("Done");
-                    //RouteApi.route("/post", true, false);
+                    if(initialPublish) {
+                        value.post.id = id;
+                        isPublishMode.next(true);
+                    } else contentUrl.next("/post");
+                        // RouteApi.route("/post", true, false);
                     return null;
                 }).catch_(err->{
                     if("cancel".equalsIgnoreCase(err.toString())) return null;

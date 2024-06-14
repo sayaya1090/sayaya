@@ -14,7 +14,5 @@ import static net.sayaya.client.dom.CustomElements.customContainer;
 public class ProgressElementBuilder implements IsElement<ProgressElement> {
     @Delegate private final ContainerBuilder<ProgressElement> _this = customContainer("sac-progress", ProgressElement.class);
     @Delegate private final ProgressElement element = _this.element();
-    @Inject public ProgressElementBuilder() {
-
-    }
+    @Inject public ProgressElementBuilder() {}
 }

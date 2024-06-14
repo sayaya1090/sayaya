@@ -60,14 +60,10 @@ public class GithubApi {
                 new String[] {"Accept", "application/vnd.sayaya.v1+json"}
         });
         return fetchApi.request("/post/repositories/" + owner + "/" + repository + "/branches", request).then(response->{
-            DomGlobal.console.log(response.status);
             if(response.status==200) return response.json().then(json->{
-                DomGlobal.console.log("1");
                 Object[] cast = Js.asArray(json);
-                DomGlobal.console.log("2");
                 List<String> repos = new ArrayList<>();
                 for(Object repo: cast) repos.add(repo.toString());
-                DomGlobal.console.log("3");
                 return Promise.resolve(repos);
             });
             else if(response.status==204) return Promise.resolve(new ArrayList());

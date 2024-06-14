@@ -2,6 +2,7 @@ package net.sayaya.client.content;
 
 import com.google.gwt.core.client.EntryPoint;
 import elemental2.dom.DomGlobal;
+import net.sayaya.client.content.component.ProgressElementBuilder;
 import net.sayaya.client.content.dom.ProgressElement;
 import net.sayaya.client.data.Progress;
 
@@ -15,16 +16,12 @@ public class ComponentTest implements EntryPoint {
         ContentModule.defineCustomTags();
         var components = DaggerContentTestComponent.create();
         changeUrlButton(components);
-        progressBar();
+        progressBar(components.progressElement(), components.progress());
         drawer(components);
     }
-    private void progressBar() {
-        var progress = customContainer("sac-progress", ProgressElement.class);
-        body().add(progress);
-        var data = new Progress();
-        data.value(0, 0);
-        data.intermediate();
-        progress.element().update(data);
+    private void progressBar(ProgressElementBuilder elem, Progress value) {
+        body().add(elem);
+        value.enabled(true).intermediate(true);
     }
     private void drawer(ContentTestComponent components) {
         body().add(components.contentElement());

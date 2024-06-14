@@ -5,7 +5,9 @@ import elemental2.dom.ShadowRootInit;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import net.sayaya.client.PostComponent;
+import net.sayaya.client.data.Progress;
 import net.sayaya.client.list.PostListScene;
+import net.sayaya.rx.subject.BehaviorSubjectJs;
 
 @JsType
 public class PostListSceneElement extends CustomElement implements IsFrame {
@@ -27,4 +29,6 @@ public class PostListSceneElement extends CustomElement implements IsFrame {
     public void onHashChange(String hash) {
 
     }
+    @Override public void url(BehaviorSubjectJs<String> subject) {}
+    @Override public void progress(Progress progress) {}
 }

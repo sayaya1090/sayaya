@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 @dagger.Component(modules = { PostEditModule.class, PostEditTestModule.class })
 public interface PostEditComponent {
     PostEditScene postEditScene();
+    @Named("url") BehaviorSubject<String> contentUrl();
     BehaviorSubject<Post> post();
     @Named("title") BehaviorSubject<String> title();
     @Named("markdown") BehaviorSubject<String> markdown();

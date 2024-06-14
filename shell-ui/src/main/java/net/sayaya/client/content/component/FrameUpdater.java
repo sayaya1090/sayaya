@@ -18,10 +18,10 @@ import static org.jboss.elemento.Elements.createHtmlElement;
 public class FrameUpdater {
     private final BehaviorSubject<Page> page;
     private final BehaviorSubjectJs<String> url;
-    private final BehaviorSubjectJs<Progress> progress;
+    private final Progress progress;
     private Page previous = null;
     private HTMLElement tag = null;
-    @Inject FrameUpdater(BehaviorSubject<Page> page, @Named("url") BehaviorSubjectJs<String> url, BehaviorSubjectJs<Progress> progress) {
+    @Inject FrameUpdater(BehaviorSubject<Page> page, @Named("url") BehaviorSubjectJs<String> url, Progress progress) {
         this.page = page;
         this.url = url;
         this.progress = progress;
@@ -43,8 +43,8 @@ public class FrameUpdater {
         next.appendChild(tag);
         parent.appendChild(next);
         IsFrame.attach(tag);
-        IsFrame.urlSubject(tag, url);
-        IsFrame.progressSubject(tag, progress);
+        IsFrame.url(tag, url);
+        IsFrame.progress(tag, progress.enabled(false).max(0.0).value(0.0).intermediate(false));
         update(page.uri);
         Scheduler.get().scheduleDeferred(()->fadeIn(next));
         DomGlobal.setTimeout(a -> {

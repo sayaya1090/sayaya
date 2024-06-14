@@ -1,6 +1,7 @@
 package net.sayaya.client.content.dom;
 
 import elemental2.dom.CSSProperties;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.ShadowRootInit;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
@@ -21,13 +22,12 @@ public class ProgressElement extends CustomElement {
     }
     private ProgressElementBuilder.LinearProgressElementBuilder progress;
     @JsIgnore public void update(Progress value) {
-        if(!value.isEnabled()) {
-            progress.element().style.opacity = CSSProperties.OpacityUnionType.of("0");
-        } else {
+        if(!value.enabled) progress.element().style.opacity = CSSProperties.OpacityUnionType.of("0");
+        else {
             progress.element().style.opacity = CSSProperties.OpacityUnionType.of("100");
-            progress.indeterminate(value.isIntermediate());
-            progress.element().max = value.max();
-            if(value.current()!=null) progress.value(value.current());
+            progress.indeterminate(value.intermediate);
+            progress.element().max = value.max;
+            if(value.value!=null) progress.value(value.value);
         }
     }
 }

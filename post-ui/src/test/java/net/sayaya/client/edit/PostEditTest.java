@@ -19,7 +19,7 @@ public class PostEditTest implements EntryPoint {
     public void onModuleLoad() {
         var components = DaggerPostEditComponent.create();
         var scene = components.postEditScene();
-        CustomElements.define("sac-post-edit", PostEditSceneElement.class, instance-> PostEditSceneElement.initialize(instance, scene));
+        CustomElements.define("sac-post-edit", PostEditSceneElement.class, instance-> PostEditSceneElement.initialize(instance, scene, components.contentUrl()));
         var elem = customContainer("sac-post-edit", PostEditSceneElement.class);
         body().add(elem);
         elem.element().attach(null);

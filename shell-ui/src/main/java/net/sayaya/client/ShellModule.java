@@ -14,6 +14,6 @@ import static net.sayaya.rx.subject.BehaviorSubject.behavior;
 public class ShellModule {
     @Provides @Singleton static FetchApi provideFetchApi() { return new FetchApi() {}; }
     @Provides @Singleton @Named("url") static BehaviorSubjectJs<String> provideContentUrl() {
-        return new S<>("");
+        return new BehaviorSubjectJs<>("");
     }
 }

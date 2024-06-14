@@ -1,21 +1,22 @@
 package net.sayaya.client.dom;
 
-import elemental2.dom.HTMLLinkElement;
-import elemental2.dom.HTMLSlotElement;
-import elemental2.dom.MutationRecord;
-import elemental2.dom.ShadowRootInit;
+import elemental2.dom.*;
 import jsinterop.annotations.JsType;
 import net.sayaya.client.api.OAuthApi;
 import net.sayaya.client.component.ConsoleElementBuilder;
+import net.sayaya.client.data.Progress;
+import net.sayaya.rx.subject.BehaviorSubject;
+import net.sayaya.rx.subject.BehaviorSubjectJs;
 
 import static net.sayaya.client.dom.CustomElements.customContainer;
 import static org.jboss.elemento.Elements.*;
 
 @JsType
 public class LoginSceneElement extends CustomElement implements IsFrame {
-    public static void initialize(LoginSceneElement instance, ConsoleElementBuilder console, OAuthApi api) {
+    public static void initialize(LoginSceneElement instance, ConsoleElementBuilder console, OAuthApi api, BehaviorSubject<Progress> progress) {
         instance.console = console;
         instance.api = api;
+        instance.subject = progress;
         var options = ShadowRootInit.create();
         options.setMode("open");
         var shadowRoot = instance.attachShadow(options);
@@ -26,6 +27,7 @@ public class LoginSceneElement extends CustomElement implements IsFrame {
     }
     private ConsoleElementBuilder console;
     private OAuthApi api;
+    private BehaviorSubject<Progress> subject;
     @Override
     public void attach(MutationRecord mutationRecord) {
         var elem = customContainer("sac-login-box", LoginElement.class);
@@ -35,5 +37,9 @@ public class LoginSceneElement extends CustomElement implements IsFrame {
     @Override
     public void onHashChange(String hash) {
 
+    }
+    @Override public void url(BehaviorSubjectJs<String> subject) {}
+    @Override public void progress(Progress progress) {
+        subject.next(progress);
     }
 }
