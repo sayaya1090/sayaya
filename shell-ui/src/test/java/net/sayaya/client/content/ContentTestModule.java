@@ -7,10 +7,12 @@ import elemental2.dom.RequestInit;
 import elemental2.dom.Response;
 import elemental2.dom.ResponseInit;
 import elemental2.promise.Promise;
+import net.sayaya.client.S;
 import net.sayaya.client.api.FetchApi;
 import net.sayaya.client.data.Menu;
 import net.sayaya.client.data.Page;
 import net.sayaya.rx.subject.BehaviorSubject;
+import net.sayaya.rx.subject.BehaviorSubjectJs;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -20,8 +22,8 @@ import static net.sayaya.rx.subject.BehaviorSubject.behavior;
 
 @dagger.Module
 public class ContentTestModule {
-    @Provides @Singleton @Named("url") static BehaviorSubject<String> provideContentUrl() {
-        return behavior("");
+    @Provides @Singleton @Named("url") static BehaviorSubjectJs<String> provideContentUrl() {
+        return new S<>("");
     }
     @Provides @Singleton static FetchApi fetchApi() {
         return new FetchApi() {

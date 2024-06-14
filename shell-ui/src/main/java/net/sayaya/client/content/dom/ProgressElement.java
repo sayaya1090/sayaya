@@ -4,7 +4,7 @@ import elemental2.dom.CSSProperties;
 import elemental2.dom.ShadowRootInit;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
-import net.sayaya.client.content.Progress;
+import net.sayaya.client.data.Progress;
 import net.sayaya.client.dom.CustomElement;
 import net.sayaya.ui.elements.ProgressElementBuilder;
 

@@ -4,7 +4,9 @@ import com.google.gwt.core.client.Scheduler;
 import elemental2.dom.*;
 import net.sayaya.client.content.dom.IsFrame;
 import net.sayaya.client.data.Page;
+import net.sayaya.client.data.Progress;
 import net.sayaya.rx.subject.BehaviorSubject;
+import net.sayaya.rx.subject.BehaviorSubjectJs;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -15,12 +17,14 @@ import static org.jboss.elemento.Elements.createHtmlElement;
 @Singleton
 public class FrameUpdater {
     private final BehaviorSubject<Page> page;
-    private final BehaviorSubject<String> url;
+    private final BehaviorSubjectJs<String> url;
+    private final BehaviorSubjectJs<Progress> progress;
     private Page previous = null;
     private HTMLElement tag = null;
-    @Inject FrameUpdater(BehaviorSubject<Page> page, @Named("url") BehaviorSubject<String> url) {
+    @Inject FrameUpdater(BehaviorSubject<Page> page, @Named("url") BehaviorSubjectJs<String> url, BehaviorSubjectJs<Progress> progress) {
         this.page = page;
         this.url = url;
+        this.progress = progress;
         previous = page.getValue();
     }
     public void listen() {
@@ -39,6 +43,8 @@ public class FrameUpdater {
         next.appendChild(tag);
         parent.appendChild(next);
         IsFrame.attach(tag);
+        IsFrame.urlSubject(tag, url);
+        IsFrame.progressSubject(tag, progress);
         update(page.uri);
         Scheduler.get().scheduleDeferred(()->fadeIn(next));
         DomGlobal.setTimeout(a -> {

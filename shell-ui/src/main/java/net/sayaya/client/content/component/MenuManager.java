@@ -6,8 +6,10 @@ import net.sayaya.client.api.ShellApi;
 import net.sayaya.client.data.Menu;
 import net.sayaya.client.data.Page;
 import net.sayaya.rx.subject.BehaviorSubject;
+import net.sayaya.rx.subject.BehaviorSubjectJs;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,23 +21,20 @@ public class MenuManager extends BehaviorSubject<List<Menu>> {
     private final ShellApi shellApi;
     private final BehaviorSubject<Page> page;
     private final Map<Page, Menu> menuByPage = new HashMap<>();
-    @Inject MenuManager(ShellApi shellApi, BehaviorSubject<Page> page) {
+    @Inject MenuManager(ShellApi shellApi, BehaviorSubject<Page> page, @Named("url") BehaviorSubjectJs<String> url) {
         super(new LinkedList<>());
         this.shellApi = shellApi;
         this.page = page;
-        reload();
+        url.subscribe(this::reload);
     }
-    public Promise<Void> reload() {
+    public Promise<Void> reload(String url) {
         return shellApi.findMenu().then(m -> {
             m = m.stream().sorted(Comparator.comparing(i->i.order, nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList());
             next(m);
             menuByPage.clear();
             for(Menu menu : m) for(Page p: menu.children) menuByPage.put(p, menu);
-            if(page.getValue()==null) {
-                String url = DomGlobal.window.location.pathname;
-                if(url!=null && url.length()>2) page.next(pickByUrl(m, url));
-                else page.next(m.get(0).children[0]);
-            }
+            var nextPage = (url!=null && url.length()>2) ? pickByUrl(m, url) : m.get(0).children[0];
+            if(page.getValue()==null || !page.getValue().uri.equals(nextPage.uri)) page.next(nextPage);
             return null;
         });
     }

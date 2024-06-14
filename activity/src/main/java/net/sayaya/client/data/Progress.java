@@ -1,4 +1,4 @@
-package net.sayaya.client.content;
+package net.sayaya.client.data;
 
 import elemental2.dom.CustomEvent;
 import elemental2.dom.Event;

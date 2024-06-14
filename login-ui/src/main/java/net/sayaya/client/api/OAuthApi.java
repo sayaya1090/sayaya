@@ -5,6 +5,8 @@ import elemental2.promise.Promise;
 import jsinterop.base.Js;
 import jsinterop.base.JsPropertyMap;
 import net.sayaya.client.component.Logger;
+import net.sayaya.client.data.Progress;
+import net.sayaya.rx.subject.BehaviorSubject;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,13 +18,16 @@ import static org.jboss.elemento.Elements.iframe;
 public class OAuthApi {
     private final Logger logger;
     private final FetchApi fetchApi;
-    @Inject OAuthApi(Logger logger, FetchApi fetchApi) {
+    private final BehaviorSubject<Progress> progress;
+    @Inject OAuthApi(Logger logger, FetchApi fetchApi, BehaviorSubject<Progress> progress) {
         this.logger = logger;
         this.fetchApi = fetchApi;
+        this.progress = progress;
     }
     public Promise<Void> login(String provider) {
         String requestUrl = "login/oauth2/authorization/" + provider;
-        return waitOAuth2LoginSuccess(requestUrl).then(param->{
+        progress.getValue().enabled(true).intermediate(true);
+        Promise<Void> promise = waitOAuth2LoginSuccess(requestUrl).then(param->{
             var url = "login/oauth2/code/" + provider + param;
             return waitAuthenticationCookie(url);
         }).then(redirect->{
@@ -30,6 +35,10 @@ public class OAuthApi {
             DomGlobal.window.location.assign("/");
             return null;
         });
+        promise = promise.finally_(()-> {
+            progress.getValue().enabled(false);
+        });
+        return promise;
     }
     private Promise<String> waitOAuth2LoginSuccess(String requestUrl) {
         return new Promise<>((resolve, reject) -> {

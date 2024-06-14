@@ -3,6 +3,7 @@ plugins {
     id("net.sayaya.gwt")
 }
 dependencies {
+    implementation(libs.sayaya.rx)
     implementation(libs.bundles.gwt)
     implementation(libs.lombok)
     annotationProcessor(libs.lombok)
