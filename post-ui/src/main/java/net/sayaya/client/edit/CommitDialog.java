@@ -3,7 +3,7 @@ package net.sayaya.client.edit;
 import elemental2.promise.Promise;
 import lombok.experimental.Delegate;
 import net.sayaya.client.data.Commit;
-import net.sayaya.client.data.Post;
+import net.sayaya.client.data.PostRequest;
 import net.sayaya.rx.subject.BehaviorSubject;
 import net.sayaya.ui.dom.MdDialogElement;
 import net.sayaya.ui.elements.DialogElementBuilder;
@@ -42,8 +42,8 @@ public class CommitDialog implements IsElement<MdDialogElement> {
             _this.close();
         });
     }
-    public Promise<Post> open(Post post) {
-        Promise<Post> promise = new Promise<>((resolve, reject)->{
+    public Promise<PostRequest> open(PostRequest post) {
+        Promise<PostRequest> promise = new Promise<>((resolve, reject)->{
             btnCancel.onClick(evt->reject.onInvoke("Cancel"));
             btnApply.onClick(evt->resolve.onInvoke(post));
         });

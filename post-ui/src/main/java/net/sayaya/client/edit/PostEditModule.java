@@ -133,7 +133,7 @@ public class PostEditModule {
             else {
                 var commit = behavior.getValue();
                 if(commit==null) {
-                    commit = new Commit().msg("Initial commit");
+                    commit = new Commit();
                     behavior.next(commit);
                 }
                 commit.destination = new GithubRepositoryConfig().owner(dest.owner).repo(dest.repo).branch(dest.branch);

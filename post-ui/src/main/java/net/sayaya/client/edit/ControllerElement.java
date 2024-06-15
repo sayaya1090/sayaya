@@ -28,12 +28,14 @@ import static org.jboss.elemento.Elements.div;
 @Singleton
 public class ControllerElement implements IsElement<HTMLElement> {
     @Delegate private final HTMLContainerBuilder<HTMLDivElement> elem = div();
+    private final CommitDialog commitDialog;
     @Inject ControllerElement(TitleElement title, GithubSettingsElement btnGithubConfig, CommitDialog commitDialog,
                               PostApi api,
                               BehaviorSubject<PostRequest> post, BehaviorSubject<CatalogItem> catalog,
                               @Named("is-preview-mode") BehaviorSubject<Boolean> isPreviewMode,
                               @Named("is-publish-mode") BehaviorSubject<Boolean> isPublishMode,
                               @Named("url") BehaviorSubject<String> contentUrl) {
+        this.commitDialog = commitDialog;
         var btnPreview = button().icon().add(icon().css("fa-sharp", "fa-light", "fa-eye")).toggle(icon().css("fa-sharp", "fa-light", "fa-eye-slash"), false);
         var btnPublish = button().icon()
                 .add(svg().viewBox(0, 0, 640, 512)
@@ -68,17 +70,14 @@ public class ControllerElement implements IsElement<HTMLElement> {
         });
     }
     private void save(PostApi api, PostRequest value, BehaviorSubject<Boolean> isPublishMode, BehaviorSubject<String> contentUrl) {
-        Promise<PostRequest> requestCommitMessage = Promise.resolve(value);
-        //if(value.commit==null) promise = Promise.resolve(value);
-        //else promise = commitDialog.open(value);
         boolean initialPublish = value.post.id==null;
-        requestCommitMessage.then(api::save)
+        commitDialog.open(value)
+                .then(api::save)
                 .then(id->{
                     if(initialPublish) {
                         value.post.id = id;
                         isPublishMode.next(true);
                     } else contentUrl.next("/post");
-                        // RouteApi.route("/post", true, false);
                     return null;
                 }).catch_(err->{
                     if("cancel".equalsIgnoreCase(err.toString())) return null;
