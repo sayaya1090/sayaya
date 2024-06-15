@@ -54,7 +54,7 @@ class Handler (
             .markdown(this.post.markdown)
             .html(html)
             .images(it.toTypedArray())
-        }.map { PostRequest().post(it).commit(this.commit) }
+        }.map { PostRequest().post(it).commit(this.commit).catalog(this.catalog) }
     }
     @OptIn(ExperimentalEncodingApi::class)
     private fun Image.uploadToS3(key: String): Mono<Image> = if(base64 != null) {
