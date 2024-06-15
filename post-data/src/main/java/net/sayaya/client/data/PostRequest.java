@@ -12,5 +12,6 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class PostRequest {
     public Post post;
+    public CatalogItem catalog;
     public Commit commit;
 }

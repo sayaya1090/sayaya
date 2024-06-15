@@ -11,13 +11,14 @@ import java.util.*
 
 @Repository
 class PostRepository(private val template: R2dbcEntityTemplate) {
-    fun save(post: Post): Mono<Post> = if(post.isNew()) template.insert(post) else template.update(post)
-    fun update(post: Post, tags: Collection<String>): Mono<Post> = template.update(post)
-        .flatMap { p ->
-            template.delete(Query.query(Criteria.where("post").`is`(p.id)), PostKeyword::class.java).
-            flatMap { Flux.fromIterable(tags).flatMap { tag -> template.insert(PostKeyword(p.id, tag)) }.then() }.
-            thenReturn(p)
-        }
+    fun save(post: Post, tags: Collection<String>?): Mono<Post> = (
+            if(post.isNew()) template.insert(post)
+            else template.update(post).flatMap { template.delete(Query.query(Criteria.where("post").`is`(it.id)), PostKeyword::class.java).thenReturn(it) }
+       ).flatMap {
+           Flux.fromIterable(tags?: emptyList()).flatMap { tag ->
+               template.insert(PostKeyword(post.id, tag))
+           }.then(Mono.just(it))
+       }
     fun find(id: UUID): Mono<Post> = template.selectOne (Query.query (Criteria.where("id").`is`(id)), Post::class.java)
     fun findKeyword(id: UUID): Mono<List<PostKeyword>> = template.select(PostKeyword::class.java)
         .matching(Query.query(Criteria.where("post").`is`(id)))

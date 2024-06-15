@@ -52,13 +52,15 @@ public class PostEditModule {
         });
         return behavior;
     }
-    @Provides @Singleton static BehaviorSubject<PostRequest> request(BehaviorSubject<Post> post, BehaviorSubject<Commit> commit) {
+    @Provides @Singleton static BehaviorSubject<PostRequest> request(BehaviorSubject<Post> post, BehaviorSubject<CatalogItem> catalog, BehaviorSubject<Commit> commit) {
         var behavior = behavior(new PostRequest());
         behavior.subscribe(p->{
             if(p.post!=null && !p.post.equals(post.getValue())) post.next(p.post);
+            if(p.catalog!=null && !p.catalog.equals(catalog.getValue())) catalog.next(p.catalog);
             if(p.commit!=null && !p.commit.equals(commit.getValue())) commit.next(p.commit);
         });
         post.subscribe(p->behavior.next(behavior.getValue().post(p)));
+        catalog.subscribe(c->behavior.next(behavior.getValue().catalog(c)));
         commit.subscribe(c->behavior.next(behavior.getValue().commit(c)));
         return behavior;
     }

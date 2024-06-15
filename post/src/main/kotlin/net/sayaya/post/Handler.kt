@@ -31,7 +31,7 @@ class Handler (
             let { path -> request.uploadBase64ImageAndReplaceToS3Url(path) }.
             mayUploadToGitHub(UUID.fromString(userId), e.createdAt.format(dateTimeFormatter)).
             copyToEntity(e)
-        }.flatMap(repo::save).map { it.id }
+        }.flatMap { repo.save(it, request.catalog?.tags?.toList() ) }.map { it.id }
     }
     private fun createEntity(timestamp: LocalDateTime, request: PostRequest): net.sayaya.post.Post = Post (
         _id = UUID.randomUUID(),
@@ -91,6 +91,8 @@ class Handler (
         title = it.post.title
         html = it.post.html
         markdown = it.post.markdown
+        description = it.catalog?.description
+        // thumbnail = it.catalog?.thumbnail
     } }
     private fun PostRequest.toCommitFiles(dir: String): List<Triple<String, String, String>> {
         return Stream.concat(
@@ -100,9 +102,12 @@ class Handler (
                 Triple("""
                     ---
                     title: ${post.title}
+                    ${catalog?.publishedAt?.let { "publishedAt: $it" } ?: ""}
+                    ${catalog?.description?.let { "description: $it" } ?: ""}
+                    ${if (catalog?.tags?.isNotEmpty() == true) "tags: ${catalog.tags.joinToString(",")}" else ""}
                     ---
                 """.trimIndent(),
-                    "$dir/meta", "utf-8")
+                "$dir/meta", "utf-8")
             ).stream()
         ).toList()
     }
@@ -111,7 +116,7 @@ class Handler (
         .map{ e ->
             // e.toS3Path(userId)
             copyToEntity(catalog, e)
-        }.flatMap { e -> repo.update(e, catalog.tags.toList()) }
+        }.flatMap { e -> repo.save(e, catalog.tags?.toList()) }
         .map { it.id }
     private fun copyToEntity(meta: CatalogItem, entity: net.sayaya.post.Post) = entity.apply {
         title = meta.title
