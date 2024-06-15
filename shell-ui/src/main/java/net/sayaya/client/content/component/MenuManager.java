@@ -1,6 +1,5 @@
 package net.sayaya.client.content.component;
 
-import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import net.sayaya.client.api.ShellApi;
 import net.sayaya.client.data.Menu;
@@ -42,7 +41,7 @@ public class MenuManager extends BehaviorSubject<List<Menu>> {
         return menu.stream()
                 .flatMap(i-> Arrays.stream(i.children))
                 .filter(p->p.uri.startsWith(url))
-                .max(Comparator.comparing(p-> p.uri.startsWith(url) ? p.uri.length() : -1))
+                .min(Comparator.comparing(p-> p.uri.startsWith(url) ? p.uri.length() : 999))
                 .orElse(null);
     }
     public Menu parentOf(Page page) { return menuByPage.get(page); }
