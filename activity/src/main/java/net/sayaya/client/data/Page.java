@@ -13,6 +13,7 @@ public final class Page {
     public String iconType;
     public String title;
     public String uri;
+    public String regex;
     public String script;
     public String tag;
     public String order;

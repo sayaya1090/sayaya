@@ -1,6 +1,7 @@
 package net.sayaya.client.content;
 
 import dagger.Provides;
+import elemental2.core.JsRegExp;
 import jsinterop.annotations.JsFunction;
 import jsinterop.base.Js;
 import net.sayaya.client.content.dom.*;
@@ -39,7 +40,10 @@ public class ContentModule {
     @Provides @Singleton static BehaviorSubject<Page> providePage(@Named("url") BehaviorSubjectJs<String> url) {
         BehaviorSubject<Page> behavior = behavior(null);
         behavior.subscribe(page->{
-            if(page!=null) url.next(page.uri);
+            if(page!=null) {
+                var regexp = new JsRegExp(page.regex);
+                if(!regexp.test(url.getValue())) url.next(page.uri);
+            }
             else url.next(null);
         });
         return behavior;

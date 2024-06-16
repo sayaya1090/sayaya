@@ -21,6 +21,6 @@ class Handler(private val repo: Repository) {
         .tags(post.tags.toTypedArray())
         .published(post.publishedAt!=null)
         .publishedAt(post.publishedAt?.toEpochSecond(ZoneOffset.UTC)?.toDouble())
-        .url("/post/${post.authorAlias}#${post.id}")
+        .url("/post#${post.id}")
     fun search(param: Search): Mono<Page<CatalogItem>> = repo.search(param).map { page -> PageImpl(page.content.map(::map), page.pageable, page.totalElements) }
 }

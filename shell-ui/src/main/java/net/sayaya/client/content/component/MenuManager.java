@@ -1,5 +1,6 @@
 package net.sayaya.client.content.component;
 
+import elemental2.core.JsRegExp;
 import elemental2.promise.Promise;
 import net.sayaya.client.api.ShellApi;
 import net.sayaya.client.data.Menu;
@@ -33,6 +34,7 @@ public class MenuManager extends BehaviorSubject<List<Menu>> {
             menuByPage.clear();
             for(Menu menu : m) for(Page p: menu.children) menuByPage.put(p, menu);
             var nextPage = (url!=null && url.length()>2) ? pickByUrl(m, url) : m.get(0).children[0];
+            if(nextPage==null) nextPage = m.get(0).children[0];
             if(page.getValue()==null || !page.getValue().uri.equals(nextPage.uri)) page.next(nextPage);
             return null;
         });
@@ -40,9 +42,15 @@ public class MenuManager extends BehaviorSubject<List<Menu>> {
     private Page pickByUrl(List<Menu> menu, String url) {
         return menu.stream()
                 .flatMap(i-> Arrays.stream(i.children))
-                .filter(p->p.uri.startsWith(url))
-                .min(Comparator.comparing(p-> p.uri.startsWith(url) ? p.uri.length() : 999))
+                .filter(p->match(p, url))
+                .min(Comparator.comparing(p->p.uri.length()))
                 .orElse(null);
     }
     public Menu parentOf(Page page) { return menuByPage.get(page); }
+    private boolean match(Page page, String url) {
+        if(page.regex==null) return false;
+        if(url==null) return false;
+        var regex = new JsRegExp(page.regex);
+        return regex.test(url);
+    }
 }

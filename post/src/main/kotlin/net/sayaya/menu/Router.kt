@@ -41,6 +41,7 @@ class Router {
                     supportingText = "Create new post"
                     order = "C000-1"
                     uri = "/post#new"
+                    regex = "^\\/post#"
                     icon = "fa-pen-to-square"
                     tag = "sac-post-edit"
                 }, Page().apply {
@@ -48,6 +49,7 @@ class Router {
                     supportingText = "List of your posts"
                     order = "C000-5"
                     uri = "/post"
+                    regex = "^\\/post$"
                     icon = "fa-list"
                     tag = "sac-post-list"
                 }

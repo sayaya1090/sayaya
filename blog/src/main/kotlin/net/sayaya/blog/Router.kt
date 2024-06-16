@@ -34,6 +34,7 @@ class Router {
                     title = ""
                     order = "B000-1"
                     uri = "/blog"
+                    regex = "^\\/blog"
                     tag = "sac-articles"
                 }
             )

@@ -47,8 +47,8 @@ public class ContentTestModule {
             menu1.order = "C";
             menu1.icon = "fa-user";
             menu1.iconType = "sharp";
-            var page1 = new Page().title("menu1-page1").uri("menu1-page1").order("AA").icon("fa-user").iconType("sharp").tag("div");
-            var page2 = new Page().title("menu1-page2").uri("menu1-page2").order("AB").icon("fa-user").iconType("sharp").tag("span");
+            var page1 = new Page().title("menu1-page1").uri("menu1-page1").regex("menu1-page1").order("AA").icon("fa-user").iconType("sharp").tag("div");
+            var page2 = new Page().title("menu1-page2").uri("menu1-page2").regex("menu1-page2").order("AB").icon("fa-user").iconType("sharp").tag("span");
             menu1.children = new Page[] { page1, page2 };
         }
         var menu2 = new Menu(); {
@@ -58,7 +58,7 @@ public class ContentTestModule {
             menu2.order = "B";
             menu2.icon = "fa-user";
             menu2.iconType = "sharp";
-            var page1 = new Page().title("menu2-page1").uri("menu2-page1").order("BA").icon("fa-user").iconType("sharp").tag("label");
+            var page1 = new Page().title("menu2-page1").uri("menu2-page1").regex("menu2-page1").order("BA").icon("fa-user").iconType("sharp").tag("label");
             menu2.children = new Page[] { page1 };
         }
         var menu3 = new Menu(); {
@@ -67,8 +67,8 @@ public class ContentTestModule {
             menu3.icon = "fa-left-from-bracket";
             menu3.iconType = "sharp";
             menu3.bottom = true;
-            var page1 = new Page().title("menu3-page1").uri("menu3-page1").order("1A").icon("fa-user").iconType("sharp").tag("a");
-            var page2 = new Page().title("menu3-page2").uri("menu3-page2").order("1B").icon("fa-user").iconType("sharp").tag("button");
+            var page1 = new Page().title("menu3-page1").uri("menu3-page1").regex("menu3-page1").order("1A").icon("fa-user").iconType("sharp").tag("a");
+            var page2 = new Page().title("menu3-page2").uri("menu3-page2").regex("menu3-page2").order("1B").icon("fa-user").iconType("sharp").tag("button");
             menu3.children = new Page[] { page1, page2 };
         }
         var menu4 = new Menu(); {
@@ -77,7 +77,7 @@ public class ContentTestModule {
             menu4.icon = "fa-right-to-bracket";
             menu4.iconType = "sharp";
             menu4.bottom = true;
-            var page1 = new Page().title("menu4-page1").uri("menu4-page1").order("0A").icon("fa-user").iconType("sharp").tag("input");
+            var page1 = new Page().title("menu4-page1").uri("menu4-page1").regex("menu4-page1").order("0A").icon("fa-user").iconType("sharp").tag("input");
             menu4.children = new Page[] { page1 };
         }
         menu = new Menu[] { menu2, menu1, menu3, menu4 };
