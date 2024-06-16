@@ -29,7 +29,6 @@ public class FrameUpdater {
     }
     public void listen() {
         page.subscribe(this::update);
-        url.subscribe(this::update);
     }
     private void update(Page page) {
         if(page==null || page.equals(previous)) return;
@@ -45,18 +44,11 @@ public class FrameUpdater {
         IsFrame.attach(tag);
         IsFrame.url(tag, url);
         IsFrame.progress(tag, progress.enabled(false).max(0.0).value(0.0).intermediate(false));
-        update(page.uri);
         Scheduler.get().scheduleDeferred(()->fadeIn(next));
         DomGlobal.setTimeout(a -> {
             old.remove();
             IsFrame.detach(tag);
         }, 100);
-    }
-    private void update(String url) {
-        if(url!=null && url.contains("#")) {
-            var hash = url.substring(url.indexOf("#")+1);
-            IsFrame.onHashChange(tag, hash);
-        }
     }
     private static void fadeOut(HTMLElement elem) {
         elem.classList.add("frame-out");

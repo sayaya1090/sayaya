@@ -1,6 +1,5 @@
 package net.sayaya.client.api;
 
-import elemental2.core.JsArray;
 import elemental2.dom.RequestInit;
 import elemental2.dom.URLSearchParams;
 import elemental2.promise.Promise;
@@ -12,9 +11,6 @@ import net.sayaya.rx.subject.BehaviorSubject;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static elemental2.core.Global.JSON;
 
@@ -46,6 +42,18 @@ public class PostApi {
                 .finally_(()-> {
                     if(progress.getValue()!=null) progress.getValue().enabled(false);
                 });
+    }
+    public Promise<Post> find(String id) {
+        RequestInit request = RequestInit.create();
+        request.setHeaders(new String[][] {
+                new String[] {"Accept", "application/vnd.sayaya.v1+json"}
+        });
+
+        return fetchApi.request("/posts/" + id, request).then(response->{
+            if(response.status==200)        return response.json();
+            else if(response.status==204)   return Promise.reject("Empty result");
+            return Promise.reject(response.statusText);
+        }).then(json-> Promise.resolve((Post)json));
     }
     public Promise<String> save(PostRequest post) {
         RequestInit request = RequestInit.create();

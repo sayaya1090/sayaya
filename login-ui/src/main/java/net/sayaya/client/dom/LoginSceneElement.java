@@ -34,10 +34,6 @@ public class LoginSceneElement extends CustomElement implements IsFrame {
         this.append(elem.element().console(console.element()).api(api));
         elem.element().attach(mutationRecord);
     }
-    @Override
-    public void onHashChange(String hash) {
-
-    }
     @Override public void url(BehaviorSubjectJs<String> subject) {}
     @Override public void progress(Progress progress) {
         subject.next(progress);

@@ -58,10 +58,10 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
         iptOrder.onChange(evt->sort.next(iptOrder.value()));
         menu.item().start(icon().css("fa-sharp", "fa-light", "fa-pen-to-square").style("font-size: 1rem;")).headline("Edit").on(EventType.click, evt->{
             evt.preventDefault();
-            contentUrl.next(selected.url);
+            contentUrl.next("/post#" + selected.id);
         }).end().item().start(icon().css("fa-sharp", "fa-light", "fa-up-to-line").style("font-size: 1rem;")).headline("Publish").on(EventType.click, evt->{
             evt.preventDefault();
-            contentUrl.next(selected.url + "/publish");
+            contentUrl.next("/post#" + selected.id + "/publish");
         }).end().item().start(icon().css("fa-sharp", "fa-light", "fa-chart-line").style("font-size: 1rem;")).headline("Statistics").on(EventType.click, evt->{
             evt.preventDefault();
         }).end();

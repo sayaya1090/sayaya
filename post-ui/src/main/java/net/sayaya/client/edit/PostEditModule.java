@@ -64,7 +64,7 @@ public class PostEditModule {
         return behavior;
     }
     @Provides @Singleton BehaviorSubject<CatalogItem> catalog(@Named("title") BehaviorSubject<String> title,
-                                                                     @Named("tags") BehaviorSubject<Set<String>> tags) {
+                                                              @Named("tags") BehaviorSubject<Set<String>> tags) {
         var behavior = behavior(new CatalogItem());
         behavior.subscribe(c->{
             if(c.title!=null && !c.title.equals(title.getValue())) title.next(c.title);

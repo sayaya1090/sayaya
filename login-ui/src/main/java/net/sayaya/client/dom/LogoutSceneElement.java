@@ -17,10 +17,6 @@ public class LogoutSceneElement extends CustomElement implements IsFrame {
     public void attach(MutationRecord mutationRecord) {
         api.logout();
     }
-    @Override
-    public void onHashChange(String hash) {
-
-    }
     @Override public void url(BehaviorSubjectJs<String> subject) {}
     @Override public void progress(Progress progress) {}
 }

@@ -54,7 +54,7 @@ class PostEditTest: GwtSpec({
                 om.readValue(json, Post::class.java).markdown shouldBeEqual contents
             }
             Then("Preview에 입력한 내용에 대응되는 HTML이 출력된다") {
-                sleep(300) // 디바운스가 걸려 있어 지연시간이 필요하다
+                sleep(500) // 디바운스가 걸려 있어 지연시간이 필요하다
                 val html = editor.findElement(By.className("html-preview")).getAttribute("innerHTML")
                 html.trim() shouldBeEqual "<p>$contents</p>"
             }

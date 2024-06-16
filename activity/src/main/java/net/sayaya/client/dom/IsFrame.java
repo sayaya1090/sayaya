@@ -5,7 +5,6 @@ import net.sayaya.rx.subject.BehaviorSubjectJs;
 import org.jboss.elemento.Attachable;
 
 public interface IsFrame extends Attachable {
-   void onHashChange(String hash);
    void url(BehaviorSubjectJs<String> subject);
    void progress(Progress progress);
 }

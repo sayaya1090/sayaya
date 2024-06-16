@@ -2,7 +2,6 @@ package net.sayaya.client.edit;
 
 import dagger.Provides;
 import elemental2.core.Global;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.RequestInit;
 import elemental2.dom.Response;
 import elemental2.dom.ResponseInit;

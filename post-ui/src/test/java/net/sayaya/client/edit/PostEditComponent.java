@@ -1,5 +1,6 @@
 package net.sayaya.client.edit;
 
+import net.sayaya.client.api.PostApi;
 import net.sayaya.client.data.GithubRepositoryConfig;
 import net.sayaya.client.data.Post;
 import net.sayaya.rx.subject.BehaviorSubject;
@@ -12,6 +13,7 @@ import javax.inject.Singleton;
 public interface PostEditComponent {
     PostEditScene postEditScene();
     @Named("url") BehaviorSubject<String> contentUrl();
+    PostApi api();
     BehaviorSubject<Post> post();
     @Named("title") BehaviorSubject<String> title();
     @Named("markdown") BehaviorSubject<String> markdown();

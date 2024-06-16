@@ -14,14 +14,10 @@ import net.sayaya.rx.subject.BehaviorSubjectJs;
 
 @JsType(isNative=true)
 public interface IsFrame {
-    @JsMethod void onHashChange(String hash);
     @JsMethod void attach(MutationRecord mutationRecord);
     @JsMethod void detach(MutationRecord mutationRecord);
     @JsMethod void url(Object observer);
     @JsMethod void progress(Object observer);
-    @JsIgnore @JsOverlay static void onHashChange(HTMLElement elem, String hash) {
-        try { ((IsFrame)Js.uncheckedCast(elem)).onHashChange(hash); } catch(Exception ignore) {}
-    }
     @JsIgnore @JsOverlay static void attach(HTMLElement elem) {
         try { ((IsFrame) Js.uncheckedCast(elem)).attach((MutationRecord) null); } catch(Exception ignore) {}
     }
