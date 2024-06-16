@@ -1,6 +1,5 @@
 package net.sayaya.search
 
-import net.sayaya.client.data.CatalogItem
 import net.sayaya.data.Search
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -19,7 +18,7 @@ class Repository(private val template: R2dbcEntityTemplate): Searchable {
         val sortBy = param.sortBy?.let(::property) ?: "created_at"
         val sort = (param.asc?.let { if(it) Sort.Order.asc(sortBy) else Sort.Order.desc(sortBy) } ?: Sort.Order.asc(sortBy)).let { Sort.by(it) }
         val pageable = PageRequest.of(pageNumber, pageSize, sort)
-        return template.search(SqlIdentifier.unquoted("post"), param.filters, Catalog::class.java, pageable)
+        return template.search(SqlIdentifier.unquoted("catalog"), param.filters, Catalog::class.java, pageable)
     }
     private fun property(name: String): String? = when(name) {
         "title" -> "title"

@@ -68,10 +68,12 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
     }
     private void layout(CatalogItem[] list) {
         CardContainer cast = Js.uncheckedCast(container.element());
+        cast.clear();
         cast.add(list);
     }
     @JsType(isNative=true)
     private interface CardContainer {
         @JsMethod void add(CatalogItem[] items);
+        @JsMethod void clear();
     }
 }

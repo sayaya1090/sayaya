@@ -37,13 +37,15 @@ public class PostApi {
         params.set("asc", String.valueOf(asc));
         params.set("sort_by", sortBy);
         //  params.set("title", "Test");
-        progress.getValue().enabled(true).intermediate(true);
+        if(progress.getValue()!=null) progress.getValue().enabled(true).intermediate(true);
         return fetchApi.request("/posts?" + params, request).then(response->{
                     if(response.status==200)        return response.json();
                     else if(response.status==204)   return Promise.reject("Empty result");
                     return Promise.reject(response.statusText);
                 }).then(json-> Promise.resolve((CatalogItem[])json))
-                .finally_(()-> progress.getValue().enabled(false));
+                .finally_(()-> {
+                    if(progress.getValue()!=null) progress.getValue().enabled(false);
+                });
     }
     public Promise<String> save(PostRequest post) {
         RequestInit request = RequestInit.create();
@@ -53,11 +55,13 @@ public class PostApi {
                 new String[] {"Accept", "application/vnd.sayaya.v1"}
         });
         request.setBody(JSON.stringify(post));
-        progress.getValue().enabled(true).intermediate(true);
+        if(progress.getValue()!=null) progress.getValue().enabled(true).intermediate(true);
         return fetchApi.request("/posts", request).then(response->{
             if(response.status==200)        return response.text();
             else if(response.status==204)   return Promise.reject("Empty result");
             return Promise.reject(response.statusText);
-        }).finally_(()-> progress.getValue().enabled(false));
+        }).finally_(()-> {
+            if(progress.getValue()!=null) progress.getValue().enabled(false);
+        });
     }
 }

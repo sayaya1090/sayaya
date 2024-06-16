@@ -31,6 +31,10 @@ public class CardContainerElement extends CustomElement {
         }
         return this;
     }
+    public CardContainerElement clear() {
+        container.element().innerHTML = "";
+        return this;
+    }
     private final static String CSS = "" +
             ".container {\n" +
             "    display: grid;\n" +

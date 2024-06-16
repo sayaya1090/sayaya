@@ -17,7 +17,7 @@ class Handler(private val repo: Repository) {
         .createdAt(post.createdAt.toEpochSecond(ZoneOffset.UTC))
         .updatedAt(post.updatedAt.toEpochSecond(ZoneOffset.UTC))
         .description(post.description)
-        .thumbnail(post.thumbnail)
+        .thumbnail(post.thumbnailUrl)
         .tags(post.tags.toTypedArray())
         .published(post.publishedAt!=null)
         .publishedAt(post.publishedAt?.toEpochSecond(ZoneOffset.UTC)?.toDouble())

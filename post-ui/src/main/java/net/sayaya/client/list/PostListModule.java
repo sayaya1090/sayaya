@@ -35,6 +35,7 @@ public class PostListModule {
         Consumer<Object> update = evt->reload.run();
         sortBy.subscribe(update::accept);
         sort.subscribe(update::accept);
+        reload.run();
         return behavior;
     }
     private void reload(PostApi api, BehaviorSubject<CatalogItem[]> posts, BehaviorSubject<String> sortBy, BehaviorSubject<String> sort) {
