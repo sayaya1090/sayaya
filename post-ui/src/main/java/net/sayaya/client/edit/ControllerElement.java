@@ -64,10 +64,7 @@ public class ControllerElement implements IsElement<HTMLElement> {
             if(publish) isPreviewMode.next(false);
         });
         btnPublish.onClick(evt-> isPublishMode.next(!btnPublish.element().selected));
-        btnSave.onClick(evt->{
-            if(isPublishMode.getValue()) save(catalog.getValue());
-            else save(api, post.getValue(), isPublishMode, contentUrl);
-        });
+        btnSave.onClick(evt->save(api, post.getValue(), isPublishMode, contentUrl));
     }
     private void save(PostApi api, PostRequest value, BehaviorSubject<Boolean> isPublishMode, BehaviorSubject<String> contentUrl) {
         boolean initialPublish = value.post.id==null;
@@ -84,8 +81,5 @@ public class ControllerElement implements IsElement<HTMLElement> {
                     else DomGlobal.console.error(Global.JSON.stringify(err));
                     return null;
                 });
-    }
-    private void save(CatalogItem catalog) {
-
     }
 }

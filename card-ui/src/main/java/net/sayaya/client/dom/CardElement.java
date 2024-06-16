@@ -5,6 +5,8 @@ import elemental2.dom.*;
 import jsinterop.annotations.JsType;
 import net.sayaya.client.data.CatalogItem;
 import net.sayaya.ui.elements.ChipsElementBuilder;
+import org.jboss.elemento.EventCallbackFn;
+import org.jboss.elemento.EventType;
 import org.jboss.elemento.HTMLContainerBuilder;
 import org.jboss.elemento.HTMLElementBuilder;
 
@@ -52,6 +54,9 @@ public class CardElement extends CustomElement {
         lblDate.element().innerHTML = "Posted in: " + toLocalDate();
         container.element().classList.remove("hide");
         return this;
+    }
+    public void onClick(EventCallbackFn<MouseEvent> callback) {
+        lblTitle.on(EventType.click, callback);
     }
     public boolean hasAttribute(String attr) {
         return container.element().hasAttribute(attr);

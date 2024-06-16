@@ -1,7 +1,9 @@
 package net.sayaya.client.list;
 
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.MouseEvent;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
@@ -10,6 +12,7 @@ import net.sayaya.rx.subject.BehaviorSubject;
 import net.sayaya.ui.elements.MenuElementBuilder;
 import net.sayaya.ui.elements.SelectElementBuilder;
 import net.sayaya.ui.elements.TextFieldElementBuilder;
+import org.jboss.elemento.EventCallbackFn;
 import org.jboss.elemento.EventType;
 import org.jboss.elemento.HTMLContainerBuilder;
 
@@ -40,7 +43,8 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
             HTMLContainerBuilder<HTMLElement> container,
             BehaviorSubject<CatalogItem[]> posts,
             @Named("sort-by") BehaviorSubject<String> sortBy,
-            @Named("sort") BehaviorSubject<String> sort) {
+            @Named("sort") BehaviorSubject<String> sort,
+            @Named("url") BehaviorSubject<String> contentUrl) {
         super(div().element());
         this.container = container;
         this.style("display: flex; flex-direction: column; height: 100%;")
@@ -52,28 +56,50 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
         sort.subscribe(v->iptOrder.element().value = v);
         iptOrderBy.onChange(evt->sortBy.next(iptOrderBy.value()));
         iptOrder.onChange(evt->sort.next(iptOrder.value()));
-        //posts.subscribe(this::layout);
         menu.item().start(icon().css("fa-sharp", "fa-light", "fa-pen-to-square").style("font-size: 1rem;")).headline("Edit").on(EventType.click, evt->{
-                    evt.preventDefault();
-                    //RouteApi.route(selected.url, true, false);
-                }).end()
-                .item().start(icon().css("fa-sharp", "fa-light", "fa-up-to-line").style("font-size: 1rem;")).headline("Publish").on(EventType.click, evt->{
-                    evt.preventDefault();
-                    //RouteApi.route(selected.url + "/publish", true, false);
-                }).end()
-                .item().start(icon().css("fa-sharp", "fa-light", "fa-chart-line").style("font-size: 1rem;")).headline("Statistics").on(EventType.click, evt->{
-                    evt.preventDefault();
-                }).end();
+            evt.preventDefault();
+            contentUrl.next(selected.url);
+        }).end().item().start(icon().css("fa-sharp", "fa-light", "fa-up-to-line").style("font-size: 1rem;")).headline("Publish").on(EventType.click, evt->{
+            evt.preventDefault();
+            contentUrl.next(selected.url + "/publish");
+        }).end().item().start(icon().css("fa-sharp", "fa-light", "fa-chart-line").style("font-size: 1rem;")).headline("Statistics").on(EventType.click, evt->{
+            evt.preventDefault();
+        }).end();
         posts.subscribe(this::layout);
     }
     private void layout(CatalogItem[] list) {
         CardContainer cast = Js.uncheckedCast(container.element());
         cast.clear();
-        cast.add(list);
+        Card[] cards = cast.add(list);
+        for(int i = 0; i < list.length; ++i) {
+            var item = list[i];
+            cards[i].onClick(evt->DomGlobal.console.log("/posts/" + item.id));
+            HTMLElement elem = Js.uncheckedCast(cards[i]);
+            elem.onclick = evt->onClickCard((MouseEvent) evt, elem, item);
+        }
     }
     @JsType(isNative=true)
     private interface CardContainer {
-        @JsMethod void add(CatalogItem[] items);
+        @JsMethod Card[] add(CatalogItem[] items);
         @JsMethod void clear();
+    }
+    @JsType(isNative=true)
+    private interface Card {
+        @JsMethod void onClick(EventCallbackFn<MouseEvent> callback);
+    }
+    private CatalogItem selected;
+    private Object onClickCard(MouseEvent evt, HTMLElement elem, CatalogItem item) {
+        evt.stopImmediatePropagation();
+        menu.anchorElement(elem).open();
+        var x = evt.offsetX - 20;
+        var y = evt.offsetY - elem.clientHeight - 20;
+        HTMLElement target = (HTMLElement) evt.target;
+        if(target != elem) {
+            if(x + target.offsetLeft + target.offsetWidth + 100 < elem.offsetWidth) x += target.offsetLeft;
+            y += target.offsetTop;
+        }
+        menu.offset((int)x, (int)y);
+        selected = item;
+        return null;
     }
 }

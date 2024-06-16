@@ -6,6 +6,8 @@ import net.sayaya.client.component.CardElementBuilder;
 import net.sayaya.client.data.CatalogItem;
 import org.jboss.elemento.HTMLContainerBuilder;
 
+import java.util.stream.IntStream;
+
 import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.elemento.Elements.*;
 
@@ -22,14 +24,14 @@ public class CardContainerElement extends CustomElement {
         );
     }
     private HTMLContainerBuilder<HTMLDivElement> container;
-    public CardContainerElement add(CatalogItem[] items) {
-        for(int i = 0; i < items.length; ++i) {
+    public CardElement[] add(CatalogItem[] items) {
+        return IntStream.range(0, items.length).mapToObj(i->{
             var item = items[i];
             var card = new CardElementBuilder();
             container.add(card);
             setTimeout(c -> card.element().item(item), (i+1)*100);
-        }
-        return this;
+            return card.element();
+        }).toArray(CardElement[]::new);
     }
     public CardContainerElement clear() {
         container.element().innerHTML = "";
