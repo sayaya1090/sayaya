@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":authentication"))
     implementation(project(":activity"))
     implementation(project(":post-data"))
+    implementation(project(":search"))
     implementation(libs.bundles.spring.client)
     implementation(libs.kotlin.jackson)
     implementation(libs.bundles.kotlin.webflux)

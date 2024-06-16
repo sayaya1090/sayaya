@@ -77,6 +77,7 @@
   - post: 포스트 작성, 관리 기능 제공
   - post-data: DTO 라이브러리
   - post-ui: 포스트 작성, 관리 UI
+  - search: 검색 파라미터 및 검색 파라미터에 대응하는 R2DBC 검색 함수 라이브러리
   - shell: 서비스 디스커버리를 통한, 현재 활성화 된 서비스 목록 제공
   - shell-ui: UI 진입점(프론트엔드 모듈의 Docking platform) / 메뉴 UI
   - vault: 개인정보 관리를 위한 vault 저장소 인터페이스
