@@ -1,5 +1,6 @@
 package net.sayaya.client;
 
+import net.sayaya.client.data.Progress;
 import net.sayaya.client.edit.PostEditModule;
 import net.sayaya.client.edit.PostEditScene;
 import net.sayaya.client.list.PostListModule;
@@ -15,4 +16,5 @@ public interface PostComponent {
     PostListScene postListScene();
     PostEditScene postEditScene();
     @Named("url") BehaviorSubject<String> contentUrl();
+    BehaviorSubject<Progress> progress();
 }

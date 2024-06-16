@@ -9,6 +9,7 @@ import elemental2.dom.ResponseInit;
 import elemental2.promise.Promise;
 import net.sayaya.client.api.FetchApi;
 import net.sayaya.client.data.GithubRepositories;
+import net.sayaya.client.data.Progress;
 import net.sayaya.rx.subject.BehaviorSubject;
 
 import javax.inject.Named;
@@ -19,10 +20,7 @@ import static net.sayaya.rx.subject.BehaviorSubject.behavior;
 
 @dagger.Module
 public class PostEditTestModule {
-    @Provides @Singleton @Named("url") static BehaviorSubject<String> provideContentUrl() {
-        return behavior("");
-    }
-    @Provides @Singleton static FetchApi fetchApi() {
+    @Provides @Singleton FetchApi fetchApi() {
         return new FetchApi() {
             @Override public Promise<Response> request(String url, RequestInit param) {
                 url = Global.decodeURI(url);
@@ -32,7 +30,13 @@ public class PostEditTestModule {
             }
         };
     }
-    private static Response repositories(String url, RequestInit param) {
+    @Provides @Singleton @Named("url") BehaviorSubject<String> provideContentUrl() {
+        return behavior("");
+    }
+    @Provides @Singleton BehaviorSubject<Progress> provideProgress() {
+        return behavior(null);
+    }
+    private Response repositories(String url, RequestInit param) {
         var headers = ResponseInit.create();
         headers.setHeaders(new String[][] {
                 new String[] {"status", "200"}
@@ -42,7 +46,7 @@ public class PostEditTestModule {
         });
         return new Response(JSON.stringify(repositories), headers);
     }
-    private static Response branches(String url, RequestInit param) {
+    private Response branches(String url, RequestInit param) {
         var headers = ResponseInit.create();
         headers.setHeaders(new String[][] {
                 new String[] {"status", "200"}

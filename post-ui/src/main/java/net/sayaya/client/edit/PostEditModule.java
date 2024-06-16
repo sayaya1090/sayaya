@@ -2,7 +2,6 @@ package net.sayaya.client.edit;
 
 import dagger.Provides;
 import dagger.multibindings.ElementsIntoSet;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import net.sayaya.client.api.GithubApi;
 import net.sayaya.client.data.*;
@@ -24,7 +23,7 @@ import static org.jboss.elemento.Elements.htmlContainer;
 
 @dagger.Module
 public class PostEditModule {
-    @Provides @Singleton static BehaviorSubject<Post> post(
+    @Provides @Singleton BehaviorSubject<Post> post(
             @Named("title") BehaviorSubject<String> title,
             @Named("markdown") BehaviorSubject<String> markdown,
             BehaviorSubject<List<Image>> images
@@ -52,7 +51,7 @@ public class PostEditModule {
         });
         return behavior;
     }
-    @Provides @Singleton static BehaviorSubject<PostRequest> request(BehaviorSubject<Post> post, BehaviorSubject<CatalogItem> catalog, BehaviorSubject<Commit> commit) {
+    @Provides @Singleton BehaviorSubject<PostRequest> request(BehaviorSubject<Post> post, BehaviorSubject<CatalogItem> catalog, BehaviorSubject<Commit> commit) {
         var behavior = behavior(new PostRequest());
         behavior.subscribe(p->{
             if(p.post!=null && !p.post.equals(post.getValue())) post.next(p.post);
@@ -64,7 +63,7 @@ public class PostEditModule {
         commit.subscribe(c->behavior.next(behavior.getValue().commit(c)));
         return behavior;
     }
-    @Provides @Singleton static BehaviorSubject<CatalogItem> catalog(@Named("title") BehaviorSubject<String> title,
+    @Provides @Singleton BehaviorSubject<CatalogItem> catalog(@Named("title") BehaviorSubject<String> title,
                                                                      @Named("tags") BehaviorSubject<Set<String>> tags) {
         var behavior = behavior(new CatalogItem());
         behavior.subscribe(c->{
@@ -77,20 +76,20 @@ public class PostEditModule {
         });
         return behavior;
     }
-    private static <T> boolean isDifferent(T[] array, Collection<T> collection) {
+    private <T> boolean isDifferent(T[] array, Collection<T> collection) {
         int length1 = array!=null?array.length:0;
         int length2 = collection!=null?collection.size():0;
         if(length1!=length2) return true;
         if(array!=null) for(T t: array) if(!collection.contains(t)) return true;
         return false;
     }
-    @Provides @Singleton @Named("title") static BehaviorSubject<String> title() {
+    @Provides @Singleton @Named("title") BehaviorSubject<String> title() {
         return behavior("");
     }
-    @Provides @Singleton @Named("markdown") static BehaviorSubject<String> markdown() {
+    @Provides @Singleton @Named("markdown") BehaviorSubject<String> markdown() {
         return behavior("");
     }
-    @Provides @Singleton @Named("html") static BehaviorSubject<String> html(@Named("markdown") BehaviorSubject<String> markdown, BehaviorSubject<List<Image>> images, BehaviorSubject<Post> post) {
+    @Provides @Singleton @Named("html") BehaviorSubject<String> html(@Named("markdown") BehaviorSubject<String> markdown, BehaviorSubject<List<Image>> images, BehaviorSubject<Post> post) {
         var subject = behavior("");
         var initialized = new AtomicBoolean(false);
         var update = debounce(()->{
@@ -114,10 +113,10 @@ public class PostEditModule {
         images.subscribe(evt->update.run());
         return subject;
     }
-    @Provides @Singleton static BehaviorSubject<List<Image>> images() {
+    @Provides @Singleton BehaviorSubject<List<Image>> images() {
         return behavior(new LinkedList<>());
     }
-    @Provides @Singleton static BehaviorSubject<GithubRepositoryConfig> repoConfig(GithubApi api) {
+    @Provides @Singleton BehaviorSubject<GithubRepositoryConfig> repoConfig(GithubApi api) {
         BehaviorSubject<GithubRepositoryConfig> repoConfig = behavior(null);
         api.findGithubRepositoryConfig().then(repo->{
             repoConfig.next(repo);
@@ -128,7 +127,7 @@ public class PostEditModule {
         });
         return repoConfig;
     }
-    @Provides @Singleton static BehaviorSubject<Commit> commit(BehaviorSubject<GithubRepositoryConfig> repo) {
+    @Provides @Singleton BehaviorSubject<Commit> commit(BehaviorSubject<GithubRepositoryConfig> repo) {
         var behavior = behavior((Commit)null);
         repo.subscribe(dest->{
             if(dest==null || !dest.isValid()) behavior.next(null);
@@ -143,22 +142,22 @@ public class PostEditModule {
         });
         return behavior;
     }
-    @Provides @ElementsIntoSet static Set<KeyEventHandler> keyHandlers() {
+    @Provides @ElementsIntoSet Set<KeyEventHandler> keyHandlers() {
         return new HashSet<>(Arrays.asList(new ListOnEnter(), new ListOrdinalOnEnter(), new ListOnTab(), new ListOrdinalOnTab()));
     }
-    @Provides @ElementsIntoSet static Set<PasteEventHandler> pasteHandlers(BehaviorSubject<List<Image>> images) {
+    @Provides @ElementsIntoSet Set<PasteEventHandler> pasteHandlers(BehaviorSubject<List<Image>> images) {
         return new HashSet<>(Arrays.asList((PasteEventHandler)new ImagePaste(images)));
     }
-    @Provides @Singleton @Named("is-preview-mode") static BehaviorSubject<Boolean> isPreviewMode() {
+    @Provides @Singleton @Named("is-preview-mode") BehaviorSubject<Boolean> isPreviewMode() {
         return behavior(true);
     }
-    @Provides @Singleton @Named("is-publish-mode") static BehaviorSubject<Boolean> isPublishMode() {
+    @Provides @Singleton @Named("is-publish-mode") BehaviorSubject<Boolean> isPublishMode() {
         return behavior(false);
     }
     @Provides @Singleton @Named("post-card") HTMLContainerBuilder<HTMLElement> postCard() {
         return htmlContainer("sac-post-card", HTMLElement.class);
     }
-    @Provides @Singleton @Named("tags") static BehaviorSubject<Set<String>> tags() {
+    @Provides @Singleton @Named("tags") BehaviorSubject<Set<String>> tags() {
         return behavior(new HashSet<>());
     }
 }

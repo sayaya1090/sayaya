@@ -1,16 +1,11 @@
 package net.sayaya.client.list;
 
-import elemental2.core.Global;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
-import elemental2.dom.ViewCSS;
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
 import net.sayaya.client.data.CatalogItem;
-import net.sayaya.client.util.Debounce;
 import net.sayaya.rx.subject.BehaviorSubject;
 import net.sayaya.ui.elements.MenuElementBuilder;
 import net.sayaya.ui.elements.SelectElementBuilder;
@@ -21,8 +16,6 @@ import org.jboss.elemento.HTMLContainerBuilder;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import java.util.stream.IntStream;
 
 import static net.sayaya.ui.elements.IconElementBuilder.icon;
 import static net.sayaya.ui.elements.SelectElementBuilder.select;
@@ -45,6 +38,7 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
     private final MenuElementBuilder.TopMenuElementBuilder menu = MenuElementBuilder.menu().positioning(MenuElementBuilder.Position.Fixed);
     @Inject public PostListScene(
             HTMLContainerBuilder<HTMLElement> container,
+            BehaviorSubject<CatalogItem[]> posts,
             @Named("sort-by") BehaviorSubject<String> sortBy,
             @Named("sort") BehaviorSubject<String> sort) {
         super(div().element());
@@ -70,14 +64,11 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
                 .item().start(icon().css("fa-sharp", "fa-light", "fa-chart-line").style("font-size: 1rem;")).headline("Statistics").on(EventType.click, evt->{
                     evt.preventDefault();
                 }).end();
-
+        posts.subscribe(this::layout);
+    }
+    private void layout(CatalogItem[] list) {
         CardContainer cast = Js.uncheckedCast(container.element());
-        cast.add(IntStream.range(0, 30).mapToObj(i->new CatalogItem().title("실행 중 'compileTestJava'...")
-                        .tags(new String[] {"webflux", "kotlin", "spring"}).author("아인슈타인")
-                        .description("Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.\n" +
-                                "\n" +
-                                "You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins."))
-                .toArray(CatalogItem[]::new));
+        cast.add(list);
     }
     @JsType(isNative=true)
     private interface CardContainer {

@@ -10,9 +10,10 @@ import static org.jboss.elemento.Elements.body;
 public class PostListTest implements EntryPoint {
     @Override
     public void onModuleLoad() {
-        var scene = DaggerPostListComponent.create().postListScene();
+        var components = DaggerPostListComponent.create();
+        var scene = components.postListScene();
 
-        CustomElements.define("sac-post-list", PostListSceneElement.class, instance-> PostListSceneElement.initialize(instance, scene));
+        CustomElements.define("sac-post-list", PostListSceneElement.class, instance-> PostListSceneElement.initialize(instance, scene, components.contentUrl(), components.progress()));
         var elem = customContainer("sac-post-list", PostListSceneElement.class);
         body().add(elem);
     }
