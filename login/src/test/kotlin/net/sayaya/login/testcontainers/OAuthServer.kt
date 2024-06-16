@@ -11,7 +11,7 @@ internal class OAuthServer {
         const val USER = "test-user"
         const val TOKEN = "SUCCESS_TOKEN"
 
-        private val oauthServer = GenericContainer(DockerImageName.parse("ghcr.io/navikt/mock-oauth2-server:2.1.4")).withExposedPorts(8080)
+        private val oauthServer = GenericContainer(DockerImageName.parse("ghcr.io/navikt/mock-oauth2-server:2.1.5")).withExposedPorts(8080)
             .waitingFor(Wait.forHttp("/$USER/.well-known/openid-configuration").forStatusCode(200))
             .waitingFor(Wait.forHttp("/test-admin/.well-known/openid-configuration").forStatusCode(200))
         init {
