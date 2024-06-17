@@ -76,6 +76,9 @@ spec:
                       - name: cache
                         subPath: fuse-overlayfs
                         mountPath: /var/lib/docker/fuse-overlayfs
+                      - mountPath: /var/lib/docker/image
+                        name: cache
+                        subPath: image
                       - name: dind-sock
                         mountPath: /var/run
                       - name: dind-externals
@@ -105,7 +108,7 @@ spec:
                             apiGroup: snapshot.storage.k8s.io
                           resources:
                             requests:
-                              storage: 6Gi
+                              storage: 7Gi
             controllerServiceAccount:
               namespace: {{ .Release.Namespace }}
               name: arc
