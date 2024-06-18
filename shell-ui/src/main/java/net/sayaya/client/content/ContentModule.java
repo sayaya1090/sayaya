@@ -5,6 +5,7 @@ import elemental2.core.JsRegExp;
 import jsinterop.annotations.JsFunction;
 import jsinterop.base.Js;
 import net.sayaya.client.content.dom.*;
+import net.sayaya.client.data.JsWindow;
 import net.sayaya.client.data.Page;
 import net.sayaya.client.data.Progress;
 import net.sayaya.client.dom.CustomElements;
@@ -20,11 +21,12 @@ import static net.sayaya.rx.subject.BehaviorSubject.behavior;
 @dagger.Module
 public class ContentModule {
     @Provides @Singleton static Progress provideProgress(ProgressElementBuilder elem) {
-        return proxy(new Progress().enabled(false).intermediate(false).max(0.0).value(0.0), (t, p, v, r) -> {
+        JsWindow.progress = proxy(new Progress().enabled(false).intermediate(false).max(0.0).value(0.0), (t, p, v, r) -> {
             Js.asPropertyMap(t).set(p, v);
             elem.update(t);
             return true;
         });
+        return JsWindow.progress;
     }
     private static native <T> T proxy(T any, JsSetter<T> callback) /*-{
         return new Proxy(any, {

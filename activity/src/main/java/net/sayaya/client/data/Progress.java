@@ -1,6 +1,9 @@
 package net.sayaya.client.data;
 
-import jsinterop.annotations.*;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsOverlay;
+import jsinterop.annotations.JsPackage;
+import jsinterop.annotations.JsType;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 

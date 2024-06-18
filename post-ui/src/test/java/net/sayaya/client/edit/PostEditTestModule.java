@@ -11,7 +11,6 @@ import net.sayaya.client.data.GithubRepositories;
 import net.sayaya.client.data.Progress;
 import net.sayaya.rx.subject.BehaviorSubject;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import static elemental2.core.Global.JSON;
@@ -28,9 +27,6 @@ public class PostEditTestModule {
                 else return Promise.resolve(Response.error());
             }
         };
-    }
-    @Provides @Singleton @Named("url") BehaviorSubject<String> provideContentUrl() {
-        return behavior("");
     }
     @Provides @Singleton BehaviorSubject<Progress> provideProgress() {
         return behavior(null);

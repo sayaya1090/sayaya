@@ -5,8 +5,7 @@ import elemental2.promise.Promise;
 import jsinterop.base.Js;
 import jsinterop.base.JsPropertyMap;
 import net.sayaya.client.component.Logger;
-import net.sayaya.client.data.Progress;
-import net.sayaya.rx.subject.BehaviorSubject;
+import net.sayaya.client.data.JsWindow;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,15 +17,13 @@ import static org.jboss.elemento.Elements.iframe;
 public class OAuthApi {
     private final Logger logger;
     private final FetchApi fetchApi;
-    private final BehaviorSubject<Progress> progress;
-    @Inject OAuthApi(Logger logger, FetchApi fetchApi, BehaviorSubject<Progress> progress) {
+    @Inject OAuthApi(Logger logger, FetchApi fetchApi) {
         this.logger = logger;
         this.fetchApi = fetchApi;
-        this.progress = progress;
     }
     public Promise<Void> login(String provider) {
         String requestUrl = "login/oauth2/authorization/" + provider;
-        progress.getValue().enabled(true).intermediate(true);
+        JsWindow.progress.enabled(true).intermediate(true);
         Promise<Void> promise = waitOAuth2LoginSuccess(requestUrl).then(param->{
             var url = "login/oauth2/code/" + provider + param;
             return waitAuthenticationCookie(url);
@@ -36,7 +33,7 @@ public class OAuthApi {
             return null;
         });
         promise = promise.finally_(()-> {
-            progress.getValue().enabled(false);
+            JsWindow.progress.enabled(false);
         });
         return promise;
     }

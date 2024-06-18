@@ -4,10 +4,10 @@ import elemental2.core.Global;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
-import elemental2.promise.Promise;
 import lombok.experimental.Delegate;
 import net.sayaya.client.api.PostApi;
 import net.sayaya.client.data.CatalogItem;
+import net.sayaya.client.data.JsWindow;
 import net.sayaya.client.data.PostRequest;
 import net.sayaya.rx.subject.BehaviorSubject;
 import org.jboss.elemento.HTMLContainerBuilder;
@@ -33,8 +33,7 @@ public class ControllerElement implements IsElement<HTMLElement> {
                               PostApi api,
                               BehaviorSubject<PostRequest> post, BehaviorSubject<CatalogItem> catalog,
                               @Named("is-preview-mode") BehaviorSubject<Boolean> isPreviewMode,
-                              @Named("is-publish-mode") BehaviorSubject<Boolean> isPublishMode,
-                              @Named("url") BehaviorSubject<String> contentUrl) {
+                              @Named("is-publish-mode") BehaviorSubject<Boolean> isPublishMode) {
         this.commitDialog = commitDialog;
         var btnPreview = button().icon().add(icon().css("fa-sharp", "fa-light", "fa-eye")).toggle(icon().css("fa-sharp", "fa-light", "fa-eye-slash"), false);
         var btnPublish = button().icon()
@@ -64,9 +63,9 @@ public class ControllerElement implements IsElement<HTMLElement> {
             if(publish) isPreviewMode.next(false);
         });
         btnPublish.onClick(evt-> isPublishMode.next(!btnPublish.element().selected));
-        btnSave.onClick(evt->save(api, post.getValue(), isPublishMode, contentUrl));
+        btnSave.onClick(evt->save(api, post.getValue(), isPublishMode));
     }
-    private void save(PostApi api, PostRequest value, BehaviorSubject<Boolean> isPublishMode, BehaviorSubject<String> contentUrl) {
+    private void save(PostApi api, PostRequest value, BehaviorSubject<Boolean> isPublishMode) {
         boolean initialPublish = value.post.id==null;
         commitDialog.open(value)
                 .then(api::save)
@@ -74,7 +73,7 @@ public class ControllerElement implements IsElement<HTMLElement> {
                     if(initialPublish) {
                         value.post.id = id;
                         isPublishMode.next(true);
-                    } else contentUrl.next("/post");
+                    } else JsWindow.url.next("/post");
                     return null;
                 }).catch_(err->{
                     if("cancel".equalsIgnoreCase(err.toString())) return null;

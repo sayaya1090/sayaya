@@ -8,6 +8,7 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
 import net.sayaya.client.data.CatalogItem;
+import net.sayaya.client.data.JsWindow;
 import net.sayaya.rx.subject.BehaviorSubject;
 import net.sayaya.ui.elements.MenuElementBuilder;
 import net.sayaya.ui.elements.SelectElementBuilder;
@@ -43,8 +44,7 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
             HTMLContainerBuilder<HTMLElement> container,
             BehaviorSubject<CatalogItem[]> posts,
             @Named("sort-by") BehaviorSubject<String> sortBy,
-            @Named("sort") BehaviorSubject<String> sort,
-            @Named("url") BehaviorSubject<String> contentUrl) {
+            @Named("sort") BehaviorSubject<String> sort) {
         super(div().element());
         this.container = container;
         this.style("display: flex; flex-direction: column; height: 100%;")
@@ -58,10 +58,10 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
         iptOrder.onChange(evt->sort.next(iptOrder.value()));
         menu.item().start(icon().css("fa-sharp", "fa-light", "fa-pen-to-square").style("font-size: 1rem;")).headline("Edit").on(EventType.click, evt->{
             evt.preventDefault();
-            contentUrl.next("/post#" + selected.id);
+            JsWindow.url.next("/post#" + selected.id);
         }).end().item().start(icon().css("fa-sharp", "fa-light", "fa-up-to-line").style("font-size: 1rem;")).headline("Publish").on(EventType.click, evt->{
             evt.preventDefault();
-            contentUrl.next("/post#" + selected.id + "/publish");
+            JsWindow.url.next("/post#" + selected.id + "/publish");
         }).end().item().start(icon().css("fa-sharp", "fa-light", "fa-chart-line").style("font-size: 1rem;")).headline("Statistics").on(EventType.click, evt->{
             evt.preventDefault();
         }).end();

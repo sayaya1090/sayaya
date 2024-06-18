@@ -1,15 +1,16 @@
 package net.sayaya.client.dom;
 
-import elemental2.dom.*;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLinkElement;
+import elemental2.dom.MutationRecord;
+import elemental2.dom.ShadowRootInit;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import net.sayaya.client.api.PostApi;
+import net.sayaya.client.data.JsWindow;
 import net.sayaya.client.data.Post;
-import net.sayaya.client.data.Progress;
 import net.sayaya.client.edit.PostEditScene;
-import net.sayaya.rx.Subscription;
 import net.sayaya.rx.subject.BehaviorSubject;
-import net.sayaya.rx.subject.BehaviorSubjectJs;
 
 import static org.jboss.elemento.Elements.htmlElement;
 import static org.jboss.elemento.Elements.script;
@@ -39,16 +40,7 @@ public class PostEditSceneElement extends CustomElement implements IsFrame {
     private BehaviorSubject<Post> post;
     @Override
     public void attach(MutationRecord mutationRecord) {
-
-    }
-    private native static void fa(HTMLElement k) /*-{
-        $wnd.FontAwesome.dom.watch({
-          autoReplaceSvgRoot: k.shadowRoot,
-          observeMutationsRoot: k.shadowRoot
-        })
-    }-*/;
-    @Override public void url(BehaviorSubjectJs<String> subject) {
-        var url = subject.getValue();
+        var url = JsWindow.url.getValue();
         var hash = url.contains("#")? url.substring(url.indexOf("#")+1) : "";
         if("new".equalsIgnoreCase(hash)) return;
         api.find(hash).then(p->{
@@ -56,7 +48,10 @@ public class PostEditSceneElement extends CustomElement implements IsFrame {
             return null;
         });
     }
-    @Override public void progress(Progress progress) {
-
-    }
+    private native static void fa(HTMLElement k) /*-{
+        $wnd.FontAwesome.dom.watch({
+          autoReplaceSvgRoot: k.shadowRoot,
+          observeMutationsRoot: k.shadowRoot
+        })
+    }-*/;
 }

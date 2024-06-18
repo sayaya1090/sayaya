@@ -9,7 +9,7 @@ public class Login implements EntryPoint {
         var components = DaggerLoginComponent.create();
         CustomElements.define("sac-console", ConsoleElement.class, ConsoleElement::initialize);
         CustomElements.define("sac-login-box", LoginElement.class, LoginElement::initialize);
-        CustomElements.define("sac-login-scene", LoginSceneElement.class, i->LoginSceneElement.initialize(i, components.console(), components.api(), components.progress()));
+        CustomElements.define("sac-login-scene", LoginSceneElement.class, i->LoginSceneElement.initialize(i, components.console(), components.api()));
         CustomElements.define("sac-logout-scene", LogoutSceneElement.class, i->LogoutSceneElement.initialize(i, components.api()));
     }
 }

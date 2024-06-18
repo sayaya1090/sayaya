@@ -42,8 +42,6 @@ public class FrameUpdater {
         next.appendChild(tag);
         parent.appendChild(next);
         IsFrame.attach(tag);
-        IsFrame.url(tag, url);
-        IsFrame.progress(tag, progress.enabled(false).max(0.0).value(0.0).intermediate(false));
         Scheduler.get().scheduleDeferred(()->fadeIn(next));
         DomGlobal.setTimeout(a -> {
             old.remove();
