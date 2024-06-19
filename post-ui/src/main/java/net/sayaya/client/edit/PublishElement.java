@@ -1,6 +1,5 @@
 package net.sayaya.client.edit;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
