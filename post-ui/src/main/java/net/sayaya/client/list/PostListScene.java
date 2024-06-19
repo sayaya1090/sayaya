@@ -46,6 +46,7 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
             @Named("sort-by") BehaviorSubject<String> sortBy,
             @Named("sort") BehaviorSubject<String> sort,
             BehaviorSubject<CatalogItem> sendCatalogToEdit,
+            @Named("is-preview-mode") BehaviorSubject<Boolean> isPreviewMode,
             @Named("is-publish-mode") BehaviorSubject<Boolean> isPublishMode) {
         super(div().element());
         this.container = container;
@@ -61,6 +62,7 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
         menu.item().start(icon().css("fa-sharp", "fa-light", "fa-pen-to-square").style("font-size: 1rem;")).headline("Edit").on(EventType.click, evt->{
             evt.preventDefault();
             sendCatalogToEdit.next(selected);
+            isPreviewMode.next(true);
             JsWindow.url.next("/post#" + selected.id);
         }).end().item().start(icon().css("fa-sharp", "fa-light", "fa-up-to-line").style("font-size: 1rem;")).headline("Publish").on(EventType.click, evt->{
             evt.preventDefault();

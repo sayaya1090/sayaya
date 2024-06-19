@@ -7,6 +7,7 @@ import elemental2.dom.ShadowRootInit;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import net.sayaya.client.api.PostApi;
+import net.sayaya.client.data.CatalogItem;
 import net.sayaya.client.data.JsWindow;
 import net.sayaya.client.data.Post;
 import net.sayaya.client.edit.PostEditScene;
@@ -17,13 +18,15 @@ import static org.jboss.elemento.Elements.script;
 
 @JsType
 public class PostEditSceneElement extends CustomElement implements IsFrame {
-    @JsIgnore public static void initialize(PostEditSceneElement instance, PostEditScene scene, PostApi api, BehaviorSubject<Post> post) {
+    @JsIgnore public static void initialize(PostEditSceneElement instance, PostEditScene scene, PostApi api, BehaviorSubject<Post> post, BehaviorSubject<CatalogItem> catalog, BehaviorSubject<Boolean> isPreviewMode) {
         var options = ShadowRootInit.create();
         options.setMode("open");
         var shadowRoot = instance.attachShadow(options);
         instance.scene = scene;
         instance.api = api;
         instance.post = post;
+        instance.catalog = catalog;
+        instance.isPreviewMode = isPreviewMode;
         shadowRoot.append(
                 htmlElement("link", HTMLLinkElement.class).attr("rel", "stylesheet").attr("href", "css/post.css").element(),
                 htmlElement("link", HTMLLinkElement.class).attr("rel", "stylesheet").attr("href", "https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.0/github-markdown.min.css").element(),
@@ -38,13 +41,19 @@ public class PostEditSceneElement extends CustomElement implements IsFrame {
     private PostEditScene scene;
     private PostApi api;
     private BehaviorSubject<Post> post;
+    private BehaviorSubject<CatalogItem> catalog;
+    private BehaviorSubject<Boolean> isPreviewMode;
     @Override
     public void attach(MutationRecord mutationRecord) {
         var url = JsWindow.url.getValue();
         var hash = url.contains("#")? url.substring(url.indexOf("#")+1) : "";
         post.next(new Post().title("").markdown("").html("").images(new net.sayaya.client.data.Image[0]));
-        if("new".equalsIgnoreCase(hash)) return;
-        api.find(hash).then(p->{
+        if("new".equalsIgnoreCase(hash)) {
+            catalog.next(new CatalogItem().title("").tags(new String[0]).description("").thumbnail("").url("")
+                    .createdAt(0).author("").updatedAt(0).publishedAt(null).published(false));
+            isPreviewMode.next(true);
+        }
+        else api.find(hash).then(p->{
             post.next(p);
             return null;
         });
