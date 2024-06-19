@@ -42,6 +42,7 @@ public class PostEditSceneElement extends CustomElement implements IsFrame {
     public void attach(MutationRecord mutationRecord) {
         var url = JsWindow.url.getValue();
         var hash = url.contains("#")? url.substring(url.indexOf("#")+1) : "";
+        post.next(new Post().title("").markdown("").html("").images(new net.sayaya.client.data.Image[0]));
         if("new".equalsIgnoreCase(hash)) return;
         api.find(hash).then(p->{
             post.next(p);
