@@ -92,6 +92,7 @@ class Handler (
         html = it.post.html
         markdown = it.post.markdown
         description = it.catalog?.description
+        publishedAt = if(it.catalog?.published == true) LocalDateTime.now() else null
         // thumbnail = it.catalog?.thumbnail
     } }
     private fun PostRequest.toCommitFiles(dir: String): List<Triple<String, String, String>> {
