@@ -45,7 +45,8 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
             BehaviorSubject<CatalogItem[]> posts,
             @Named("sort-by") BehaviorSubject<String> sortBy,
             @Named("sort") BehaviorSubject<String> sort,
-            BehaviorSubject<CatalogItem> sendCatalogToEdit) {
+            BehaviorSubject<CatalogItem> sendCatalogToEdit,
+            @Named("is-publish-mode") BehaviorSubject<Boolean> isPublishMode) {
         super(div().element());
         this.container = container;
         this.style("display: flex; flex-direction: column; height: 100%;")
@@ -64,7 +65,8 @@ public class PostListScene extends HTMLContainerBuilder<HTMLDivElement> {
         }).end().item().start(icon().css("fa-sharp", "fa-light", "fa-up-to-line").style("font-size: 1rem;")).headline("Publish").on(EventType.click, evt->{
             evt.preventDefault();
             sendCatalogToEdit.next(selected);
-            JsWindow.url.next("/post#" + selected.id + "/publish");
+            isPublishMode.next(true);
+            JsWindow.url.next("/post#" + selected.id);
         }).end().item().start(icon().css("fa-sharp", "fa-light", "fa-chart-line").style("font-size: 1rem;")).headline("Statistics").on(EventType.click, evt->{
             evt.preventDefault();
         }).end();
