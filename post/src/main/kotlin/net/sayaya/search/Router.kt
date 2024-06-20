@@ -19,7 +19,11 @@ class Router(private val handler: Handler) {
         GET("/posts", accept(MediaType("application", "vnd.sayaya.v1+json")), ::search)
     }
     private fun search(request: ServerRequest): Mono<ServerResponse> = request.principal()
-        .flatMap { with(Search) { request.param() } .let { param -> handler.search(param)} }
+        .flatMap { with(Search) {
+            request.param().apply {
+                filters.add("author" to it.name)
+            }
+        } .let { param -> handler.search(param)} }
         .flatMap { posts ->
             ok().contentType(MediaType("application", "vnd.sayaya.v1+json"))
                 .header("X-Total-Count", posts.totalElements.toString())

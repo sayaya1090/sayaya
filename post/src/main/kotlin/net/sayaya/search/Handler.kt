@@ -22,5 +22,8 @@ class Handler(private val repo: Repository) {
         .published(post.publishedAt!=null)
         .publishedAt(post.publishedAt?.toEpochSecond(ZoneOffset.UTC)?.toDouble())
         .url("/post#${post.id}")
-    fun search(param: Search): Mono<Page<CatalogItem>> = repo.search(param).map { page -> PageImpl(page.content.map(::map), page.pageable, page.totalElements) }
+    fun search(param: Search): Mono<Page<CatalogItem>> = repo.search(param).mapNotNull { page ->
+        if(page.content.isEmpty()) null
+        else PageImpl(page.content.map(::map), page.pageable, page.totalElements)
+    }
 }

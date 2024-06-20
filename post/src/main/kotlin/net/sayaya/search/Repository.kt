@@ -9,6 +9,7 @@ import org.springframework.data.relational.core.query.Criteria
 import org.springframework.data.relational.core.sql.SqlIdentifier
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
+import java.util.*
 
 @Repository
 class Repository(private val template: R2dbcEntityTemplate): Searchable {
@@ -28,6 +29,7 @@ class Repository(private val template: R2dbcEntityTemplate): Searchable {
         else -> null
     }
     override fun R2dbcEntityTemplate.predicate(key: String, value: String): Criteria {
+        if(key == "author") return Criteria.where("author").`is`(UUID.fromString(value))
         val property = property(key) ?: return Criteria.empty()
         return Criteria.where(property).`is`(value).ignoreCase(true)
     }
