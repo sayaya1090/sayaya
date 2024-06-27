@@ -7,15 +7,14 @@ plugins {
 }
 dependencies {
     implementation(project(":activity"))
-    implementation(project(":authentication"))
-    implementation(libs.bundles.spring.client)
+    implementation(project(":search"))
+    implementation(project(":blog-data"))
+    implementation(project(":post-data"))
+    implementation(libs.spring.log4j2)
     implementation(libs.kotlin.jackson)
     implementation(libs.spring.thymeleaf)
     implementation(libs.bundles.kotlin.webflux)
     implementation(libs.bundles.r2dbc.postgres)
-    implementation(libs.bouncycastle.bcprov)
-    implementation(libs.jjwt.api)
-    runtimeOnly(libs.bundles.jjwt.runtime)
     testImplementation(libs.bundles.test.api)
     testImplementation(libs.spring.security.test)
 }

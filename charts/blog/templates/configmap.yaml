@@ -15,11 +15,6 @@ data:
           - classpath:postgresql.yaml
       main:
         web-application-type: reactive
-      security:
-        authentication:
-          header: Authentication
-          jwt:
-            secret: ${jwt.secret}
     management:
       endpoint:
         health:

@@ -1,7 +1,6 @@
 package net.sayaya.blog
 
-import net.sayaya.client.data.Menu
-import net.sayaya.client.data.Page
+import net.sayaya.data.Search
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
@@ -11,33 +10,38 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
 import reactor.core.publisher.Mono
 
-@Configuration
-class Router {
-    @Bean("net.sayaya.menu.Router.route")
+@Configuration("net.sayaya.blog.Router")
+class Router(private var handler: Handler) {
+    @Bean("net.sayaya.blog.Router.route")
     fun route() = router {
-        GET ("/menu", ::findMenu)
+        GET("/") {
+            if(it.headers().accept().contains(MediaType("application", "vnd.sayaya.v1+json"))) search(it)
+            else index(it)
+        }
+        GET("/{id}/{title}", ::find)
     }
-    private fun findMenu(request: ServerRequest): Mono<ServerResponse> = Mono.just(blog)
-        .flatMap(ServerResponse.ok().contentType(MediaType("application", "vnd.sayaya.v1+json"))::bodyValue)
-        .switchIfEmpty(Mono.defer { ServerResponse.noContent().build() })
+    private fun search(request: ServerRequest): Mono<ServerResponse> = with(Search) { request.param() }
+        .let { param -> handler.search(param) }
+        .flatMap { posts ->
+            ServerResponse.ok().contentType(MediaType("application", "vnd.sayaya.v1+json"))
+                .header("X-Total-Count", posts.totalElements.toString())
+                .header("X-Total-Page", posts.totalPages.toString())
+                .bodyValue(posts.toList())
+        }.switchIfEmpty(ServerResponse.noContent().build()).
+        onErrorResume(IllegalStateException::class.java) { ex -> ServerResponse.badRequest().bodyValue(ex.message?:"") }.
+        onErrorResume(WebClientResponseException::class.java) { ex -> ServerResponse.status(ex.statusCode).bodyValue(ex.responseBodyAsString) }
+    private fun index(request: ServerRequest): Mono<ServerResponse> = with(Search) { request.param() }
+        .let { param -> handler.search(param) }.flatMap {
+            ServerResponse.ok().contentType(MediaType.TEXT_HTML).render("catalog", mapOf("articles" to it.content))
+        }.switchIfEmpty(Mono.defer { ServerResponse.noContent().build() })
         .onErrorResume(IllegalStateException::class.java) { ex -> ServerResponse.badRequest().bodyValue(ex.message?:"") }
         .onErrorResume(WebClientResponseException::class.java) { ex -> ServerResponse.status(ex.statusCode).bodyValue(ex.responseBodyAsString) }
 
-    companion object {
-        private val blog = Menu().apply {
-            title = "ARTICLE"
-            icon = "fa-newspaper"
-            iconType = "sharp"
-            order = "B000"
-            children = arrayOf(
-                Page().apply {
-                    title = ""
-                    order = "B000-1"
-                    uri = "/blog"
-                    regex = "^\\/blog"
-                    tag = "sac-articles"
-                }
-            )
-        }
-    }
+    private fun find(request: ServerRequest): Mono<ServerResponse> = handler.find(request.pathVariable("id"), request.pathVariable("title"))
+        .flatMap {
+            ServerResponse.ok().contentType(MediaType.TEXT_HTML).
+            render("article", mapOf("catalog" to it, "content" to it.html))
+        }.switchIfEmpty(Mono.defer { ServerResponse.noContent().build() })
+            .onErrorResume(IllegalStateException::class.java) { ex -> ServerResponse.badRequest().bodyValue(ex.message?:"") }
+            .onErrorResume(WebClientResponseException::class.java) { ex -> ServerResponse.status(ex.statusCode).bodyValue(ex.responseBodyAsString) }
 }
