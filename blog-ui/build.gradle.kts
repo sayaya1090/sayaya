@@ -45,7 +45,7 @@ tasks {
     }
     gwtTest {
         dependsOn("compileTestJava")
-        modules = listOf("net.sayaya.BlogListTest")
+        modules = listOf("net.sayaya.ArticleListTest")
         launcherDir = file("src/test/webapp")
         webserverPort = 8080
         port = 8081
