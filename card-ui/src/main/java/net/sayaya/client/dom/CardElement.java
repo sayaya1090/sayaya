@@ -51,7 +51,7 @@ public class CardElement extends CustomElement {
         lblTags.element().innerHTML = "";
         if(item.tags!=null) for(var tag: item.tags) lblTags.assist().label(tag);
         lblAuthor.element().innerHTML = "written by " + item.author;
-        lblDate.element().innerHTML = "Posted in: " + toLocalDate();
+        lblDate.element().innerHTML = "posted in: " + toLocalDate();
         container.element().classList.remove("hide");
         return this;
     }

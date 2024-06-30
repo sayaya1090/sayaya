@@ -31,7 +31,7 @@
             <div id="description" th:text="*{article.description}"></div>
             <div>
                 <label id="author" class="author" th:text="|written by *{article.author}|"></label>
-                <label id="update-date" class="date" th:text="|Posted in *{article.updatedAt}|"></label>
+                <label id="update-date" class="date" th:text="|posted in *{article.updatedAt}|"></label>
             </div>
             <md-chip-set id="tags" style="justify-content: flex-end; grid-column: 1 / span 2;">
                 <md-assist-chip id="tag" th:each="tag : ${article.tags}" th:label="*{tag}"></md-assist-chip>

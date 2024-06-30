@@ -45,9 +45,9 @@ public class ArticleListModule {
         var thumbnail = elem.querySelector("#thumbnail").getAttribute("src");
         var title = elem.querySelector("#title").innerHTML;
         var description = elem.querySelector("#description").innerHTML;
-        var author = elem.querySelector("#author").innerHTML;
+        var author = elem.querySelector("#author").innerHTML.replace("written by ", "");
         var updateAt = -1L;
-        try { updateAt = Long.parseLong(elem.querySelector("#update-date").innerHTML); } catch(Exception ignore) { }
+        try { updateAt = Long.parseLong(elem.querySelector("#update-date").innerHTML.replace("posted in ", "")); } catch(Exception ignore) { }
         var tags = elem.querySelector("#tags").getElementsByTagName("md-assist-chip").asList().stream()
                 .map(i->i.getAttribute("label")).toArray(String[]::new);
         return new CatalogItem().title(title).description(description).thumbnail(thumbnail).author(author).updatedAt(updateAt).tags(tags);
