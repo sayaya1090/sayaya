@@ -12,6 +12,7 @@ import org.jboss.elemento.HTMLContainerBuilder;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -30,8 +31,8 @@ public class ArticleListModule {
         if(behavior.getValue().length <= 0) reload.run();
         return behavior;
     }
-    @Provides @Singleton static BehaviorSubject<Set<String>> params() {
-        BehaviorSubject<Set<String>> behavior = behavior(null);
+    @Provides @Singleton BehaviorSubject<Set<String>> params() {
+        BehaviorSubject<Set<String>> behavior = behavior(new HashSet<>());
         return behavior;
     }
     @Provides @Singleton @Named("sort-by") BehaviorSubject<String> sortBy() {
