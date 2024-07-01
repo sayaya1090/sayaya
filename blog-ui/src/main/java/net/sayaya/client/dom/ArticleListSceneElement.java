@@ -1,10 +1,13 @@
 package net.sayaya.client.dom;
 
+import elemental2.dom.HTMLLinkElement;
 import elemental2.dom.MutationRecord;
 import elemental2.dom.ShadowRootInit;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 import net.sayaya.client.list.ArticleListScene;
+
+import static org.jboss.elemento.Elements.htmlElement;
 
 @JsType
 public class ArticleListSceneElement extends CustomElement implements IsFrame {
@@ -14,6 +17,7 @@ public class ArticleListSceneElement extends CustomElement implements IsFrame {
         var shadowRoot = instance.attachShadow(options);
         instance.scene = scene;
         shadowRoot.append(
+                htmlElement("link", HTMLLinkElement.class).attr("rel", "stylesheet").attr("href", "css/blog.css").element(),
                 instance.scene.element()
         );
     }

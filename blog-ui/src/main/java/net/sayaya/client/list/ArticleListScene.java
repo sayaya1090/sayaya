@@ -1,45 +1,42 @@
 package net.sayaya.client.list;
 
-import elemental2.dom.DomGlobal;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.MouseEvent;
+import elemental2.dom.*;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
 import net.sayaya.client.data.CatalogItem;
 import net.sayaya.rx.subject.BehaviorSubject;
+import net.sayaya.ui.elements.ChipsElementBuilder;
+import net.sayaya.ui.elements.TextFieldElementBuilder;
 import org.jboss.elemento.EventCallbackFn;
+import org.jboss.elemento.EventType;
 import org.jboss.elemento.HTMLContainerBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.HashSet;
 import java.util.Set;
 
+import static elemental2.dom.DomGlobal.window;
+import static net.sayaya.rx.subject.BehaviorSubject.behavior;
+import static net.sayaya.ui.elements.TextFieldElementBuilder.textField;
 import static org.jboss.elemento.Elements.div;
 
 @Singleton
 public class ArticleListScene extends HTMLContainerBuilder<HTMLDivElement> {
+    private final HTMLContainerBuilder<HTMLDivElement> searchBoxContainer = div();
+    private final TextFieldElementBuilder.OutlinedTextFieldElementBuilder iptSearchBox = textField().outlined().label("Search");
+    private final ChipsElementBuilder chips = ChipsElementBuilder.chips();
     private final HTMLContainerBuilder<HTMLElement> container;
     @Inject ArticleListScene(HTMLContainerBuilder<HTMLElement> container, BehaviorSubject<CatalogItem[]> articles, BehaviorSubject<Set<String>> params) {
         super(div().element());
-        this.css("compilation")
-                /*.add(searchBoxContainer.css("search-box-container")
+        this.css("article-list")
+                .add(searchBoxContainer.css("search-box-container")
                         .add(iptSearchBox)
-                        .add(chips))*/
-                .add(container);
+                        .add(chips))
+                .add(container.css("card-container"));
         this.container = container;
         articles.subscribe(this::layout);
-        /*
-        window.addEventListener(EventType.wheel.name, evt->{
-            var cast = (WheelEvent)evt;
-            if(cast.deltaY > 0 ) isSearchMode.next(true);
-            else if(cast.deltaY < 0 && container.element().scrollTop+cast.deltaY<=0 ) isSearchMode.next(false);
-        });
-        isSearchMode.subscribe(mode->{
-            if(mode) searchBoxContainer.element().style.marginTop = CSSProperties.MarginTopUnionType.of("0vh");
-            else searchBoxContainer.element().style.marginTop = CSSProperties.MarginTopUnionType.of("32vh");
-        });
         iptSearchBox.onChange(evt->{
             var value = iptSearchBox.value();
             if(value==null || value.length() < 3) return;
@@ -51,18 +48,25 @@ public class ArticleListScene extends HTMLContainerBuilder<HTMLDivElement> {
         });
         params.subscribe(tag->{
             if(tag==null) return;
-            mtxInitialize.set(true);
             chips.element().innerHTML = "";
             for(var t: tag) {
                 var chip = chips.input().label(t);
                 chip.element().addEventListener("DOMNodeRemoved", evt->{
-                    if(mtxInitialize.get()) return;
                     params.getValue().remove(t);
                     params.next(params.getValue());
                 });
             }
-            mtxInitialize.set(false);
-        });*/
+        });
+        BehaviorSubject<Boolean> isSearchMode = behavior(false);
+        window.addEventListener(EventType.wheel.name, evt->{
+            var cast = (WheelEvent)evt;
+            if(cast.deltaY > 0 ) isSearchMode.next(true);
+            else if(cast.deltaY < 0 && container.element().scrollTop+cast.deltaY<=0 ) isSearchMode.next(false);
+        });
+        isSearchMode.subscribe(mode->{
+            if(mode) searchBoxContainer.element().style.marginTop = CSSProperties.MarginTopUnionType.of("0vh");
+            else searchBoxContainer.element().style.marginTop = CSSProperties.MarginTopUnionType.of("32vh");
+        });
     }
     private void layout(CatalogItem[] list) {
         CardContainer cast = Js.uncheckedCast(container.element());

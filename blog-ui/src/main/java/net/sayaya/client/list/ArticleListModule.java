@@ -26,14 +26,14 @@ public class ArticleListModule {
         BehaviorSubject<CatalogItem[]> behavior = behavior(getCatalogItemIfPresent());
         var reload = throttle(()->reload(api, behavior, params, sortBy, sort), 100);
         Consumer<Object> update = evt->reload.run();
+        params.subscribe(update::accept);
         sortBy.subscribe(update::accept);
         sort.subscribe(update::accept);
-        if(behavior.getValue().length <= 0) reload.run();
+        if(behavior.getValue().length == 0) reload.run();
         return behavior;
     }
     @Provides @Singleton BehaviorSubject<Set<String>> params() {
-        BehaviorSubject<Set<String>> behavior = behavior(new HashSet<>());
-        return behavior;
+        return behavior(new HashSet<>());
     }
     @Provides @Singleton @Named("sort-by") BehaviorSubject<String> sortBy() {
         return behavior("publishedAt");
